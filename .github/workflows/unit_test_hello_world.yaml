@@ -1,7 +1,5 @@
 name: update-Python-packages
 
-on:
-
 jobs:
   build:
 
