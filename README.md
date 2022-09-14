@@ -1,4 +1,4 @@
-# Unorthadox Jukebox
+# Unorthodox Jukebox
 ## Members
 - Aedan Cullen
 - Austin Hushower
