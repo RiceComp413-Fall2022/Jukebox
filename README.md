@@ -19,6 +19,15 @@ cd test/server
 pytest
 ```
 
+To run the unittests:
+
+*First time users should install pip on their machines before proceeding
+*Addionally, ensure that the user is currently on the Jukebox directory or the relative file path will have to be changed
+```
+ pip install -r src/server/requirements.txt
+ python3 -m unittest src/server/tests/example_test.py
+```
+
 ## Running Basic Demo
 To start the server, which currently serves a simple Hello World demo:
 ```
