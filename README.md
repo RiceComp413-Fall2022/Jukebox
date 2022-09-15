@@ -20,8 +20,8 @@ To run the unittests:
 
 *Addionally, ensure that the user is currently on the Jukebox directory or the relative file path will have to be changed*
 ```
- pip install -r src/server/requirements.txt
- python3 -m unittest src/server/tests/example_test.py
+pip install -r src/server/requirements.txt
+python -m unittest discover test/server
 ```
 
 ## Running Basic Demo
@@ -29,3 +29,4 @@ To start the server, which currently serves a simple Hello World demo:
 ```
 cd src/server
 flask --app main run
+```
