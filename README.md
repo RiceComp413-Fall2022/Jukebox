@@ -13,11 +13,6 @@ In small gatherings, parties, or public spaces, there’s often a single device 
 
 
 ## Running Tests
-To test the Python/Flask server-side code independently:
-```
-cd test/server
-pytest
-```
 
 To run the unittests:
 
