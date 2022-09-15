@@ -33,4 +33,4 @@ To run the unittests:
 To start the server, which currently serves a simple Hello World demo:
 ```
 cd src/server
-flask main.py
+flask --app main run
