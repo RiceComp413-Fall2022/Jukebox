@@ -23,13 +23,21 @@ class SongQueue:
         """Add a song data object with zero votes.
 
         A separate identifier can optionally be provided for use during lookup for voting.
+        Returns True if the song did not exist yet (by identifier) and was added.
+        Return False if the song identifier already existed and the add was treated as an upvote.
         """
         song_identifier = song_data if song_identifier is None else song_identifier
         with self.lock:
-            count = next(self.counter)
-            entry = [0, count, song_data, song_identifier]
-            self.entries_by_song[song_identifier] = entry
-            heapq.heappush(self.pq, entry)
+            if song_identifier in self.entries_by_song:
+                self.entries_by_song[song_identifier][0] -= 1 # Upvote if identifier already exists
+                heapq.heapify(self.pq)
+                return False
+            else:
+                count = next(self.counter)
+                entry = [0, count, song_data, song_identifier]
+                self.entries_by_song[song_identifier] = entry
+                heapq.heappush(self.pq, entry)
+                return True
 
     def update_song(self, song_identifier, new_votes):
         """Completely replace the number of votes that a song has with new_votes."""
