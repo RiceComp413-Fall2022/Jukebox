@@ -78,7 +78,7 @@ class SongQueue:
             return ret
 
     def get_all(self):
-        "Return a list of tuples (votes, song_data, song_identifier) for all songs in the queue."""
+        """Return a list of tuples (votes, song_data, song_identifier) for all songs in the queue."""
         with self.lock:
             ret = []
             for priority, count, song_data, song_identifier in self.pq:
