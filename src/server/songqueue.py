@@ -76,3 +76,11 @@ class SongQueue:
             for priority, count, song_data, song_identifier in heapq.nsmallest(n, self.pq):
                 ret.append((-priority, song_data, song_identifier))
             return ret
+
+    def get_all(self):
+        "Return a list of tuples (votes, song_data, song_identifier) for all songs in the queue."""
+        with self.lock:
+            ret = []
+            for priority, count, song_data, song_identifier in self.pq:
+                ret.append((-priority, song_data, song_identifier))
+            return ret
