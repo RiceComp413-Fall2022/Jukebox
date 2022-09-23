@@ -21,7 +21,8 @@ class SongQueue:
             return len(self.pq)
 
     def add_song(self, song_data, song_identifier=None):
-        """Add a song data object with zero votes.
+        """
+        Add a song data object with zero votes.
 
         A separate identifier can optionally be provided for use during lookup for voting.
         Returns True if the song did not exist yet (by identifier) and was added.
