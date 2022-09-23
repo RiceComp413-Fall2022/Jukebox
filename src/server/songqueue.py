@@ -7,12 +7,13 @@ import itertools
 class SongQueue:
     """A song queue which can keep track of song rankings according to upvotes/downvotes."""
 
-    def __init__(self):
+    def __init__(self, update_data_funct=lambda data, new_votes: None):
         """Create an empty song queue containing no songs. self.counter is monotonic to maintain insertion ordering."""
         self.pq = []
         self.lock = threading.Lock()
         self.counter = itertools.count()
         self.entries_by_song = {}
+        self.update_data_funct = update_data_funct
 
     def __len__(self):
         """Return the number of songs in the queue."""
@@ -39,18 +40,12 @@ class SongQueue:
                 heapq.heappush(self.pq, entry)
                 return True
 
-    def update_song(self, song_identifier, new_votes):
-        """Completely replace the number of votes that a song has with new_votes."""
-        with self.lock:
-            entry = self.entries_by_song[song_identifier]
-            entry[0] = -new_votes
-            heapq.heapify(self.pq)
-
     def upvote_song(self, song_identifier):
         """Increment the number of votes that a song has. Internally, this means decreasing its priority."""
         with self.lock:
             entry = self.entries_by_song[song_identifier]
             entry[0] -= 1
+            self.update_data_funct(entry[2], -entry[0]) # song_data, votes
             heapq.heapify(self.pq)
 
     def downvote_song(self, song_identifier):
@@ -58,6 +53,7 @@ class SongQueue:
         with self.lock:
             entry = self.entries_by_song[song_identifier]
             entry[0] += 1
+            self.update_data_funct(entry[2], -entry[0]) # song_data, votes
             heapq.heapify(self.pq)
 
     def remove_top(self):
