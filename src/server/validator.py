@@ -8,6 +8,7 @@ from src.server import config
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=config.SPOTIFY_CLIENT_ID,
                                                            client_secret=config.SPOTIFY_CLIENT_SECRET))
 
+
 def validate_uri(uri):
     """
     The validate uri function returns true or false based on whether or not the provided uri string is a correctly
