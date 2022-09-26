@@ -52,7 +52,17 @@ class SSEMessageAnnouncer(MessageAnnouncer):
     
 def format_sse(data: str, event=None) -> str:
     '''
-    Formats a string TODO
+    Formats a string into Server Sent Envent format.
+    Event format outlined here:
+    https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#event_stream_format
+
+    Input:
+        - data: String message to put in SSE format
+        - event: String event to be added to the message sent to the listners, that can clasify what type of event the
+                message is describing.
+
+    Output:
+        String in SSE format.
     '''
     msg = f'data: {data}\n\n'
     if event is not None:
