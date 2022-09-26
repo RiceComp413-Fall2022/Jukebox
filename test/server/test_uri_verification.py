@@ -1,6 +1,6 @@
 import unittest
 
-from src.server.validator import validate_uri
+from validator import validate_uri
 
 
 class UriVerificationTest(unittest.TestCase):
