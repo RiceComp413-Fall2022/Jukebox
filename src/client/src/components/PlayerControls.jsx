@@ -10,21 +10,34 @@ import { FiRepeat } from "react-icons/fi";
 import { useStateProvider } from "../utils/StateProvider";
 import axios from "axios";
 import { reducerCases } from "../utils/Constants";
-export default function PlayerControls() {
-  const [{ token, playerState }, dispatch] = useStateProvider();
+import $ from 'jquery'; 
 
-  const changeState = async () => {
+
+export default function PlayerControls(props) {
+  const [{ token, playerState }, dispatch] = useStateProvider();
+  
+  const changeState = async () => { 
     const state = playerState ? "pause" : "play";
-    await axios.put(
-      `https://api.spotify.com/v1/me/player/${state}`,
-      {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      }
-    );
+    $.ajax({
+        url: "https://api.spotify.com/v1/me/player/play",
+        type: "PUT",
+        data: '{"uris": ["spotify:track:2HScVhNGt7DltJYrph09Ee"]}',
+        beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + props.token);},
+        success: function(data) { 
+          console.log(data)
+        }
+    });
+    
+    // await axios.put(
+    //   `https://api.spotify.com/v1/me/player/${state}`,
+    //   {},
+    //   {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: "Bearer " + token,
+    //     },
+    //   }
+    // );
     dispatch({
       type: reducerCases.SET_PLAYER_STATE,
       playerState: !playerState,

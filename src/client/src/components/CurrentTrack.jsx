@@ -3,26 +3,8 @@ import styled from "styled-components";
 import axios from "axios";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
-export default function CurrentTrack() {
+export default function CurrentTrack(props) {
     
-  const tempSong = {
-    uri: "spotify:track:12Zex1yqVOGxKSXa0rFi3c", // Spotify URI
-    id: null,                // Spotify ID from URI (can be null)
-    type: "track",             // Content type: can be "track", "episode" or "ad"
-    media_type: "audio",       // Type of file: can be "audio" or "video"
-    name: "what was the last thing u said",         // Name of content
-    is_playable: true,         // Flag indicating whether it can be played
-    album: {
-      uri: 'spotify:album:2MrgIgzeQvPFRCmG12C7Xo', // Spotify Album URI
-      name: 'Album Name',
-    //   images: [
-    //     { url: "https://image/xxxx" }
-    //   ]
-    },
-    artists: [
-      { uri: 'spotify:artist:1J6OD7vLbjEuFVgVRlusmS', name: "Artist Name" }
-    ]
-  };  
   const [{ token, currentPlaying }, dispatch] = useStateProvider();
   useEffect(() => {
     const getCurrentTrack = async () => {
@@ -31,25 +13,24 @@ export default function CurrentTrack() {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
+            Authorization: "Bearer " + props.token,
           },
         }
       );
       if (response.data !== "") {
-        // const currentPlaying = {
-        //   id: response.data.item.id,
-        //   name: response.data.item.name,
-        //   artists: response.data.item.artists.map((artist) => artist.name),
-        //   image: response.data.item.album.images[2].url,
-        // };
-        const currentPlaying = tempSong;
-        dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: tempSong });
+        const currentPlaying = {
+          id: response.data.item.id,
+          name: response.data.item.name,
+          artists: response.data.item.artists.map((artist) => artist.name),
+          image: response.data.item.album.images[2].url,
+        };
+        dispatch({ type: reducerCases.SET_PLAYING, currentPlaying });
       } else {
-        dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: tempSong });
+        dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: null });
       }
     };
     getCurrentTrack();
-  }, [token, dispatch]);
+  }, [props.token, dispatch]);
   return (
     <Container>
       {currentPlaying && (

@@ -6,7 +6,7 @@ import axios from "axios";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 
-export default function Spotify() {
+export default function Spotify(props) {
   const [{ token }, dispatch] = useStateProvider();
   const [navBackground, setNavBackground] = useState(false);
   const [headerBackground, setHeaderBackground] = useState(false);
@@ -23,7 +23,7 @@ export default function Spotify() {
     const getUserInfo = async () => {
       const { data } = await axios.get("https://api.spotify.com/v1/me", {
         headers: {
-          Authorization: "Bearer " + token,
+          Authorization: "Bearer " + props.token,
           "Content-Type": "application/json",
         },
       });
@@ -35,12 +35,12 @@ export default function Spotify() {
       dispatch({ type: reducerCases.SET_USER, userInfo });
     };
     getUserInfo();
-  }, [dispatch, token]);
+  }, [dispatch, props.token]);
   useEffect(() => {
     const getPlaybackState = async () => {
       const { data } = await axios.get("https://api.spotify.com/v1/me/player", {
         headers: {
-          Authorization: "Bearer " + token,
+          Authorization: "Bearer " + props.token,
           "Content-Type": "application/json",
         },
       });
@@ -50,7 +50,7 @@ export default function Spotify() {
       });
     };
     getPlaybackState();
-  }, [dispatch, token]);
+  }, [dispatch, props.token]);
   return (
     <Container>
       <div className="spotify__body">
@@ -59,7 +59,7 @@ export default function Spotify() {
         </div>
       </div>
       <div className="spotify__footer">
-        <Footer />
+        <Footer token = {props.token}/>
       </div>
     </Container>
   );

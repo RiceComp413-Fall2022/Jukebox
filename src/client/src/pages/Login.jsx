@@ -6,18 +6,28 @@ export default function Login() {
     const client_id = "0b2885f02bea4a8f887f715664b411e9";
     const redirect_uri = "http://localhost:3000/"
     const api_uri = "https://accounts.spotify.com/authorize";
-    const scope = [
-      "user-read-private",
-      "user-read-email",
-      "user-modify-playback-state",
-      "user-read-playback-state",
-      "user-read-currently-playing",
-      "user-read-recently-played",
-      "user-top-read",
+    const scopes = [
+      'streaming',
+      'user-read-birthdate',
+      'user-read-private',
+      'user-modify-playback-state'
     ];
-    window.location.href = `${api_uri}?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=${scope.join(
-      " "
-    )}&response_type=token&show_dialog=true`;
+    const scope = [
+      "streaming",
+      "user-read-email",  // I have found this is necessary for playback, YMMV
+      "user-read-private",
+      "user-read-playback-state",
+      "user-modify-playback-state",
+      // "user-read-private",
+      // "user-read-email",
+      // "user-modify-playback-state",
+      // "user-read-playback-state",
+      // "user-read-currently-playing",
+      // "user-read-recently-played",
+      // "user-top-read",
+    ];
+    window.location.href = `${api_uri}?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=${scope.join('%20')}&response_type=token&show_dialog=true`;
+
   };
   return (
     <Container>

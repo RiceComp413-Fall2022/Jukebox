@@ -9,6 +9,7 @@ import reducer, { initialState } from "./utils/Reducer";
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    {/* <script src="https://sdk.scdn.co/spotify-player.js"></script> */}
     <StateProvider initialState={initialState} reducer={reducer}>
       <App />
     </StateProvider>
