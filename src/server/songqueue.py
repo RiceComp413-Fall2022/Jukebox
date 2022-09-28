@@ -68,9 +68,7 @@ class SongQueue:
             return None
 
     def get_top(self, n):
-        """
-        Return a list of tuples (votes, song_data, song_identifier) for the top n songs in the queue, without removing.
-        """
+        """Return a list of tuples (votes, song_data, song_identifier) for the top n songs in the queue, without removing."""
         with self.lock:
             ret = []
             for priority, count, song_data, song_identifier in heapq.nsmallest(n, self.pq):
@@ -90,6 +88,7 @@ class Song:
     """A wrapper class to hold all associated metadata for a song."""
 
     def __init__(self, uri, requestee, time):
+        """Create a new Song."""
         self.uri = uri
         self.requestee = requestee
         self.time = time
