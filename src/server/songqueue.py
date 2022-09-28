@@ -26,37 +26,54 @@ class SongQueue:
         Add a song data object with zero votes.
 
         A separate identifier can optionally be provided for use during lookup for voting.
-        Returns True if the song did not exist yet (by identifier) and was added.
-        Return False if the song identifier already existed and the add was treated as an upvote.
+        The first item of the tuple returned is:
+            True if the song did not exist yet (by identifier) and was added.
+            False if the song identifier already existed and the add was treated as an upvote.
+        The second item of the tuple returned is (votes, song_data, song_identifier).
         """
         song_identifier = song_data if song_identifier is None else song_identifier
         with self.lock:
             if song_identifier in self.entries_by_song:
-                self.entries_by_song[song_identifier][0] -= 1 # Upvote if identifier already exists
+                entry = self.entries_by_song[song_identifier]
+                entry[0] -= 1 # Upvote if identifier already exists
                 heapq.heapify(self.pq)
-                return False
+                priority, count, song_data, song_identifier = entry
+                return False, (-priority, song_data, song_identifier)
             else:
                 count = next(self.counter)
                 entry = [0, count, song_data, song_identifier]
                 self.entries_by_song[song_identifier] = entry
                 heapq.heappush(self.pq, entry)
-                return True
+                priority, count, song_data, song_identifier = entry
+                return True, (-priority, song_data, song_identifier)
 
     def upvote_song(self, song_identifier):
-        """Increment the number of votes that a song has. Internally, this means decreasing its priority."""
+        """
+        Increment the number of votes that a song has. Internally, this means decreasing its priority.
+
+        Return (votes, song_data, song_identifier) for the song that was upvoted.
+        """
         with self.lock:
             entry = self.entries_by_song[song_identifier]
             entry[0] -= 1
             self.update_data_funct(entry[2], -entry[0]) # song_data, votes
             heapq.heapify(self.pq)
+            priority, count, song_data, song_identifier = entry
+            return (-priority, song_data, song_identifier)
 
     def downvote_song(self, song_identifier):
-        """Increment the number of votes that a song has. Internally, this means increasing its priority."""
+        """
+        Increment the number of votes that a song has. Internally, this means increasing its priority.
+
+        Return (votes, song_data, song_identifier) for the song that was downvoted.
+        """
         with self.lock:
             entry = self.entries_by_song[song_identifier]
             entry[0] += 1
             self.update_data_funct(entry[2], -entry[0]) # song_data, votes
             heapq.heapify(self.pq)
+            priority, count, song_data, song_identifier = entry
+            return (-priority, song_data, song_identifier)
 
     def remove_top(self):
         """Remove the top song in the queue and return a tuple (votes, song_data, song_identifier)."""
