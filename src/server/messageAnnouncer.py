@@ -1,3 +1,6 @@
+'''
+Defines the message announcer class.
+'''
 import queue
 
 class MessageAnnouncer:
