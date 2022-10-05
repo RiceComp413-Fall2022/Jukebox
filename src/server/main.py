@@ -1,8 +1,8 @@
-import config
+from .config import *
 from flask import Flask
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-from routes import routes
+from .routes import routes
 
 app = Flask(__name__)
 app.register_blueprint(routes)

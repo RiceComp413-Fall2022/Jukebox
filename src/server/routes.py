@@ -2,8 +2,8 @@
 Defines the routes for the Unorthadox Jukebox API and calls the proper function to execute
 '''
 from flask import Blueprint
-from announcer import announce_song_queue
-from listen import song_queue_listen
+from .announcer import announce_song_queue
+from .listen import song_queue_listen
 
 routes = Blueprint('routes', __name__)
 

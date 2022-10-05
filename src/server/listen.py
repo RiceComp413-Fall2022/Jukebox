@@ -1,7 +1,7 @@
 '''
 Defines functions that allow front ends to subscribe to event announcements from the backend.
 '''
-from announcer import announcer, SONG_QUEUE_EVENT
+from .announcer import announcer, SONG_QUEUE_EVENT
 from flask import Response
 
 def song_queue_listen():
