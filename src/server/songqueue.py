@@ -109,4 +109,6 @@ class Song:
         self.uri = uri
         self.requestee = requestee
         self.time = time
+        self.upvotes_by_user = {}
         self.upvotes = 0
+
