@@ -1,15 +1,14 @@
 from flask import Flask
 from flask import request
 import json
+import time
 
 from server import config
 from server import songqueue
 
 app = Flask(__name__)
 
-
 queue = songqueue.SongQueue()
-
 
 class RequestHandlingException(Exception):
     """
@@ -19,13 +18,7 @@ class RequestHandlingException(Exception):
     def __init__(self, message):
         self.message = message
 
-@app.route("/")
-def hello_world():
-
-    return "<p>Hello, World!</p>"
-
-
-@app.route('/api/add_song', methods=['GET'])
+@app.route('/add_song', methods=['GET', 'POST'])
 def add_song():
     """
 
@@ -35,23 +28,32 @@ def add_song():
     request_bytes = request.data
     try:
         parsed = handle_request(request_bytes)
-
     except Exception as e:
         return str(e), config.REQUEST_ERROR_MESSAGE_CODE
 
-    queue.add_song()
+    s = songqueue.Song(parsed['uri'], parsed['userid'], time.time())
+    queue.add_song(s, song_identifier=parsed['uri'])
 
-    return 0
+    return json.dumps({'success':True}), 200
 
-
-@app.route('/api/remove_song', methods=['GET'])
+@app.route('/remove_song', methods=['GET', 'POST'])
 def remove_song():
     """
 
     :return:
     """
-    return 0
 
+    request_bytes = request.data
+    try:
+        parsed = handle_request(request_bytes)
+    except RequestHandlingException as e:
+        return str(e), config.REQUEST_ERROR_MESSAGE_CODE
+
+    votes, song_data, song_identifier = queue.get_song(parsed['uri'])
+    if song_data.requestee == parsed['userID']:
+        queue.remove_song(parsed['uri'])
+    
+    return json.dumps({'success':True}), 200
 
 def handle_request(request_bytes):
     """
@@ -64,14 +66,10 @@ def handle_request(request_bytes):
     except json.JSONDecodeError as e:
         raise RequestHandlingException("Error while converting request to JSON:\n" + str(e))
 
-    if "uri" not in parsed:
+    if not "uri" in parsed:
         raise RequestHandlingException("Song URI not present in request.")
 
-    if "userid" not in parsed:
-        raise RequestHandlingException("UserID not present in request.")
+    if not "userid" in parsed:
+        raise RequestHandlingException("User ID not present in request.")
 
-
-
-
-
-
+    return parsed

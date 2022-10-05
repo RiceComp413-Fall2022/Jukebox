@@ -75,6 +75,17 @@ class SongQueue:
             priority, count, song_data, song_identifier = entry
             return (-priority, song_data, song_identifier)
 
+    def remove_song(self, song_identifier):
+        """Remove a song from the queue by its identifier."""
+        with self.lock:
+            if song_identifier in self.entries_by_song:
+                entry = self.entries_by_song[song_identifier]
+                self.pq.remove(entry)
+                del self.entries_by_song[song_identifier]
+                priority, count, song_data, song_identifier = entry
+                return (-priority, song_data, song_identifier)
+            return None
+
     def remove_top(self):
         """Remove the top song in the queue and return a tuple (votes, song_data, song_identifier)."""
         with self.lock:
@@ -82,6 +93,13 @@ class SongQueue:
                 priority, count, song_data, song_identifier = heapq.heappop(self.pq)
                 del self.entries_by_song[song_identifier]
                 return (-priority, song_data, song_identifier)
+            return None
+
+    def get_song(self, song_identifier):
+        """Return a list of tuples (votes, song_data, song_identifier) for the specified song identifier."""
+        with self.lock:
+            if song_identifier in self.entries_by_song:
+                return self.entries_by_song[song_identifier]
             return None
 
     def get_top(self, n):
@@ -100,7 +118,6 @@ class SongQueue:
                 ret.append((-priority, song_data, song_identifier))
             return ret
 
-
 class Song:
     """A wrapper class to hold all associated metadata for a song."""
 
@@ -111,4 +128,3 @@ class Song:
         self.time = time
         self.upvotes_by_user = {}
         self.upvotes = 0
-

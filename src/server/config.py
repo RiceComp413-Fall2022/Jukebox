@@ -1,6 +1,7 @@
 """
-This file should only include globally necessary static config variables. Do not add anything which is intended to be
-dynamically modified.
+This file should only include globally necessary static config variables.
+
+Do not add anything which is intended to be dynamically modified.
 """
 
 # Serverside client credentials
