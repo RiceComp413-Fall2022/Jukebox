@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 export default function Login() {
   const handleClick = async () => {
+    
     const client_id = "0b2885f02bea4a8f887f715664b411e9";
     const redirect_uri = "http://localhost:3000/"
     const api_uri = "https://accounts.spotify.com/authorize";
@@ -18,13 +19,12 @@ export default function Login() {
       "user-read-private",
       "user-read-playback-state",
       "user-modify-playback-state",
-      // "user-read-private",
-      // "user-read-email",
-      // "user-modify-playback-state",
-      // "user-read-playback-state",
-      // "user-read-currently-playing",
-      // "user-read-recently-played",
-      // "user-top-read",
+      "playlist-read-collaborative",
+      "playlist-modify-public",
+      "playlist-modify-private",
+      "playlist-read-private",
+      "playlist-read-collaborative",
+
     ];
     window.location.href = `${api_uri}?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=${scope.join('%20')}&response_type=token&show_dialog=true`;
 

@@ -3,12 +3,23 @@ import styled from "styled-components";
 import { useStateProvider } from "../utils/StateProvider";
 import { FaSearch } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
-export default function Navbar({ navBackground }) {
+export default function Navbar({ navBackground }, props) {
   const [{ userInfo }] = useStateProvider();
+  // const getTrack = async(track) => { 
+  //   const state = playerState ? "pause" : "play";
+  //   $.ajax({
+  //       url: "https://api.spotify.com/v1/search?q=" + track,
+  //       type: "GET",
+  //       beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + props.token);},
+  //       success: function(data) { 
+  //         console.log(data)
+  //       }
+  //   });
+  // };
   return (
     <Container navBackground={navBackground}>
       <div className="search__bar">
-        <FaSearch />
+        <FaSearch/>
         <input type="text" placeholder="Artists, songs, or podcasts" />
       </div>
       <div className="avatar">

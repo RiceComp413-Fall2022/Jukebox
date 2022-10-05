@@ -5,10 +5,11 @@ import CurrentTrack from "./CurrentTrack";
 import PlayerControls from "./PlayerControls";
 import Volume from "./Volume";
 export default function Footer(props) {
+
   return (
     <Container>
       <CurrentTrack token = {props.token}/>
-      <PlayerControls token = {props.token}/>
+      <PlayerControls token = {props.token} uriVal = {props.uriVal}/>
       <Volume />
     </Container>
   );
