@@ -10,7 +10,9 @@ from server import songqueue
 
 app = Flask(__name__)
 
-queue = songqueue.SongQueue()
+def update_votes(data, new_votes):
+    data.upvotes = new_votes
+queue = songqueue.SongQueue(update_data_funct=update_votes)
 
 class RequestHandlingException(Exception):
     """
