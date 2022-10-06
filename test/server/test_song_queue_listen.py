@@ -11,8 +11,8 @@ import requests
 from multiprocessing import Process
 
 from sseclient import SSEClient
-from start_server import start
-from announcer import SONG_QUEUE_EVENT
+from .start_server import start
+from src.server.announcer import SONG_QUEUE_EVENT
 
 async def get_message_event(msg_event):
     """Grabs messages from listen and assigns them to shared variable."""
