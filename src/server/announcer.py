@@ -8,10 +8,6 @@ SONG_QUEUE_EVENT = 'song_queue'
 
 def announce_song_queue():
     """Sends the current song queue to all listeners that are listening for the song_queue event as definded above."""
-    song_id_list = []
-
-    for votes, song, song_id in queue.get_all():
-        # add song id to list to send out
-        song_id_list.append(song_id)
+    song_id_list = [song_id for votes, song, song_id in queue.get_all()]
 
     announcer.announce(json.dumps(song_id_list), SONG_QUEUE_EVENT)
