@@ -1,5 +1,5 @@
 """Defines the anouncer to use for the server sent events and also defines events that can be used consistently."""
-from .messageAnnouncer import SSEMessageAnnouncer
+from messageAnnouncer import SSEMessageAnnouncer
 
 announcer = SSEMessageAnnouncer()
 

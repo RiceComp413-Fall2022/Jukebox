@@ -1,5 +1,5 @@
 """Starts flask server."""
-from src.server.main import app
+from main import app
 
 def start():
     """Start server on localhost, port 5000. For testing purposes."""
