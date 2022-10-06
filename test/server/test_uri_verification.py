@@ -14,9 +14,9 @@ class UriVerificationTest(unittest.TestCase):
         """
         print("\nTesting valid song URIs")
         valid_uris = ["spotify:track:5YZuePCawcrg0DJrWovPu7",
-                    "spotify:track:3Ofmpyhv5UAQ70mENzB277",
-                    "spotify:track:0qcr5FMsEO85NAQjrlDRKo",
-                    "spotify:track:1IHWl5LamUGEuP4ozKQSXZ"]
+                      "spotify:track:3Ofmpyhv5UAQ70mENzB277",
+                      "spotify:track:0qcr5FMsEO85NAQjrlDRKo",
+                      "spotify:track:1IHWl5LamUGEuP4ozKQSXZ"]
 
         for uri in valid_uris:
             self.assertTrue(validate_uri(uri), "Valid URI rejected as false. URI: " + uri)
@@ -49,9 +49,9 @@ class UriVerificationTest(unittest.TestCase):
         """
         # Poorly formatted URIs
         print("\nTesting poorly formatted URIs.")
-        bad_format_uris = [
-                "", "spootify:track:5YZuePCawcrg0DJrWovPu7",
-                "spotify:track:5YZuePCawcrspotify:track:5YZuePCawcrg0DJrWovPu7g0DJrWovPu7spotify:track:5YZuePCawcrg0DJrWovPu7"]
+        bad_format_uris = ["",
+                           "spootify:track:5YZuePCawcrg0DJrWovPu7",
+                           "spotify:track:5YZuePCawcrspotify:track:5YZuePCawcrg0DJrWovPu7g0DJrWovPu7spotify:track:5YZuePCawcrg0DJrWovPu7"] # noqa: E501
 
         for uri in bad_format_uris:
             self.assertFalse(validate_uri(uri), "Incorrectly formatted track uri returned true. URI: " + uri)
