@@ -1,3 +1,4 @@
+"""Handles URI validation."""
 from urllib.error import HTTPError
 import re
 import spotipy
@@ -11,6 +12,8 @@ sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=config.SPOT
 
 def validate_uri(uri):
     """
+    Validates a given URI.
+
     The validate uri function returns true or false based on whether or not the provided uri string is a correctly
     formatted Spotify URI, for an existing song. To return true, the uri must be formatted correctly AND the song must
     be valid.
@@ -38,7 +41,7 @@ def validate_uri(uri):
 
     # URI is correctly formatted. At this point, the only way to weed out bad URIs is testing + catching exceptions
     try:
-        track = sp.track(uri)
+        sp.track(uri)
         return True
     except HTTPError as err:
         if err.code == 404:

@@ -11,7 +11,10 @@ from server import songqueue
 app = Flask(__name__)
 
 def update_votes(data, new_votes):
+    """Update votes."""
     data.upvotes = new_votes
+
+
 queue = songqueue.SongQueue(update_data_funct=update_votes)
 
 class RequestHandlingException(Exception):
