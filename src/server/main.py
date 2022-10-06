@@ -3,7 +3,7 @@ import spotipy
 from flask import Flask
 from spotipy.oauth2 import SpotifyClientCredentials
 
-import config
+from src.server import config
 from .routes import routes
 
 app = Flask(__name__)
