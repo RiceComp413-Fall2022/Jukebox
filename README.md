@@ -13,14 +13,20 @@ In small gatherings, parties, or public spaces, there’s often a single device 
 
 
 ## Running Tests
-To test the Python/Flask server-side code independently:
+
+To run the unittests:
+
+*First time users should install pip on their machines before proceeding*
+
+*Addionally, ensure that the user is currently on the Jukebox directory or the relative file path will have to be changed*
 ```
-cd test/server
-pytest
+pip install -r src/server/requirements.txt
+python -m unittest discover test/server
 ```
 
 ## Running Basic Demo
 To start the server, which currently serves a simple Hello World demo:
 ```
 cd src/server
-flask main.py
+flask --app main run
+```
