@@ -103,18 +103,16 @@ export default function PlayerControls(props) {
     let temp = ''
     for(const cVal of mult_uri){
       if(cVal == "["){
-        temp += "[";
         canAdd = true
       }
       else if(cVal == "]"){
-        temp += "]"
         canAdd = false
       }
       else if(canAdd){
         temp += cVal;
       }
     }
-    return temp;
+    return JSON.parse("[" + temp + "]");
   }
   function changeState(uris) {
     const state = playerState ? "pause" : "play";
@@ -125,7 +123,7 @@ export default function PlayerControls(props) {
         data: uris,
         beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + props.token);},
         success: function(data) { 
-          console.log(data)
+          // console.log(data)
         }
     });
   }
@@ -183,7 +181,6 @@ export default function PlayerControls(props) {
       type: "POST",
       beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + props.token);},
       success: function(data) { 
-        console.log(data)
       }
     });
     // await axios.post(

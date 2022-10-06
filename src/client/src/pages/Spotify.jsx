@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar"; 
-import Body from "../components/Body";
 import axios from "axios";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
+import PlayerControls from "../components/PlayerControls";
+import RenderTrack from "../components/RenderTrack";
 
 export default function Spotify(props) {
   const [{ token }, dispatch] = useStateProvider();
@@ -23,24 +24,26 @@ export default function Spotify(props) {
   };
   const single_uri ='{"uris": ["spotify:track:2HScVhNGt7DltJYrph09Ee"]}';
   const uriVal = '{"uris": ["spotify:track:2LO5hQnz5rEaRwkGUvZcHN", "spotify:track:6IpvkngH89cA3hhPC84Leg", "spotify:track:63dLm0BUpepXeFIfZ0OKEL"]}';
-  
+  const urisT = ["2LO5hQnz5rEaRwkGUvZcHN","6IpvkngH89cA3hhPC84Leg", "63dLm0BUpepXeFIfZ0OKEL"]
   function parseURIList(uris){
-    let canAdd = false
-    let temp = ''
-    for(const cVal of uris){
-      if(cVal == "["){
-        temp += "[";
-        canAdd = true
-      }
-      else if(cVal == "]"){
-        temp += "]"
-        canAdd = false
-      }
-      else if(canAdd){
-        temp += cVal;
-      }
+    let final = []
+    let parseVal = JSON.parse(uris).uris
+    for (const track of parseVal){
+        let temp = ''
+        let canAdd = false
+        for(let itr = 0; itr < track.length; itr++){
+            if (track[itr-1] == ':' && track[itr- 2] == 'k'){
+                canAdd = true
+            }
+
+            if(canAdd) {
+                temp += track[itr]
+            }
+        }
+        final.push(temp)
     }
-    return temp
+    
+    return final
 
   }
 
@@ -78,29 +81,29 @@ export default function Spotify(props) {
   }, [dispatch, props.token]);
   return (
     <Container>
-      <div className="spotify__body">
-        <div className="body" ref={bodyRef} onScroll={bodyScrolled}>
-          <Navbar navBackground={navBackground} />
-          <div className="body__contents">
-            <Body headerBackground={headerBackground} token={props.token} uriVal={parseURIList(uriVal)}/>
-          </div>
+    <div className="spotify__body">
+      <div className="body" ref={bodyRef} onScroll={bodyScrolled}>
+        <Navbar navBackground={navBackground} />
+        <div className="body__contents">
+          <RenderTrack headerBackground={headerBackground} token={props.token} uriVal={parseURIList(uriVal)}/>
         </div>
       </div>
-      <div className="spotify__footer">
-        <Footer token = {props.token} uriVal={uriVal}/>
-      </div>
-    </Container>
+    </div>
+    <div className="spotify__footer">
+      <Footer token = {props.token} uriVal={uriVal}/>
+    </div>
+  </Container>
   );
 }
 
 const Container = styled.div`
-  max-width: 100vw;
   max-height: 100vh;
+  max-width: 100%;  
   overflow: hidden;
   display: grid;
   grid-template-rows: 85vh 15vh;
   .spotify__body {
-    display: grid;
+    display: flex;
     grid-template-columns: 15vw 85vw;
     height: 100%;
     width: 100%;
@@ -116,6 +119,10 @@ const Container = styled.div`
         &-thumb {
           background-color: rgba(255, 255, 255, 0.6);
         }
+      }
+    .body__contents {
+      display: flex;
+      flex-direction: row;
       }
     }
   }
