@@ -46,6 +46,30 @@ const reducer = (state, action) => {
           ...state,
           selectedPlaylistId: action.selectedPlaylistId,
         };
+      case reducerCases.SET_MULT_SONGS:
+        return{
+          ...state,
+          setMultSongs: action.setMultSongs,
+        }
+
+      case reducerCases.SET_NAME:
+        return{
+          ...state,
+          setName: action.setName,
+        }
+
+      case reducerCases.SET_IMAGE:
+        return{
+          ...state,
+          setImage: action.setImage,
+        }
+      
+      case reducerCases.SET_TIME:
+        return{
+          ...state,
+          setTime: action.setTime,
+        }
+
       default:
         return state;
     }
