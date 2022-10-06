@@ -4,7 +4,7 @@ import re
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
-import config
+from src.server import config
 
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=config.SPOTIFY_CLIENT_ID,
                                                            client_secret=config.SPOTIFY_CLIENT_SECRET))

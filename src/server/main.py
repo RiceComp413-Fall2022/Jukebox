@@ -5,8 +5,8 @@ from flask import request
 import json
 import time
 
-from server import config
-from server import songqueue
+from src.server import config
+from src.server import songqueue
 
 app = Flask(__name__)
 
