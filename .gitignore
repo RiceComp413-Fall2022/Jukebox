@@ -3,3 +3,5 @@ __pycache*
 .cache
 */.cache
 .vscode
+src/client/node_modules/
+src/client/package-lock.json
