@@ -7,6 +7,7 @@ from .announcer import announce_song_queue
 from .listen import song_queue_listen
 from .resources import queue
 from .songqueue import Song
+from .validator import validate_uri
 
 routes = Blueprint('routes', __name__)
 
@@ -25,6 +26,9 @@ def song_add():
 
     if 'userid' not in args:
         return "User ID not present in request.", 400
+
+    if not validate_uri(args['uri']):
+        return "Invalid song URI", 400
 
     s = Song(args['uri'], args['userid'], time.time())
     queue.add_song(s, s.uri)
