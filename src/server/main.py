@@ -3,45 +3,13 @@
 from flask import Flask
 from flask import request
 import json
-import time
 
-import config
-import songqueue
+from .config import REQUEST_ERROR_MESSAGE_CODE
+from .resources import queue, RequestHandlingException
+from .routes import routes
 
 app = Flask(__name__)
-
-def update_votes(data, new_votes):
-    """Update votes."""
-    data.upvotes = new_votes
-
-
-queue = songqueue.SongQueue(update_data_funct=update_votes)
-
-class RequestHandlingException(Exception):
-    """
-    Custom exception type to be thrown by any method which runs into an issue handling the request from the front end.
-
-    This exception should be caught to prevent server errors. When caught, relay the error to the front end.
-    """
-
-    def __init__(self, message):
-        """Set the message."""
-        self.message = message
-
-@app.route('/add_song', methods=['GET', 'POST'])
-def add_song():
-    """Adds a song to the queue for a client."""
-
-    request_bytes = request.data
-    try:
-        parsed = handle_request(request_bytes)
-    except Exception as e:
-        return str(e), config.REQUEST_ERROR_MESSAGE_CODE
-
-    s = songqueue.Song(parsed['uri'], parsed['userid'], time.time())
-    queue.add_song(s, song_identifier=parsed['uri'])
-
-    return json.dumps({'success': True}), 200
+app.register_blueprint(routes)
 
 @app.route('/remove_song', methods=['GET', 'POST'])
 def remove_song():
@@ -51,7 +19,7 @@ def remove_song():
     try:
         parsed = handle_request(request_bytes)
     except RequestHandlingException as e:
-        return str(e), config.REQUEST_ERROR_MESSAGE_CODE
+        return str(e), REQUEST_ERROR_MESSAGE_CODE
 
     votes, song_data, song_identifier = queue.get_song(parsed['uri'])
     if song_data.requestee == parsed['userID']:
