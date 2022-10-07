@@ -5,7 +5,7 @@ from flask import request
 
 from .announcer import announce_song_queue
 from .listen import song_queue_listen
-from .resources import RequestHandlingException, queue
+from .resources import queue
 from .songqueue import Song
 
 routes = Blueprint('routes', __name__)
@@ -21,10 +21,10 @@ def song_add():
     # add song to song queue here
     args = request.args
     if 'uri' not in args:
-        raise RequestHandlingException("Song URI not present in request.")
+        return "Song URI not present in request.", 400
 
     if 'userid' not in args:
-        raise RequestHandlingException("User ID not present in request.")
+        return "User ID not present in request.", 400
 
     s = Song(args['uri'], args['userid'], time.time())
     queue.add_song(s, s.uri)
