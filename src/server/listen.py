@@ -12,7 +12,7 @@ def song_queue_listen():
         messages = announcer.listen()  # returns a queue.Queue
 
         # tells the user the current state of the queue
-        init_q = format_sse(json.dumps({'uris':[song_id for votes, song, song_id in queue.get_all()]}), SONG_QUEUE_EVENT)
+        init_q = format_sse(json.dumps({'uris': [song_id for votes, song, song_id in queue.get_all()]}), SONG_QUEUE_EVENT)
         yield init_q
 
         while True:
