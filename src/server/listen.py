@@ -21,4 +21,4 @@ def song_queue_listen():
             if f"event: {SONG_QUEUE_EVENT}" in msg:
                 yield msg
 
-    return Response(stream(), mimetype='text/event-stream', headers={'Access-Control-Allow-Orgin': "*"})
+    return Response(stream(), mimetype='text/event-stream', headers={'Access-Control-Allow-Origin': "*"})
