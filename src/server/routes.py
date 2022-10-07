@@ -35,4 +35,4 @@ def song_add():
 
     # then send updated song queue to everyone
     announce_song_queue()
-    return {}, 200
+    return {"result": "Song successfully added"}, 200
