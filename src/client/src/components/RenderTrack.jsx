@@ -4,6 +4,7 @@ import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 
 import styled from "styled-components";
+import { BsFonts } from "react-icons/bs";
 
 
 
@@ -45,10 +46,14 @@ export default function RenderTrack(props){
 
                     let renderObj = tpArr.map((item) =>
                     <li key={item.id} style={{listStyleType:"none"}} >
-                        <SongPlayer style={{backgroundColor : "#a6f1a6"}}> 
-                            <img src={item.image} />
-                            {item.name}
-                            {item.artists.join(", ")}
+                        <SongPlayer style={{backgroundColor : "#181818"}}> 
+                            <div className="image">
+                                <img src={item.image} />
+                            </div>
+                            <div className="info">
+                                <h3 className = "song__name">{item.name}</h3>
+                                <h5 className="artists__names">{item.artists.join(", ")}</h5>
+                            </div>
                         </SongPlayer> 
                     </li>);
                      dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
@@ -104,9 +109,26 @@ const SongPlayer = styled.div`
     display: flex;
     height: 80px;
     flex-direction: row; 
-    width: 60%;
-    border-style: solid;
-    border-width: 1px;
+    align-items: center;
+    gap : 2rem;
+    width: 80%;
+    border : none;
+    .image {
+    }
+    .info {
+        display: table;
+        flex-direction: column;
+        align-items: left;
+        font-size : 1rem;
+        justify-content : center;
+        .song__name {
+            color : white;
+
+        }
+        .artists__names {
+            color : white;
+        }
+    }
 `
 ;
     

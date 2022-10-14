@@ -31,6 +31,7 @@ export default function CurrentTrack(props) {
     };
     getCurrentTrack();
   }, [props.token, dispatch]);
+  
   return (
     <Container>
       {currentPlaying && (
@@ -58,7 +59,7 @@ const Container = styled.div`
     &__image {
     }
     &__info {
-      display: flex;
+      display: table;
       flex-direction: column;
       gap: 0.3rem;
       &__track__name {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import styled from "styled-components";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar"; 
@@ -7,9 +7,11 @@ import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 import PlayerControls from "../components/PlayerControls";
 import RenderTrack from "../components/RenderTrack";
+import { data } from "jquery";
 
 export default function Spotify(props) {
-  const [{ token }, dispatch] = useStateProvider();
+
+  const [{ token }, dispatch, setImage] = useStateProvider();
   const [uriList, setUriList] = useStateProvider(undefined);
   const [navBackground, setNavBackground] = useState(false);
   const [headerBackground, setHeaderBackground] = useState(false);
@@ -23,7 +25,8 @@ export default function Spotify(props) {
       : setHeaderBackground(false);
   };
   const single_uri ='{"uris": ["spotify:track:2HScVhNGt7DltJYrph09Ee"]}';
-  const uriVal = '{"uris": ["spotify:track:2LO5hQnz5rEaRwkGUvZcHN", "spotify:track:6IpvkngH89cA3hhPC84Leg", "spotify:track:63dLm0BUpepXeFIfZ0OKEL"]}';
+  var uriVals2 = '';
+  const uriVal = '{"uris": ["spotify:track:63dLm0BUpepXeFIfZ0OKEL", "spotify:track:2LO5hQnz5rEaRwkGUvZcHN", "spotify:track:6IpvkngH89cA3hhPC84Leg"]}';
   const urisT = ["2LO5hQnz5rEaRwkGUvZcHN","6IpvkngH89cA3hhPC84Leg", "63dLm0BUpepXeFIfZ0OKEL"]
   function parseURIList(uris){
     let final = []
@@ -79,6 +82,65 @@ export default function Spotify(props) {
     };
     getPlaybackState();
   }, [dispatch, props.token]);
+  
+  //const [songs, setSongs] = useState([])
+
+  useEffect(() => {
+    const sse = new EventSource('http://127.0.0.1:5000/songQueueListen',
+      { withCredentials: false });
+    
+    sse.addEventListener('message', handleReceiveMessage)
+
+    // const getRealtimeData = async(data) => {
+    //   // process the data here,
+    //   // then pass it to state to be rendered
+    //   console.log("i love wallach")
+    //   console.log(data)
+    //   if (data) {
+    //     dispatch({ type: reducerCases.SET_IMAGE, setImage: data})
+    //   }
+    // }
+
+    //sse.onmessage = (event) => (getRealtimeData(JSON.parse(event.data)));
+      //const songData = JSON.parse(event.data);
+    //setData((data) => songData)
+      //songList.push(songData)
+      //console.log('accessed data')
+    //}
+
+    // sse.addEventListener('message', event => {
+    //   alert(`Said: ${event.data}`);
+    // });
+
+    // const updateSongList = (uris) => {
+    //   setData([...uris])
+    // }
+
+    sse.onopen = (e) => {
+      console.log('open')
+    }
+
+    sse.onerror = () => {
+      // error log here 
+      console.log('bricked')
+      
+      sse.close();
+    }
+    return () => {
+      sse.close();
+    };
+
+    
+  }, []);
+
+  const handleReceiveMessage = useCallback((event) => {
+    console.log('message recieved')
+    const eventData = event.data
+  }, []);
+
+  //console.log(songs)
+
+
   return (
     <Container>
     <div className="spotify__body">
@@ -126,4 +188,5 @@ const Container = styled.div`
       }
     }
   }
-  `;
+  `
+  ;
