@@ -11,6 +11,16 @@ from .validator import validate_uri
 
 routes = Blueprint('routes', __name__)
 
+@routes.route("/songQueueCreate", methods=['GET'])
+def song_q_create():
+    """API endpoint client should use to create a new room/songqueue."""
+    pass
+
+@routes.route("/songQueueDestroy", methods=['GET'])
+def song_q_destroy():
+    """API endpoint client should use to destroy a room/songqueue."""
+    pass
+
 @routes.route("/songQueueListen", methods=['GET'])
 def song_q_listen():
     """API endpoint client should use to listen for song queues."""
@@ -36,3 +46,36 @@ def song_add():
     # then send updated song queue to everyone
     announce_song_queue()
     return f"Sucessuflly added song uri: {s.uri}", 200
+
+@routes.route("/removeSong", methods=['GET'])
+def song_remove():
+    """API endpoint client should use to remove songs from the song queue."""
+    args = request.args
+    if 'uri' not in args:
+        return "Song URI not present in request.", 400
+
+    if 'userid' not in args:
+        return "User ID not present in reqeust.", 400
+
+    announce_song_queue()
+    return "", 200
+
+@routes.route("/upvoteSong", methods=['GET'])
+def song_upvote():
+    """API endpoint client should use to upvote songs in the song queue."""
+    pass
+
+@routes.route("/downvoteSong", methods=['GET'])
+def song_downvote():
+    """API endpoint client should use to downvote songs in the song queue."""
+    pass
+
+@routes.route("/getTopSong", methods=['GET'])
+def song_get_top():
+    """API endpoint client should use to get the top song from the song queue."""
+    pass
+
+@routes.route("/removeTopSong", methods=['GET'])
+def song_remove_top():
+    """API endpoint client should use to get the top song from the song queue."""
+    pass
