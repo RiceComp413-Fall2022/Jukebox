@@ -2,6 +2,7 @@
 from .messageAnnouncer import SSEMessageAnnouncer
 from .songqueue import SongQueue
 
+
 def update_votes(data, new_votes):
     """Update votes."""
     data.upvotes = new_votes
@@ -10,6 +11,7 @@ def update_votes(data, new_votes):
 announcer = SSEMessageAnnouncer()
 
 queue = SongQueue(update_data_funct=update_votes)
+
 
 class RequestHandlingException(Exception):
     """
