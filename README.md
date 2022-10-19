@@ -24,17 +24,15 @@ sh actions.sh
 ```
 
 ## Running Basic Demo
-To start the server, which currently serves a simple Hello World demo:
+To start the server on port 3001, which currently serves a simple Hello World demo:
 ```
 sh starter.sh Server 3001
 ```
-This command will start the server on port 3001. 
 
-To start the client, run the following:
+To start the client on port 3002, run the following:
 
 * Users must have npm installed to execute this script. *
 ```
 sh starter.sh Client 3002
 ```
-This will start the client on port 3002. 
 
