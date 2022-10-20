@@ -126,10 +126,9 @@ const SongPlayer = styled.div`
     height: 100px;
     flex-direction: row; 
     align-items: center;
-    gap : 1rem;
+    gap : 0.5rem;
     width: 80%;
     border : none;
-    position : absolute;
     .image {
         padding-left: 10px;
     }
@@ -139,6 +138,8 @@ const SongPlayer = styled.div`
         align-items: left;
         font-size : 1rem;
         justify-content : center;
+        width : 200px;
+        padding-left : 15px;
         .song__name {
             color : white;
 
@@ -149,7 +150,6 @@ const SongPlayer = styled.div`
     }
     .album {
         color : white;
-        padding-left : 50px;
         margin-left : 100px;
     }
     .duration {
