@@ -150,7 +150,7 @@ const SongPlayer = styled.div`
     }
     .album {
         color : white;
-        margin-left : 100px;
+        margin-left : 10%;
     }
     .duration {
         color : white;
