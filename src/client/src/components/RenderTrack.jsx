@@ -17,6 +17,16 @@ export default function RenderTrack(props){
     const tempTracks = "7ouMYWpwJ422jRcDASZB7P,4VqPOruhp5EdPBeR92t6lQ,2takcwOaAZWiXQijPHIx7B";
     const didMount = useRef(true);
 
+    function changeTime(millis) {
+        var minutes = Math.floor(millis / 60000);
+        var seconds = ((millis % 60000) / 1000).toFixed(0);
+        return (
+        seconds == 60 ?
+        (minutes+1) + ":00" :
+        minutes + ":" + (seconds < 10 ? "0" : "") + seconds
+      );
+    }
+
     useEffect(() =>{
         const getTracks = async() => {
             const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + props.uriVal,
@@ -36,6 +46,8 @@ export default function RenderTrack(props){
                       name: response.data.tracks[i].name,
                       artists: response.data.tracks[i].artists.map((artist) => artist.name),
                       image: response.data.tracks[i].album.images[2].url,
+                      album : response.data.tracks[i].album.name,
+                      duration : response.data.tracks[i].duration_ms
                     };
                     tpArr.push(currentPlaying);
                 }
@@ -53,6 +65,12 @@ export default function RenderTrack(props){
                                 <h3 className = "song__name">{item.name}</h3>
                                 <h5 className="artists__names">{item.artists.join(", ")}</h5>
                             </div>
+                            <h4 className="album">
+                                {item.album}
+                            </h4>
+                            <h6 className="duration">
+                                {changeTime(item.duration)}
+                            </h6>
                         </SongPlayer> 
                     </li>);
 
@@ -105,12 +123,13 @@ const ListWrapper = styled.div`
 
 const SongPlayer = styled.div`
     display: flex;
-    height: 80px;
+    height: 100px;
     flex-direction: row; 
     align-items: center;
     gap : 1rem;
     width: 80%;
     border : none;
+    position : absolute;
     .image {
         padding-left: 10px;
     }
@@ -127,6 +146,19 @@ const SongPlayer = styled.div`
         .artists__names {
             color : white;
         }
+    }
+    .album {
+        color : white;
+        padding-left : 50px;
+        margin-left : 100px;
+    }
+    .duration {
+        color : white;
+        padding-left : 100px;
+        font-size : 1rem;
+        margin-left : auto;
+        margin-right : 0;
+        padding-right : 10px;
     }
 `
 ;
