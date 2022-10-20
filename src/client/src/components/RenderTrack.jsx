@@ -7,7 +7,6 @@ import styled from "styled-components";
 import { BsFonts } from "react-icons/bs";
 
 
-
 export default function RenderTrack(props){
     const [{ setMultSongs, setName, setTime, setImage}, dispatch] = useStateProvider();
     const [resp, setResp] = useState('')
@@ -19,7 +18,6 @@ export default function RenderTrack(props){
     const didMount = useRef(true);
 
     useEffect(() =>{
-
         const getTracks = async() => {
             const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + props.uriVal,
             {
@@ -28,8 +26,9 @@ export default function RenderTrack(props){
                 "Content-Type" : "application/json"
             },
             })
+            //console.log(response.data.tracks[0].album.images)
             if (response.data != ""){
-                console.log("we're in")
+                //console.log("we're in")
                 let tpArr = []
                 for(let i = 0; i < response.data.tracks.length; i ++) {
                     const currentPlaying = {
@@ -48,7 +47,7 @@ export default function RenderTrack(props){
                     <li key={item.id} style={{listStyleType:"none"}} >
                         <SongPlayer style={{backgroundColor : "#181818"}}> 
                             <div className="image">
-                                <img src={item.image} />
+                                <img src={item.image} width={'77'} height={'77'}/>
                             </div>
                             <div className="info">
                                 <h3 className = "song__name">{item.name}</h3>
@@ -56,6 +55,7 @@ export default function RenderTrack(props){
                             </div>
                         </SongPlayer> 
                     </li>);
+
                      dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
 
                 } else {
@@ -77,17 +77,15 @@ export default function RenderTrack(props){
                 // dispatch({ type: reducerCases.SET_TIME, setTime: tempSTime });
             } 
         } 
+
             
-        
-        getTracks();
+        getTracks()
 
-    }, [props.token, dispatch]);
-
+    }, [props.token, dispatch, props.uriVal]); 
     
 
+        //console.log(setTime)
 
-    
-  
         return(
     
             <ListWrapper>
@@ -110,10 +108,11 @@ const SongPlayer = styled.div`
     height: 80px;
     flex-direction: row; 
     align-items: center;
-    gap : 2rem;
+    gap : 1rem;
     width: 80%;
     border : none;
     .image {
+        padding-left: 10px;
     }
     .info {
         display: table;

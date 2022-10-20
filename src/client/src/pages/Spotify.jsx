@@ -7,11 +7,11 @@ import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 import PlayerControls from "../components/PlayerControls";
 import RenderTrack from "../components/RenderTrack";
-import { data } from "jquery";
+import { data, event } from "jquery";
 
 export default function Spotify(props) {
 
-  const [{ token }, dispatch, setImage] = useStateProvider();
+  const [{ token, setImage}, dispatch, setUris] = useStateProvider();
   const [uriList, setUriList] = useStateProvider(undefined);
   const [navBackground, setNavBackground] = useState(false);
   const [headerBackground, setHeaderBackground] = useState(false);
@@ -28,26 +28,30 @@ export default function Spotify(props) {
   var uriVals2 = '';
   const uriVal = '{"uris": ["spotify:track:63dLm0BUpepXeFIfZ0OKEL", "spotify:track:2LO5hQnz5rEaRwkGUvZcHN", "spotify:track:6IpvkngH89cA3hhPC84Leg"]}';
   const urisT = ["2LO5hQnz5rEaRwkGUvZcHN","6IpvkngH89cA3hhPC84Leg", "63dLm0BUpepXeFIfZ0OKEL"]
+
   function parseURIList(uris){
-    let final = []
-    let parseVal = JSON.parse(uris).uris
-    for (const track of parseVal){
-        let temp = ''
-        let canAdd = false
-        for(let itr = 0; itr < track.length; itr++){
-            if (track[itr-1] == ':' && track[itr- 2] == 'k'){
-                canAdd = true
-            }
-
-            if(canAdd) {
-                temp += track[itr]
-            }
-        }
-        final.push(temp)
+    let parseVal2 = []
+    //console.log(uris)
+    if (uris) {
+      parseVal2 = JSON.parse(uris).uris
+      let final = []
+      for (const track of parseVal2){
+          let temp = ''
+          let canAdd = false
+          for(let itr = 0; itr < track.length; itr++){
+              if (track[itr-1] == ':' && track[itr- 2] == 'k'){
+                  canAdd = true
+              }
+  
+              if(canAdd) {
+                  temp += track[itr]
+              }
+          }
+          final.push(temp)
+      }      
+      //console.log(final)
+      return final
     }
-    
-    return final
-
   }
 
   useEffect(() => {
@@ -67,6 +71,7 @@ export default function Spotify(props) {
     };
     getUserInfo();
   }, [dispatch, props.token]);
+
   useEffect(() => {
     const getPlaybackState = async () => {
       const { data } = await axios.get("https://api.spotify.com/v1/me/player", {
@@ -83,38 +88,25 @@ export default function Spotify(props) {
     getPlaybackState();
   }, [dispatch, props.token]);
   
-  //const [songs, setSongs] = useState([])
-
   useEffect(() => {
     const sse = new EventSource('http://127.0.0.1:5000/songQueueListen',
       { withCredentials: false });
     
-    sse.addEventListener('message', handleReceiveMessage)
+    // sse.addEventListener('message', handleReceiveMessage)
 
-    // const getRealtimeData = async(data) => {
-    //   // process the data here,
-    //   // then pass it to state to be rendered
-    //   console.log("i love wallach")
-    //   console.log(data)
-    //   if (data) {
-    //     dispatch({ type: reducerCases.SET_IMAGE, setImage: data})
-    //   }
-    // }
 
-    //sse.onmessage = (event) => (getRealtimeData(JSON.parse(event.data)));
-      //const songData = JSON.parse(event.data);
-    //setData((data) => songData)
-      //songList.push(songData)
-      //console.log('accessed data')
-    //}
+    function getRealtimeData(dataV)  {
+      // process the data here,
+      // then pass it to state to be rendered
+      dispatch({ type: reducerCases.SET_IMAGE, setImage: dataV})
 
-    // sse.addEventListener('message', event => {
-    //   alert(`Said: ${event.data}`);
-    // });
+    }
 
-    // const updateSongList = (uris) => {
-    //   setData([...uris])
-    // }
+    sse.onmessage = (event) => {
+      //console.log('message received')
+      getRealtimeData(event.data)
+    };
+    
 
     sse.onopen = (e) => {
       console.log('open')
@@ -131,15 +123,7 @@ export default function Spotify(props) {
     };
 
     
-  }, []);
-
-  const handleReceiveMessage = useCallback((event) => {
-    console.log('message recieved')
-    const eventData = event.data
-  }, []);
-
-  //console.log(songs)
-
+  }, [dispatch, props.token]);
 
   return (
     <Container>
@@ -147,12 +131,12 @@ export default function Spotify(props) {
       <div className="body" ref={bodyRef} onScroll={bodyScrolled}>
         <Navbar navBackground={navBackground} />
         <div className="body__contents">
-          <RenderTrack headerBackground={headerBackground} token={props.token} uriVal={parseURIList(uriVal)}/>
+          <RenderTrack headerBackground={headerBackground} token={props.token} uriVal={parseURIList(setImage)}/>
         </div>
       </div>
     </div>
     <div className="spotify__footer">
-      <Footer token = {props.token} uriVal={uriVal}/>
+      <Footer token = {props.token} uriVal={setImage}/>
     </div>
   </Container>
   );
