@@ -10,7 +10,7 @@ def update_votes(data, new_votes):
 
 announcer = SSEMessageAnnouncer()
 
-queue = SongQueue(update_data_funct=update_votes)
+queue = SongQueue("primary_user")
 
 
 class RequestHandlingException(Exception):
