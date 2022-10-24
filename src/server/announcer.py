@@ -11,6 +11,6 @@ def announce_song_queue(roomid):
     queue = queues[roomid]
     announcer = announcers[roomid]
 
-    song_id_list = [song_id for votes, song, song_id in queue.get_all()]
+    song_id_list = [song.uri for song in queue.get_all()]
 
     announcer.announce(json.dumps({'uris': song_id_list}), SONG_QUEUE_EVENT)

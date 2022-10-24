@@ -47,7 +47,7 @@ def song_q_listen():
         return "Invalid room ID", 400
 
     """API endpoint client should use to listen for song queues."""
-    return song_queue_listen(queues[args['roomid']])
+    return song_queue_listen(args['roomid'])
 
 @routes.route("/addSong", methods=['GET'])
 def song_add():
