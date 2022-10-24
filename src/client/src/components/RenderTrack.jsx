@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState, useRef } from "react";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
+import { AiFillClockCircle } from "react-icons/ai";
 
 import styled from "styled-components";
 import { BsFonts } from "react-icons/bs";
@@ -27,6 +28,45 @@ export default function RenderTrack(props){
       );
     }
 
+    const playTrack = async (
+        id,
+        name,
+        artists,
+        image,
+        context_uri,
+        track_number
+    ) => {
+        const response = await axios.put(
+            `https://api.spotify.com/v1/me/player/play`,
+            {
+                context_uri,
+                offset: {
+                    position: track_number - 1,
+                },
+                position_ms: 0,
+            },
+            {
+                headers: {
+                    Authorization: "Bearer " + props.token,
+                    "Content-Type": "application/json",
+                    
+                },
+            }
+        );
+        if (response.status === 204) {
+            const currentPlaying = {
+            id,
+            name,
+            artists,
+            image,
+            };
+            dispatch({ type: reducerCases.SET_PLAYING, currentPlaying });
+            dispatch({ type: reducerCases.SET_PLAYER_STATE, playerState: true });
+        } else {
+            dispatch({ type: reducerCases.SET_PLAYER_STATE, playerState: true });
+        }
+    };
+
     useEffect(() =>{
         const getTracks = async() => {
             const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + props.uriVal,
@@ -36,7 +76,6 @@ export default function RenderTrack(props){
                 "Content-Type" : "application/json"
             },
             })
-            //console.log(response.data.tracks[0].album.images)
             if (response.data != ""){
                 //console.log("we're in")
                 let tpArr = []
@@ -47,30 +86,52 @@ export default function RenderTrack(props){
                       artists: response.data.tracks[i].artists.map((artist) => artist.name),
                       image: response.data.tracks[i].album.images[2].url,
                       album : response.data.tracks[i].album.name,
-                      duration : response.data.tracks[i].duration_ms
+                      duration : response.data.tracks[i].duration_ms,
+                      context_uri : response.data.tracks[i].album.uri,
+                      track_number : response.data.tracks[i].track_number
                     };
                     tpArr.push(currentPlaying);
                 }
                 dispatch({ type: reducerCases.SET_MULT_SONGS, setMultSongs: tpArr })
                 if(tpArr.length != 0){
 
-
-                    let renderObj = tpArr.map((item) =>
+                    let renderObj = tpArr.map((item, index) =>
                     <li key={item.id} style={{listStyleType:"none"}} >
                         <SongPlayer style={{backgroundColor : "#181818"}}> 
-                            <div className="image">
-                                <img src={item.image} width={'77'} height={'77'}/>
+                            <div className="tracks">
+                                <div className="row"
+                                     key={item.id}
+                                     onClick={() =>
+                                        playTrack(
+                                            item.id,
+                                            item.name,
+                                            item.artists,
+                                            item.image,
+                                            item.context_uri,
+                                            item.track_number
+                                        )
+                                     }
+                                >
+                                    <div className="col">
+                                        <span> {index + 1}</span>
+                                    </div>
+                                    <div className="col detail">
+                                        <div className="image">
+                                            <img src={item.image} alt='track'/>
+                                        </div>
+                                        <div className="info">
+                                            <span className = "song__name">{item.name}</span>
+                                            <span className="artists__names">{item.artists.join(", ")}</span>
+                                        </div>
+                                    </div>
+                                    <div className="col">
+                                        <span>{item.album}</span>
+                                    </div>
+                                    <div className="col">
+                                        <span>{changeTime(item.duration)}</span>
+                                    </div>    
+                                </div>
                             </div>
-                            <div className="info">
-                                <h3 className = "song__name">{item.name}</h3>
-                                <h5 className="artists__names">{item.artists.join(", ")}</h5>
-                            </div>
-                            <h4 className="album">
-                                {item.album}
-                            </h4>
-                            <h6 className="duration">
-                                {changeTime(item.duration)}
-                            </h6>
                         </SongPlayer> 
                     </li>);
 
@@ -105,10 +166,28 @@ export default function RenderTrack(props){
         //console.log(setTime)
 
         return(
-    
+
             <ListWrapper>
-               {setTime}
+            <div className="header-row">
+                <div className="col">
+                    <span>#</span>
+                </div>
+                <div className="col">
+                    <span>TITLE</span>
+                </div>
+                <div className="col">
+                    <span>ALBUM</span>
+                </div>
+                <div className="col">
+                    <span>
+                        <AiFillClockCircle />
+                    </span>
+                </div>
+            </div>
+            
+            {setTime}
             </ListWrapper>
+    
         );
 
     }
@@ -116,49 +195,54 @@ export default function RenderTrack(props){
 const ListWrapper = styled.div`
     display: flex;
     flex-direction: column; 
-    width: 100%;
+    width: 95%;
     padding-left:50px;
+
+     .header-row {
+        display: grid;
+        grid-template-columns: 0.3fr 3fr 3fr 0.1fr;
+        margin: 1rem 0 0 0;
+        color: #dddcdc;
+        position: sticky;
+        top: 15vh;
+        padding: 1rem 3rem;
+        transition: 0.3s ease-in-out;
+        background-color: ${({ headerBackground }) =>
+          headerBackground ? "#000000dc" : "none"};
+    }
 `
 ;
-
+    
 const SongPlayer = styled.div`
-    display: flex;
-    height: 100px;
-    flex-direction: row; 
-    align-items: center;
-    gap : 0.5rem;
-    width: 80%;
-    border : none;
-    .image {
-        padding-left: 10px;
-    }
-    .info {
-        display: table;
+    .tracks {
+        margin: 0 2rem;
+        display: flex;
         flex-direction: column;
-        align-items: left;
-        font-size : 1rem;
-        justify-content : center;
-        width : 200px;
-        padding-left : 15px;
-        .song__name {
-            color : white;
-
+        .row {
+            padding: 0.5rem 1rem;
+            display: grid;
+            grid-template-columns: 0.3fr 3.1fr 3fr 0.1fr;
+            &:hover {
+            background-color: rgba(0, 0, 0, 0.7);
         }
-        .artists__names {
-            color : white;
+        .col {
+          display: flex;
+          align-items: center;
+          color: #dddcdc;
+          img {
+            height: 50px;
+            width: 50px;
+          }
         }
-    }
-    .album {
-        color : white;
-        margin-left : 10%;
-    }
-    .duration {
-        color : white;
-        padding-left : 100px;
-        font-size : 1rem;
-        margin-left : auto;
-        margin-right : 0;
-        padding-right : 10px;
+        .detail {
+          display: flex;
+          gap: 1rem;
+          .info {
+            display: flex;
+            flex-direction: column;
+          }
+        }
+      }
     }
 `
 ;

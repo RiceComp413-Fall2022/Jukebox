@@ -37,7 +37,7 @@ export default function CurrentTrack(props) {
       {currentPlaying && (
         <div className="track">
           <div className="track__image">
-            <img src={currentPlaying.image} alt="currentPlaying" width={'125px'} height={'125px'}/>
+            <img src={currentPlaying.image} alt="currentPlaying" width={'100px'} height={'100px'}/>
           </div>
           <div className="track__info">
             <h4 className="track__info__track__name">{currentPlaying.name}</h4>
