@@ -10,7 +10,7 @@ class test_songqueue(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         """Create a new SongQueue when the test class is instantiated."""
         super(test_songqueue, self).__init__(*args, **kwargs)
-        self.sq = SongQueue()
+        self.sq = SongQueue("primary_user")
 
     def a_test_songqueue_is_empty(self):
         """Ensure that the song queue is empty after creation."""

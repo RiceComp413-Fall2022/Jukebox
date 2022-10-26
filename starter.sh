@@ -12,11 +12,11 @@ fi
 echo "Attempting to start user of type: $1";
 USER_TYPE=$1
 
-if [ "$USER_TYPE" = "Server" ]; then
+if [ "$USER_TYPE" = "server" ]; then
   cd src/server
-  flask --app main run -p $USER_PORT
+  flask --app main run --host=0.0.0.0 -p $USER_PORT
 
-elif [ "$USER_TYPE" = "Client" ]; then
+elif [ "$USER_TYPE" = "client" ]; then
   cd src/client
   npm install
   npm start # Uncomment once port specification added --port $USER_PORT
