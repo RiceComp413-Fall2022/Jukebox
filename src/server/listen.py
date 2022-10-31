@@ -7,8 +7,8 @@ from flask import Response
 import json
 
 def stream(testing=False):
-    """ 
-    Defines the stream to be used for server send events
+    """
+    Defines the stream to be used for server send events.
 
     Set testing to true if you would like the initial q to return and then for the connection to be closed.
     This option should not be used in prodcution.
@@ -21,7 +21,7 @@ def stream(testing=False):
 
     if testing != 0:
         return
-    
+
     while True:
         msg = messages.get()  # blocks until a new message arrives
         # check if this message is about the song queue
