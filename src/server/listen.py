@@ -1,6 +1,6 @@
 """Defines functions that allow front ends to subscribe to event announcements from the backend."""
 from .messageAnnouncer import format_sse
-from .announcer import announcers, SONG_QUEUE_EVENT
+from .announcer import announcers, SONG_QUEUE_EVENT, QUEUE_CLOSED_EVENT
 from .resources import queues
 
 from flask import Response
@@ -23,5 +23,8 @@ def song_queue_listen(roomid):
             # check if this message is about the song queue
             if f"event: {SONG_QUEUE_EVENT}" in msg:
                 yield msg
+            if f"event: {QUEUE_CLOSED_EVENT}" in msg:
+                yield msg
+                return
 
     return Response(stream(), mimetype='text/event-stream', headers={'Access-Control-Allow-Origin': "*"})

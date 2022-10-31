@@ -1,8 +1,8 @@
-"""Defines the routes for the Unorthadox Jukebox API and calls the proper function to execute."""
+"""Defines the routes for the Unorthodox Jukebox API and calls the proper function to execute."""
 from flask import Blueprint
 from flask import request
 
-from .announcer import announce_song_queue
+from .announcer import announce_song_queue, announce_queue_close
 from .listen import song_queue_listen
 from .resources import queues, announcers
 from .songqueue import SongQueue
@@ -17,13 +17,13 @@ def song_q_create():
     args = request.args
 
     if 'userid' not in args:
-        return "User ID not presetn in request.", 400
+        return "User ID not present in request.", 400
 
     if 'roomid' not in args:
         return "Room ID not present in request.", 400
 
     if args['roomid'] in queues:
-        return "Room ID already exists", 400
+        return "Room ID already exists.", 400
 
     queues[args['roomid']] = SongQueue(args['userid'])
     announcers[args['roomid']] = SSEMessageAnnouncer()
@@ -33,7 +33,25 @@ def song_q_create():
 @routes.route("/songQueueDestroy", methods=['GET'])
 def song_q_destroy():
     """API endpoint client should use to destroy a room/songqueue."""
-    pass
+    args = request.args
+
+    if 'userid' not in args:
+        return "User ID not present in request.", 400
+
+    if 'roomid' not in args:
+        return "Room ID not present in request.", 400
+
+    if args['roomid'] not in queues:
+        return "Room ID does not exist.", 400
+
+    if args['userid'] != queues[args['roomid']].primary_user_id:
+        return "Failed to destroy queue", 400
+
+    announce_queue_close(args['roomid'])
+    del queues[args['roomid']]
+    del announcers[args['roomid']]
+
+    return "Successfully destroyed song queue", 200
 
 @routes.route("/songQueueListen", methods=['GET'])
 def song_q_listen():

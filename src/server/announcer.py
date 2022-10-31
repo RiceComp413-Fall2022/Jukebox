@@ -5,6 +5,7 @@ from .resources import announcers, queues
 
 """Event that sends a whole song queue to a listener."""
 SONG_QUEUE_EVENT = 'song_queue'
+QUEUE_CLOSED_EVENT = 'queue_closed'
 
 def announce_song_queue(roomid):
     """Sends the current song queue to all listeners that are listening for the song_queue event as definded above."""
@@ -14,3 +15,9 @@ def announce_song_queue(roomid):
     song_id_list = [song.uri for song in queue.get_all()]
 
     announcer.announce(json.dumps({'uris': song_id_list}), SONG_QUEUE_EVENT)
+
+def announce_queue_close(roomid):
+    """Announces to all listeners that the current song queue is being closed."""
+    announcer = announcers[roomid]
+
+    announcer.announce('', QUEUE_CLOSED_EVENT)
