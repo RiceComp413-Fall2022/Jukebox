@@ -15,7 +15,7 @@ class MessageAnnouncer:
         Returns:
             a queue that contains messages from the announcer
         """
-        q = queue.Queue(maxsize=5)
+        q = queue.Queue()
         self.listeners.append(q)
         return q
 

@@ -1,7 +1,7 @@
 """Defines functions that allow front ends to subscribe to event announcements from the backend."""
 from .messageAnnouncer import format_sse
-from .announcer import announcer, SONG_QUEUE_EVENT
-from .resources import queue
+from .announcer import announcers, SONG_QUEUE_EVENT, QUEUE_CLOSED_EVENT
+from .resources import queues
 
 from flask import Response
 import json

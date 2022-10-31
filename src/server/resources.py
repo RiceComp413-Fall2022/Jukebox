@@ -1,15 +1,12 @@
 """Used to define shared resources for the server."""
-from .messageAnnouncer import SSEMessageAnnouncer
-from .songqueue import SongQueue
 
 def update_votes(data, new_votes):
     """Update votes."""
     data.upvotes = new_votes
 
 
-announcer = SSEMessageAnnouncer()
-
-queue = SongQueue(update_data_funct=update_votes)
+queues = {}
+announcers = {}
 
 class RequestHandlingException(Exception):
     """
