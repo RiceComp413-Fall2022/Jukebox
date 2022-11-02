@@ -6,7 +6,7 @@ from .resources import queues
 from flask import Response
 import json
 
-def stream(testing=False):
+def stream(announcer, queue, testing=False):
     """
     Defines the stream to be used for server send events.
 
@@ -27,8 +27,14 @@ def stream(testing=False):
         # check if this message is about the song queue
         if f"event: {SONG_QUEUE_EVENT}" in msg:
             yield msg
+        if f"event: {QUEUE_CLOSED_EVENT}" in msg:
+            yield msg
+            return
 
-def song_queue_listen():
+def song_queue_listen(roomid):
     """Listens for a song queue to be announced using server sent events."""
+    queue = queues[roomid]
+    announcer = announcers[roomid]
+
     # NOTE: Change the * to the domain to be more secure later
-    return Response(stream(), mimetype='text/event-stream', headers={'Access-Control-Allow-Origin': "*"})
+    return Response(stream(announcer, queue), mimetype='text/event-stream', headers={'Access-Control-Allow-Origin': "*"})
