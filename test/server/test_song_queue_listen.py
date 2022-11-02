@@ -15,8 +15,14 @@ from src.server.announcer import SONG_QUEUE_EVENT
 from src.server.listen import stream
 from .fixtures import client # noqa: F401
 
-# place holder userid
+# place holder userid and roomid
 userid = 100
+roomid = 101
+
+@pytest.fixture(scope="function", autouse=True)
+def setup(client): # noqa: F811
+    """Before each test sets up our song queue."""
+    client.get(f'/songQueueCreate?userid={userid}&roomid={roomid}')
 
 @contextmanager
 def set_stream_to_testing():
@@ -32,7 +38,7 @@ def test_song_queue_listen_event(client): # noqa: F811
     """Checks that song queues that are sent to the client have correct event format."""
 
     with set_stream_to_testing():
-        r = client.get('/songQueueListen')
+        r = client.get(f'/songQueueListen?roomid={roomid}')
 
     assert f'event: {SONG_QUEUE_EVENT}' in r.data.decode('utf-8')
 
@@ -40,7 +46,7 @@ def test_song_queue_listen_empty_queue(client): # noqa: F811
     """Checks that the initial song queue with no songs added is formated corretly."""
 
     with set_stream_to_testing():
-        r = client.get('/songQueueListen')
+        r = client.get(f'/songQueueListen?roomid={roomid}')
 
     assert 'data: {"uris": []}' in r.data.decode('utf-8')
 
@@ -49,11 +55,11 @@ def test_song_queue_listen_one_song(client): # noqa: F811
 
     # add song
     uri = 'spotify:track:5YZuePCawcrg0DJrWovPu7'
-    client.get(f'/addSong?userid={userid}&uri={uri}')
+    client.get(f'/addSong?userid={userid}&uri={uri}&roomid={roomid}')
 
     # listen for queue
     with set_stream_to_testing():
-        r = client.get('/songQueueListen')
+        r = client.get(f'/songQueueListen?roomid={roomid}')
 
     j = json.loads(re.findall(r'{.*}', r.data.decode('utf-8'))[0])
 
@@ -68,11 +74,11 @@ def test_song_queue_listen_multiple_songs(client): # noqa: F811
             "spotify:track:0qcr5FMsEO85NAQjrlDRKo",
             "spotify:track:1IHWl5LamUGEuP4ozKQSXZ"]
     for uri in uris:
-        client.get(f'/addSong?userid={userid}&uri={uri}')
+        client.get(f'/addSong?userid={userid}&uri={uri}&roomid={roomid}')
 
     # listen for queue
     with set_stream_to_testing():
-        r = client.get('/songQueueListen')
+        r = client.get(f'/songQueueListen?roomid={roomid}')
 
     j = json.loads(re.findall(r'{.*}', r.data.decode('utf-8'))[0])
 

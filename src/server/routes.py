@@ -13,7 +13,13 @@ routes = Blueprint('routes', __name__)
 
 @routes.route("/songQueueCreate", methods=['GET'])
 def song_q_create():
-    """API endpoint client should use to create a new room/songqueue."""
+    """
+    API endpoint client should use to create a new room/songqueue.
+
+    Required Params:
+        userid: id of user creating the queue (primary user)
+        roomid: id fo the room being created, should be unique
+    """
     args = request.args
 
     if 'userid' not in args:
@@ -55,7 +61,12 @@ def song_q_destroy():
 
 @routes.route("/songQueueListen", methods=['GET'])
 def song_q_listen():
-    """API endpoint client should use to listen for updates to the queue."""
+    """
+    API endpoint client should use to listen for updates to the queue.
+
+    Required params:
+        roomid: the room id of the song queue to listen to.
+    """
     args = request.args
 
     if 'roomid' not in args:
@@ -69,7 +80,14 @@ def song_q_listen():
 
 @routes.route("/addSong", methods=['GET'])
 def song_add():
-    """API endpoint client should use to add songs to the song queue."""
+    """
+    API endpoint client should use to add songs to the song queue.
+
+    Required Params:
+        userid: id of user adding to the queue
+        roomid: room id of the queue to add to
+        uri:    uri of the song to add to the queue
+    """
     # add song to song queue here
     args = request.args
 
