@@ -1,52 +1,97 @@
 """
-Tests that a song queue can be sent end to end.
+Tests that the song queue listen api endpoint has the correct up to date song queue object passed to it.
 
-Doesn't currently work.
+Does not test that the new events received by a client from server sent events are correct. Only tests that the initial event is
+information is correct.
 """
+from contextlib import contextmanager
+import json
+from functools import partial
+from unittest import mock
+import pytest # noqa: F401
+import re
 
-import asyncio
-import pytest
-import requests
-
-from multiprocessing import Process
-
-from sseclient import SSEClient
-from .start_server import start
 from src.server.announcer import SONG_QUEUE_EVENT
+from src.server.listen import stream
+from .fixtures import client # noqa: F401
 
-async def get_message_event(msg_event):
-    """Grabs messages from listen and assigns them to shared variable."""
-    msgs = SSEClient('http://127.0.0.1:5000/songQueueListen')
-    msg_event.set_result(msgs[0].event)
+# place holder userid and roomid
+userid = 100
+roomid = 101
 
-@pytest.mark.asyncio
-@pytest.mark.skip
-async def test_song_queue_listen():
+@pytest.fixture(scope="function", autouse=True)
+def setup(client): # noqa: F811
+    """Before each test sets up our song queue."""
+    client.get(f'/songQueueCreate?userid={userid}&roomid={roomid}')
+
+@contextmanager
+def set_stream_to_testing():
     """
-    Subscribe as a song queue listener and see that the server can send song events to us and we can receive it.
+    Mocks the server sent event steam so that it returns after sending initial song queue.
 
-    Can't currently get this working but have tested manually
+    This prevents the request from hanging and allows us to test the output.
     """
-    # # start server
-    server = Process(target=start)
-    server.start()
+    with mock.patch('src.server.listen.stream', partial(stream, testing=True)):
+        yield
 
-    loop = asyncio.get_running_loop()
-    msg_event = loop.create_future()
+def test_song_queue_listen_event(client): # noqa: F811
+    """Checks that song queues that are sent to the client have correct event format."""
 
-    # listen for song queues
-    listener = loop.create_task(get_message_event(msg_event))
-    # stop flake from yelling at me
-    listener
+    with set_stream_to_testing():
+        r = client.get(f'/songQueueListen?roomid={roomid}')
 
-    await asyncio.sleep(1)
-    requests.get('http://127.0.0.1:5000/addSong')
+    assert f'event: {SONG_QUEUE_EVENT}' in r.data.decode('utf-8')
 
-    await msg_event
+def test_song_queue_listen_empty_queue(client): # noqa: F811
+    """Checks that the initial song queue with no songs added is formated corretly."""
 
-    # shutdown server
-    server.terminate()
-    server.join()
+    with set_stream_to_testing():
+        r = client.get(f'/songQueueListen?roomid={roomid}')
 
-    print(msg_event)
-    assert msg_event == SONG_QUEUE_EVENT
+    assert 'data: {"uris": []}' in r.data.decode('utf-8')
+
+def test_song_queue_listen_one_song(client): # noqa: F811
+    """Checks that the initial song queue with one song added is formated corretly."""
+
+    # add song
+    uri = 'spotify:track:5YZuePCawcrg0DJrWovPu7'
+    client.get(f'/addSong?userid={userid}&uri={uri}&roomid={roomid}')
+
+    # listen for queue
+    with set_stream_to_testing():
+        r = client.get(f'/songQueueListen?roomid={roomid}')
+
+    j = json.loads(re.findall(r'{.*}', r.data.decode('utf-8'))[0])
+
+    assert uri == j.get('uris')[0]
+
+def test_song_queue_listen_multiple_songs(client): # noqa: F811
+    """Checks that the initial song queue with 4 song added is formated corretly."""
+
+    # add song
+    uris = ["spotify:track:5YZuePCawcrg0DJrWovPu7",
+            "spotify:track:3Ofmpyhv5UAQ70mENzB277",
+            "spotify:track:0qcr5FMsEO85NAQjrlDRKo",
+            "spotify:track:1IHWl5LamUGEuP4ozKQSXZ"]
+    for uri in uris:
+        client.get(f'/addSong?userid={userid}&uri={uri}&roomid={roomid}')
+
+    # listen for queue
+    with set_stream_to_testing():
+        r = client.get(f'/songQueueListen?roomid={roomid}')
+
+    j = json.loads(re.findall(r'{.*}', r.data.decode('utf-8'))[0])
+
+    listenUris = j.get('uris')
+
+    correct = True
+    idx = 0
+    for uri in uris:
+        if listenUris[idx] != uri:
+            print(f'Uri {uri}, should have been added but it listener did not get it or the order was incorrect. This is '
+                  'what listener got: {listenUris}')
+            correct = False
+            break
+        idx += 1
+
+    assert correct
