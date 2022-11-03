@@ -129,7 +129,7 @@ export default function Spotify(props) {
     <Container>
     <div className="spotify__body">
       <div className="body" ref={bodyRef} onScroll={bodyScrolled}>
-        <Navbar navBackground={navBackground} />
+        <Navbar  token={props.token}/>
         <div className="body__contents">
           <RenderTrack headerBackground={headerBackground} token={props.token} uriVal={parseURIList(setImage)}/>
         </div>

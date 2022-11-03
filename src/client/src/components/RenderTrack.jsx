@@ -10,6 +10,7 @@ import { BsFonts } from "react-icons/bs";
 
 export default function RenderTrack(props){
     const [{ setMultSongs, setName, setTime, setImage}, dispatch] = useStateProvider();
+    console.log("TOK@",  props.token)
     const [resp, setResp] = useState('')
     const [sName, setSName] = useState([])
     const [sImg, setSImg] = useState([])
