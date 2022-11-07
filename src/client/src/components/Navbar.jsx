@@ -8,6 +8,7 @@ import { FaSearch } from "react-icons/fa";
 import $ from 'jquery'; 
 import { CgProfile } from "react-icons/cg";
 
+
 export default function Navbar(props) {
   const [{ userInfo }] = useStateProvider();
   const [{ token, currentPlaying }, dispatch] = useStateProvider();
@@ -15,7 +16,7 @@ export default function Navbar(props) {
   const [input, setInput] = useState(props?.value ?? '');
   console.log("Tok", props.token)
 
-  getSearchResults(query){
+  function getSearchResults(query){
     const access_token = props.token ;
     const searchQuery = query;
     console.log("Search Query: " + searchQuery.toString())
@@ -58,7 +59,8 @@ export default function Navbar(props) {
       })
     )
   }
-  render() {
+
+  function render() {
     let card;
     if(this.state.searchResults.length > 0){
       card = <Card>
@@ -87,7 +89,7 @@ export default function Navbar(props) {
       </div>
     );
   }
-}
+
   // const getTrack = async(track) => { 
   //   const state = playerState ? "pause" : "play";
   //   $.ajax({
@@ -106,7 +108,7 @@ export default function Navbar(props) {
       {/* <div className="search__bar"> */}
         {/* <FaSearch/>
         <input type="text" placeholder="Artists, songs, or podcasts" onInput={searchVal("Linkin Park")}/> */}
-    <Container>
+      </div>  
       <div className="search__bar">
         <FaSearch/>
         <input id = {id} value={input} type="text" placeholder="Artists, songs, or podcasts" onChange={e => getSearchVal(e.target.value)}/>
@@ -120,6 +122,7 @@ export default function Navbar(props) {
     </Container>
   );
 }
+
 
 const Container = styled.div`
   display: flex;
