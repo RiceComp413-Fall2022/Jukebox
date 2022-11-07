@@ -20,13 +20,19 @@ To run the unittests:
 
 *Addionally, ensure that the user is currently on the Jukebox directory or the relative file path will have to be changed*
 ```
-pip install -r src/server/requirements.txt
-python -m unittest discover test/server
+sh actions.sh
 ```
 
 ## Running Basic Demo
-To start the server, which currently serves a simple Hello World demo:
+To start the server on port 3001, which currently serves a simple Hello World demo:
 ```
-cd src/server
-flask --app main run
+sh starter.sh Server 3001
 ```
+
+To start the client on port 3002, run the following:
+
+* Users must have npm installed to execute this script. *
+```
+sh starter.sh Client 3002
+```
+
