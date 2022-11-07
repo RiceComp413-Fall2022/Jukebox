@@ -1,10 +1,32 @@
 import React from "react";
 import styled from "styled-components";
+import axios from "axios";
 import { useStateProvider } from "../utils/StateProvider";
+import SearchBar from "./SearchBar";
 import { FaSearch } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
-export default function Navbar({ navBackground }, props) {
+export default function Navbar(props, { navBackground }) {
   const [{ userInfo }] = useStateProvider();
+  // function searchVal(sVal){
+
+  //     const rep = axios.get(
+  //       `https://api.spotify.com/v1/search?q=`+sVal,
+  //       {
+  //           context_uri,
+  //           offset: {
+  //               position: track_number - 1,
+  //           },
+  //           position_ms: 0,
+  //       },
+  //       {
+  //           headers: {
+  //               Authorization: "Bearer " + props.token,
+  //               "Content-Type": "application/json",
+                
+  //           },
+  //       }
+  //   );
+  // }
   // const getTrack = async(track) => { 
   //   const state = playerState ? "pause" : "play";
   //   $.ajax({
@@ -18,9 +40,11 @@ export default function Navbar({ navBackground }, props) {
   // };
   return (
     <Container navBackground={navBackground}>
-      <div className="search__bar">
-        <FaSearch/>
-        <input type="text" placeholder="Artists, songs, or podcasts" />
+      <div>
+        <SearchBar token = {props.token}/>
+      {/* <div className="search__bar"> */}
+        {/* <FaSearch/>
+        <input type="text" placeholder="Artists, songs, or podcasts" onInput={searchVal("Linkin Park")}/> */}
       </div>
       <div className="avatar">
         <a href={userInfo?.userUrl}>
