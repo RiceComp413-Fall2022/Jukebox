@@ -1,32 +1,93 @@
-import React from "react";
+import React,  {useEffect,  useId, useState} from "react";
 import styled from "styled-components";
-import axios from "axios";
+import  axios from "axios";
+import {Card} from 'antd';
 import { useStateProvider } from "../utils/StateProvider";
 import SearchBar from "./SearchBar";
 import { FaSearch } from "react-icons/fa";
+import $ from 'jquery'; 
 import { CgProfile } from "react-icons/cg";
-export default function Navbar(props, { navBackground }) {
-  const [{ userInfo }] = useStateProvider();
-  // function searchVal(sVal){
 
-  //     const rep = axios.get(
-  //       `https://api.spotify.com/v1/search?q=`+sVal,
-  //       {
-  //           context_uri,
-  //           offset: {
-  //               position: track_number - 1,
-  //           },
-  //           position_ms: 0,
-  //       },
-  //       {
-  //           headers: {
-  //               Authorization: "Bearer " + props.token,
-  //               "Content-Type": "application/json",
-                
-  //           },
-  //       }
-  //   );
-  // }
+export default function Navbar(props) {
+  const [{ userInfo }] = useStateProvider();
+  const [{ token, currentPlaying }, dispatch] = useStateProvider();
+  const id = useId();
+  const [input, setInput] = useState(props?.value ?? '');
+  console.log("Tok", props.token)
+
+  getSearchResults(query){
+    const access_token = props.token ;
+    const searchQuery = query;
+    console.log("Search Query: " + searchQuery.toString())
+    const fetchURL = encodeURI(`q=${searchQuery}`);
+    fetch(`https://api.spotify.com/v1/search?${fetchURL}&type=track`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${access_token}`     
+        }
+      }
+    )
+    .then(response => {
+      if(!response.ok){
+        throw Error("Response Not Ok")
+      }
+      return response;
+    })
+    .then(response => response.json())
+    .then(({tracks}) => {
+      console.log(tracks.items[0].name);
+      const results = [];
+      tracks.items.forEach(element => {
+        let artists = []
+        element.artists.forEach(artist => artists.push(artist.name))
+        results.push(      
+          <List.Item key={element.uri}>
+            <List.Item.Meta
+              avatar={<Avatar shape='square' size='large' src={element.album.images[0].url} />}
+              title={<p href="https://ant.design">{element.name}</p>}
+              description={artists.join(', ')}
+            />
+          </List.Item>);
+      });
+      this.setState({
+        searchResults: results
+      });
+    })
+    .catch(error => this.setState({
+        searchResults: []
+      })
+    )
+  }
+  render() {
+    let card;
+    if(this.state.searchResults.length > 0){
+      card = <Card>
+        <List itemLayout="horizontal">
+          {this.state.searchResults}
+        </List>
+      </Card>;
+    }
+    else {
+      card = <Card hidden={true}/>;
+    }
+    return (
+      <div className="App">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+        <a href='http://localhost:8888' > Login to Spotify </a>
+        <div className="Search">
+          <Search
+            placeholder="input search text"
+            enterButton="Search"
+            size="large"
+            onChange={value => this.getSearchResults(value.target.value)}
+            onSearch={value => console.log(value)}
+          />
+          {card}
+        </div>
+      </div>
+    );
+  }
+}
   // const getTrack = async(track) => { 
   //   const state = playerState ? "pause" : "play";
   //   $.ajax({
@@ -45,6 +106,10 @@ export default function Navbar(props, { navBackground }) {
       {/* <div className="search__bar"> */}
         {/* <FaSearch/>
         <input type="text" placeholder="Artists, songs, or podcasts" onInput={searchVal("Linkin Park")}/> */}
+    <Container>
+      <div className="search__bar">
+        <FaSearch/>
+        <input id = {id} value={input} type="text" placeholder="Artists, songs, or podcasts" onChange={e => getSearchVal(e.target.value)}/>
       </div>
       <div className="avatar">
         <a href={userInfo?.userUrl}>
