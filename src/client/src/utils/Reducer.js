@@ -70,6 +70,13 @@ const reducer = (state, action) => {
           setTime: action.setTime,
         }
 
+      case reducerCases.SET_URIS:
+        return{
+          ...state,
+          setUris: action.setUris,
+        }
+  
+
       default:
         return state;
     }

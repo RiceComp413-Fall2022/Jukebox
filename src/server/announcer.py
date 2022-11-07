@@ -4,6 +4,7 @@ import json
 from .resources import announcers, queues
 
 """Event that sends a whole song queue to a listener."""
+
 SONG_QUEUE_EVENT = 'song_queue'
 QUEUE_CLOSED_EVENT = 'queue_closed'
 

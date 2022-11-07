@@ -78,7 +78,7 @@ export default function PlayerControls(props) {
         data: '{"uris": ["spotify:track:2HScVhNGt7DltJYrph09Ee"]}',
         beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + props.token);},
         success: function(data) { 
-          console.log(data)
+          //console.log(data)
         }
     });
     

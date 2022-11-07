@@ -31,12 +31,13 @@ export default function CurrentTrack(props) {
     };
     getCurrentTrack();
   }, [props.token, dispatch]);
+  
   return (
     <Container>
       {currentPlaying && (
         <div className="track">
           <div className="track__image">
-            <img src={currentPlaying.image} alt="currentPlaying" />
+            <img src={currentPlaying.image} alt="currentPlaying" width={'100px'} height={'100px'}/>
           </div>
           <div className="track__info">
             <h4 className="track__info__track__name">{currentPlaying.name}</h4>
@@ -58,14 +59,16 @@ const Container = styled.div`
     &__image {
     }
     &__info {
-      display: flex;
+      display: table;
       flex-direction: column;
       gap: 0.3rem;
       &__track__name {
-        color: white;
+        color : white;
+        font-size : 1.2rem;
       }
       &__track__artists {
-        color: #b3b3b3;
+        color : #b3b3b3;
+        font-size : 0.8rem;
       }
     }
   }

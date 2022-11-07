@@ -109,6 +109,7 @@ def song_add():
     result = queues[args['roomid']].add_song(args['userid'], args['uri'])
 
     # then send updated song queue to everyone
+
     announce_song_queue(args['roomid'])
 
     if result:

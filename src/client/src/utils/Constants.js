@@ -9,5 +9,6 @@ export const reducerCases = {
   SET_MULT_SONGS: "SET_MULT_SONGS",
   SET_NAME: "SET_NAME",
   SET_IMAGE: "SET_IMAGE",
-  SET_TIME: "SET_TIME"
+  SET_TIME: "SET_TIME",
+  SET_URIS: "SET_URIS"
 };
