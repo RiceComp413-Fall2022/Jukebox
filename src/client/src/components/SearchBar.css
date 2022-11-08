@@ -7,13 +7,18 @@
     pointer-events: none;
   }
   
-  div, button {
-    margin: 10px;
-  }
   
   .Search {
-    margin: '0 auto';
-    max-width: 800;
+
+  }
+
+
+  .dataResult::-webkit-scrollbar {
+    display: none;
+  }
+
+  .Card {
+    margin : '0 auto';
   }
   
   @media (prefers-reduced-motion: no-preference) {

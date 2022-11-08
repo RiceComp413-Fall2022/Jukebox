@@ -7,6 +7,10 @@ import SearchBar from "./SearchBar";
 import { FaSearch } from "react-icons/fa";
 import $ from 'jquery'; 
 import { CgProfile } from "react-icons/cg";
+import { Input, List, Avatar } from 'antd';
+
+const { Search } = Input;
+
 
 export default function Navbar(props) {
   const [{ userInfo }] = useStateProvider();
@@ -15,7 +19,7 @@ export default function Navbar(props) {
   const [input, setInput] = useState(props?.value ?? '');
   console.log("Tok", props.token)
 
-  getSearchResults(query){
+  function getSearchResults(query){
     const access_token = props.token ;
     const searchQuery = query;
     console.log("Search Query: " + searchQuery.toString())
@@ -57,8 +61,9 @@ export default function Navbar(props) {
         searchResults: []
       })
     )
+
   }
-  render() {
+  function render() {
     let card;
     if(this.state.searchResults.length > 0){
       card = <Card>
@@ -87,7 +92,7 @@ export default function Navbar(props) {
       </div>
     );
   }
-}
+
   // const getTrack = async(track) => { 
   //   const state = playerState ? "pause" : "play";
   //   $.ajax({
@@ -100,17 +105,14 @@ export default function Navbar(props) {
   //   });
   // };
   return (
-    <Container navBackground={navBackground}>
+    <Container navBackground={props.navBackground}>
       <div>
         <SearchBar token = {props.token}/>
-      {/* <div className="search__bar"> */}
-        {/* <FaSearch/>
-        <input type="text" placeholder="Artists, songs, or podcasts" onInput={searchVal("Linkin Park")}/> */}
-    <Container>
-      <div className="search__bar">
+      </div>  
+      {/* <div className="search__bar">
         <FaSearch/>
-        <input id = {id} value={input} type="text" placeholder="Artists, songs, or podcasts" onChange={e => getSearchVal(e.target.value)}/>
-      </div>
+        <input id = {id} value={input} type="text" placeholder="Artists, songs, or podcasts" onChange={e => getSearchResults(e.target.value)}/>
+      </div> */}
       <div className="avatar">
         <a href={userInfo?.userUrl}>
           <CgProfile />
