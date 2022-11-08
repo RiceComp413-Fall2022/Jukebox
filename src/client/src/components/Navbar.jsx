@@ -7,6 +7,9 @@ import SearchBar from "./SearchBar";
 import { FaSearch } from "react-icons/fa";
 import $ from 'jquery'; 
 import { CgProfile } from "react-icons/cg";
+import { Input, List, Avatar } from 'antd';
+
+const { Search } = Input;
 
 
 export default function Navbar(props) {
@@ -58,8 +61,8 @@ export default function Navbar(props) {
         searchResults: []
       })
     )
-  }
 
+  }
   function render() {
     let card;
     if(this.state.searchResults.length > 0){
@@ -102,17 +105,14 @@ export default function Navbar(props) {
   //   });
   // };
   return (
-    <Container navBackground={navBackground}>
+    <Container navBackground={props.navBackground}>
       <div>
         <SearchBar token = {props.token}/>
-      {/* <div className="search__bar"> */}
-        {/* <FaSearch/>
-        <input type="text" placeholder="Artists, songs, or podcasts" onInput={searchVal("Linkin Park")}/> */}
       </div>  
-      <div className="search__bar">
+      {/* <div className="search__bar">
         <FaSearch/>
-        <input id = {id} value={input} type="text" placeholder="Artists, songs, or podcasts" onChange={e => getSearchVal(e.target.value)}/>
-      </div>
+        <input id = {id} value={input} type="text" placeholder="Artists, songs, or podcasts" onChange={e => getSearchResults(e.target.value)}/>
+      </div> */}
       <div className="avatar">
         <a href={userInfo?.userUrl}>
           <CgProfile />
@@ -122,7 +122,6 @@ export default function Navbar(props) {
     </Container>
   );
 }
-
 
 const Container = styled.div`
   display: flex;

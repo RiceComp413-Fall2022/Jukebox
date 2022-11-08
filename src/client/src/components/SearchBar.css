@@ -7,9 +7,6 @@
     pointer-events: none;
   }
   
-  div, button {
-    margin: 10px;
-  }
   
   .Search {
     margin: '0 auto';

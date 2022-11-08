@@ -203,7 +203,7 @@ const ListWrapper = styled.div`
         display: grid;
         grid-template-columns: 0.3fr 3fr 3fr 0.1fr;
         margin: 1rem 0 0 0;
-        color: #dddcdc;
+        color: white;
         position: sticky;
         top: 15vh;
         padding: 1rem 3rem;
