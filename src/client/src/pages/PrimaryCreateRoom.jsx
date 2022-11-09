@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { reducerCases } from "../utils/Constants";
 import { useStateProvider } from "../utils/StateProvider";
 import { Link } from 'react-router-dom';
+import axios from "axios";
+
 
 export default function PrimaryCreateRoom(props) {
   const [{  token, setGroup }, dispatch] = useStateProvider();
@@ -15,12 +17,15 @@ export default function PrimaryCreateRoom(props) {
     // console.log(token)
     // console.log(inputRef.current.value);
 
+    //axios.get('http://127.0.0.1:5000/songQueueCreate?userid=' + 123 + '&roomid=' + setGroup)
+
   }
   useEffect(() => {
     // dispatch({ type: reducerCases.SET_GROUP_ID, groupId: inputRef.current.value });   
     console.log("groupID", setGroup)
 
   }, [dispatch, inputRef, setGroup]);
+  
 
 
   return (
