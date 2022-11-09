@@ -37,4 +37,4 @@ def song_queue_listen(roomid):
     announcer = announcers[roomid]
 
     # NOTE: Change the * to the domain to be more secure later
-    return Response(stream(announcer, queue), mimetype='text/event-stream', headers={'Access-Control-Allow-Origin': "*"})
+    return Response(stream(announcer, queue), mimetype='text/event-stream')
