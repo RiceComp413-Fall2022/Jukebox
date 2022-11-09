@@ -10,7 +10,7 @@ import RenderTrack from "../components/RenderTrack";
 import { data, event } from "jquery";
 
 export default function Spotify(props) {
-  const [{ token, setImage}, dispatch, setUris] = useStateProvider();
+  const [{ token, setImage, setGroup }, dispatch, setUris] = useStateProvider();
   console.log(token, "SPORT")
   const [uriList, setUriList] = useStateProvider(undefined);
   const [navBackground, setNavBackground] = useState(false);
@@ -89,15 +89,17 @@ export default function Spotify(props) {
   }, [dispatch, props.token]);
   
   useEffect(() => {
-    const sse = new EventSource('http://127.0.0.1:5000/songQueueListen',
+    // console.log('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup)
+    const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup,
       { withCredentials: false });
     
-    // sse.addEventListener('message', handleReceiveMessage)
+    sse.addEventListener('song_queue', handleReceiveMessage)
 
 
     function getRealtimeData(dataV)  {
       // process the data here,
       // then pass it to state to be rendered
+      console.log(dataV,"dadat2")
       dispatch({ type: reducerCases.SET_IMAGE, setImage: dataV})
 
     }
@@ -123,7 +125,12 @@ export default function Spotify(props) {
     };
 
     
-  }, [dispatch, props.token]);
+  }, []);
+
+  const handleReceiveMessage = (event) => {
+    console.log('message receieved')
+    dispatch({ type: reducerCases.SET_IMAGE, setImage: event.data})
+  }
 
   return (
     <Container>

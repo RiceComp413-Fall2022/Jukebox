@@ -85,10 +85,10 @@ export default function SpotifyCollab(props) {
 
   useEffect(() => {
     // console.log('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup)
-    const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=12345',
+    const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup,
       { withCredentials: false });
     
-    // sse.addEventListener('message', handleReceiveMessage)
+    sse.addEventListener('song_queue', handleReceiveMessage)
 
 
     function getRealtimeData(dataV)  {
@@ -120,9 +120,12 @@ export default function SpotifyCollab(props) {
     };
 
     
-  }, [dispatch, props.token]);
+  }, []);
 
-
+  const handleReceiveMessage = (event) => {
+    console.log('message receieved')
+    dispatch({ type: reducerCases.SET_IMAGE, setImage: event.data})
+  }
 
   return (
   <Container>
