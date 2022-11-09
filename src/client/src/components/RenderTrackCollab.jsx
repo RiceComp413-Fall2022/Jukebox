@@ -6,12 +6,14 @@ import { AiFillClockCircle } from "react-icons/ai";
 
 import styled from "styled-components";
 import { BsFonts } from "react-icons/bs";
+import remove_song from "./removeSong"
 
 
 export default function RenderTrackCollab(props){
-    const [{ setMultSongs, setName, setTime, setImage}, dispatch] = useStateProvider();
-    const [resp, setResp] = useState('')
+    const [{ setMultSongs, setName, setTime, setImage, setGroup}, dispatch] = useStateProvider();
+    const [userId, setUserId] = useState(undefined);
     const [sName, setSName] = useState([])
+    const [resp, setResp] = useState('')
     const [sImg, setSImg] = useState([])
     const [sArtist, setSArtist]  = useState([])
     const [sTime, setSTime] = useState([])
@@ -82,7 +84,8 @@ export default function RenderTrackCollab(props){
                                         <span>{item.album}</span>
                                     </div>
                                     <div className="col">
-                                        <span>{changeTime(item.duration)}</span>
+                                        {/* <span>{changeTime(item.duration)}</span> */}
+                                        <span> <button onClick={remove_song(userId, setGroup, props.uriVal)}> Remove Song </button></span>
                                     </div>    
                                 </div>
                             </div>
