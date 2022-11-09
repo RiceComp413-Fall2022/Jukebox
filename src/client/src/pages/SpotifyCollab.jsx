@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import styled from "styled-components";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar"; 
+import FooterCollab from "../components/FooterCollab";
+import NavbarCollab from "../components/NavbarCollab"; 
 import $ from 'jquery'; 
 import { useStateProvider } from "../utils/StateProvider";
-import { reducerCases } from "../utils/Constants";
-import RenderTrack from "../components/RenderTrack";
+import RenderTrackCollab from "../components/RenderTrackCollab";
 
 
 import axios from "axios";
@@ -82,58 +81,21 @@ export default function SpotifyCollab(props) {
     }
   }
 
-  
-  
-  useEffect(() => {
-    const sse = new EventSource('http://127.0.0.1:5000/songQueueListen',
-      { withCredentials: false });
-    
-    // sse.addEventListener('message', handleReceiveMessage)
 
-
-    function getRealtimeData(dataV)  {
-      // process the data here,
-      // then pass it to state to be rendered
-      dispatch({ type: reducerCases.SET_IMAGE, setImage: dataV})
-
-    }
-
-    sse.onmessage = (event) => {
-      //console.log('message received')
-      getRealtimeData(event.data)
-    };
-    
-
-    sse.onopen = (e) => {
-      console.log('open')
-    }
-
-    sse.onerror = () => {
-      // error log here 
-      console.log('bricked')
-      
-      sse.close();
-    }
-    return () => {
-      sse.close();
-    };
-
-    
-  }, [dispatch, token]);
 
   return (
   <Container>
     <div className="spotify__body">
       <div className="body" ref={bodyRef} onScroll={bodyScrolled}>
-        <Navbar token = {tok} navBackground={navBackground} />
+        <NavbarCollab token = {tok} navBackground={navBackground} />
         
         <div className="body__contents">
-          <RenderTrack headerBackground={headerBackground} token={tok} uriVal={parseURIList(setImage)}/>
+          <RenderTrackCollab headerBackground={headerBackground} token={tok} uriVal={parseURIList(setImage)}/>
         </div>
       </div>
     </div>
     <div className="spotify__footer">
-      <Footer token = {tok} uriVal={setImage}/>
+      <FooterCollab token = {tok} uriVal={setImage}/>
     </div>
   </Container>
   );

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
-export default function CurrentTrack(props) {
+export default function  CurrentTrack(props) {
     
   const [{ token, currentPlaying }, dispatch] = useStateProvider();
   useEffect(() => {

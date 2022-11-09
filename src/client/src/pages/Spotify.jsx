@@ -10,8 +10,8 @@ import RenderTrack from "../components/RenderTrack";
 import { data, event } from "jquery";
 
 export default function Spotify(props) {
-
   const [{ token, setImage}, dispatch, setUris] = useStateProvider();
+  console.log(token, "SPORT")
   const [uriList, setUriList] = useStateProvider(undefined);
   const [navBackground, setNavBackground] = useState(false);
   const [headerBackground, setHeaderBackground] = useState(false);
@@ -58,7 +58,7 @@ export default function Spotify(props) {
     const getUserInfo = async () => {
       const { data } = await axios.get("https://api.spotify.com/v1/me", {
         headers: {
-          Authorization: "Bearer " + props.token,
+          Authorization: "Bearer " + token.access_token,
           "Content-Type": "application/json",
         },
       });
@@ -76,7 +76,7 @@ export default function Spotify(props) {
     const getPlaybackState = async () => {
       const { data } = await axios.get("https://api.spotify.com/v1/me/player", {
         headers: {
-          Authorization: "Bearer " + props.token,
+          Authorization: "Bearer " + token.access_token,
           "Content-Type": "application/json",
         },
       });
@@ -129,15 +129,15 @@ export default function Spotify(props) {
     <Container>
     <div className="spotify__body">
       <div className="body" ref={bodyRef} onScroll={bodyScrolled}>
-        <Navbar token = {props.token} navBackground={navBackground} />
+        <Navbar token = {token.access_token} navBackground={navBackground} />
         
         <div className="body__contents">
-          <RenderTrack headerBackground={headerBackground} token={props.token} uriVal={parseURIList(setImage)}/>
+          <RenderTrack headerBackground={headerBackground} token={token.access_token} uriVal={parseURIList(setImage)}/>
         </div>
       </div>
     </div>
     <div className="spotify__footer">
-      <Footer token = {props.token} uriVal={setImage}/>
+      <Footer token = {token.access_token} uriVal={setImage}/>
     </div>
   </Container>
   );

@@ -1,14 +1,15 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-// import { Route } from "react-router";
-import Spotify from "./Spotify";
+
 import { reducerCases } from "../utils/Constants";
 import { useStateProvider } from "../utils/StateProvider";
-import {BrowserRouter as Router, Route, Link, Routes} from 'react-router-dom';
+import {Link} from 'react-router-dom';
+import LoginWrapper from "./LoginWrapper";
 import PrimaryCreateRoom from "./PrimaryCreateRoom";
+import Spotify from "./Spotify";
 
 export default function HomePage() {
-  const [{ token }, dispatch] = useStateProvider();
+  const [{ token, groupId }, dispatch] = useStateProvider();
   useEffect(() => {
 
   const hash = window.location.hash
@@ -29,12 +30,12 @@ export default function HomePage() {
     
     document.title = "Spotify";
   }, [dispatch,token]);
+  console.log(token)
 
 
   return (
       <div>
-        {token  ? <PrimaryCreateRoom token = {token.access_token}/> :
-        <Container>
+          {token ? <PrimaryCreateRoom token = {token.access_token}/> : <Container>
           <Link to='/primary'>
             <button>
                 Primary
@@ -43,10 +44,9 @@ export default function HomePage() {
           <Link to='/joinCode'>
             <button>Contributor</button>
           </Link>
-        </Container>
+        </Container>}
+      </div>
 
-        }
-    </div>
   );
 }
 

@@ -1,25 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-// import { Route } from "react-router";
-import Spotify from "./Spotify";
 import { reducerCases } from "../utils/Constants";
 import { useStateProvider } from "../utils/StateProvider";
 import {BrowserRouter as Router, Route, Link, Routes} from 'react-router-dom';
 
 export default function CollabJoinRoom(props) {
-  const [{ token, groupId, setGroupId }, dispatch] = useStateProvider();
-  const inputRef = useRef(null);
-  function handleClick() {
-    dispatch({ type: reducerCases.SET_GROUP_ID, groupId: inputRef.current.value });   
-    console.log(inputRef.current.value);
-
-  }
-  useEffect(() => {
-    console.log("groupID", groupId)
-    // dispatch({ type: reducerCases.SET_GROUP_ID, groupId: inputRef.current.value });   
-
-  }, [dispatch, groupId]);
-
+    const [{  token, setGroup }, dispatch] = useStateProvider();
+    const inputRef = useRef(null);
+    function handleClick() {
+      dispatch({
+          type: reducerCases.SET_GROUP,
+          setGroup: inputRef.current.value,
+        });
+  
+  
+    }
+    useEffect(() => {
+      // dispatch({ type: reducerCases.SET_GROUP_ID, groupId: inputRef.current.value });   
+      console.log("groupID", setGroup)
+  
+    }, [dispatch, inputRef, setGroup]);
+  
 
   return (
     <Container>

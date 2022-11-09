@@ -3,8 +3,10 @@ import Login from "./Login";
 import Spotify from "./Spotify";
 import { reducerCases } from "../utils/Constants";
 import { useStateProvider } from "../utils/StateProvider";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginWrapper() {
+  let navigate = useNavigate();
   const [{ token }, dispatch] = useStateProvider();
   useEffect(() => {
 
@@ -28,7 +30,7 @@ export default function LoginWrapper() {
   }, [dispatch,token]);
   return (
           <div>
-            {token ? <Spotify token = {token.access_token}/> : <Login />}
+            {token ? <Spotify token = {token}/> : <Login />}
           </div>
           );
 }

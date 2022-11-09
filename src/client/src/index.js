@@ -14,6 +14,7 @@ import {
 } from "react-router-dom";
 import SpotifyCollab from './pages/SpotifyCollab';
 import CollabJoinRoom from './pages/CollabJoinRoom';
+import PrimaryCreateRoom from './pages/PrimaryCreateRoom';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
