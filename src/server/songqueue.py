@@ -11,7 +11,7 @@ class SongQueue:
     def __init__(self, primary_user_id):
         """Create an empty song queue containing no songs. self.counter is monotonic to maintain insertion ordering."""
         self.pq = []
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
         self.counter = itertools.count()
         self.entries_by_song = {}
         self.primary_user_id = primary_user_id
@@ -32,11 +32,7 @@ class SongQueue:
         """
         with self.lock:
             if uri in self.entries_by_song:
-                entry = self.entries_by_song[uri]
-                entry[0] -= 1 # Upvote if identifier already exists
-                entry[2].upvotes = -entry[0]
-                heapq.heapify(self.pq)
-                return False
+                return self.upvote_song(user_id, uri)
             else:
                 song_data = Song(user_id, uri)
                 count = next(self.counter)

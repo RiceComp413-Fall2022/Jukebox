@@ -16,7 +16,9 @@ def stream(announcer, queue, testing=False):
     messages = announcer.listen()  # returns a queue.Queue
 
     # tells the user the current state of the queue
-    init_q = format_sse(json.dumps({'uris': [song.uri for song in queue.get_all()]}), SONG_QUEUE_EVENT)
+    queue_contents = queue.get_all()
+    json_data = [{"uri": song.uri, "upvotes": song.upvotes} for song in queue_contents]
+    init_q = format_sse(json.dumps(json_data), SONG_QUEUE_EVENT)
     yield init_q
 
     if testing != 0:
