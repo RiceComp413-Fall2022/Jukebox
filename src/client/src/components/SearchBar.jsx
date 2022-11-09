@@ -5,6 +5,8 @@ import { Input, List, Avatar } from 'antd';
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 import styled from "styled-components";
+import axios from "axios";
+
 
 
 import 'antd/dist/antd.css';
@@ -15,7 +17,7 @@ const { Search } = Input;
 
 
 export default function SearchBar(props){
-const [dispatch] = useStateProvider();
+const [{ setGroup }, dispatch] = useStateProvider();
 const [image, setImage] = useState([]);
 console.log(props.token)
 
@@ -71,7 +73,8 @@ function parseURI(uri){
         let artists = []
         element.artists.forEach(artist => artists.push(artist.name))
         results.push(   
-          <div onClick={() => console.log(parseURI(element.uri))}>
+          <div onClick={() => axios.get('http://127.0.0.1:5000/addSong?userid=fun&roomid=' + setGroup + '&uri=' + element.uri,
+          { withCredentials: false })}>
             <li key={element.uri}  >
               <List.Item.Meta 
                 avatar={<Avatar shape='square' size='large' src={element.album.images[0].url} />}
