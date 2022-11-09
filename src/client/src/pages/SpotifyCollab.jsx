@@ -3,6 +3,8 @@ import styled from "styled-components";
 import FooterCollab from "../components/FooterCollab";
 import NavbarCollab from "../components/NavbarCollab"; 
 import $ from 'jquery'; 
+import { reducerCases } from "../utils/Constants";
+
 import { useStateProvider } from "../utils/StateProvider";
 import RenderTrackCollab from "../components/RenderTrackCollab";
 
@@ -11,7 +13,7 @@ import axios from "axios";
 const qs = require('qs');
 
 export default function SpotifyCollab(props) {
-  const [{ token, setImage, groupId}, dispatch, setUris] = useStateProvider();
+  const [{ token, setImage, setGroup}, dispatch, setUris] = useStateProvider();
   const [uriList, setUriList] = useStateProvider(undefined);
   const [navBackground, setNavBackground] = useState(false);
   const [tok, setTok] = useState(false);
@@ -55,7 +57,7 @@ export default function SpotifyCollab(props) {
     }
     getAuth()
   },[dispatch, token]);
-  console.log('tok', tok)
+  // console.log('tok', tok)
   function parseURIList(uris){
     let parseVal2 = []
     //console.log(uris)
@@ -80,6 +82,45 @@ export default function SpotifyCollab(props) {
       return final
     }
   }
+
+  useEffect(() => {
+    // console.log('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup)
+    const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=12345',
+      { withCredentials: false });
+    
+    // sse.addEventListener('message', handleReceiveMessage)
+
+
+    function getRealtimeData(dataV)  {
+      // process the data here,
+      // then pass it to state to be rendered
+      console.log(dataV,"dadat2")
+      dispatch({ type: reducerCases.SET_IMAGE, setImage: dataV})
+
+    }
+
+    sse.onmessage = (event) => {
+      //console.log('message received')
+      getRealtimeData(event.data)
+    };
+    
+
+    sse.onopen = (e) => {
+      console.log('open')
+    }
+
+    sse.onerror = () => {
+      // error log here 
+      console.log('bricked')
+      
+      sse.close();
+    }
+    return () => {
+      sse.close();
+    };
+
+    
+  }, [dispatch, props.token]);
 
 
 

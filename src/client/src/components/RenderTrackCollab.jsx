@@ -30,6 +30,7 @@ export default function RenderTrackCollab(props){
 
     useEffect(() =>{
         const getTracks = async() => {
+            console.log(props.uriVal)
             const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + props.uriVal,
             {
             headers: {
@@ -38,6 +39,7 @@ export default function RenderTrackCollab(props){
             },
             })
             if (response.data != ""){
+                console.log(response.data.tracks[0].name, "rep")
                 console.log("we're in")
                 let tpArr = []
                 for(let i = 0; i < response.data.tracks.length; i ++) {
