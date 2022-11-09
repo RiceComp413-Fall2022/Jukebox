@@ -7,8 +7,6 @@ import { reducerCases } from "../utils/Constants";
 import styled from "styled-components";
 import axios from "axios";
 
-
-
 import 'antd/dist/antd.css';
 
 
@@ -40,7 +38,6 @@ function parseURI(uri){
   return final
 
 }
-
 
   function getSearchResults(query){
 
@@ -80,7 +77,6 @@ function parseURI(uri){
                 avatar={<Avatar shape='square' size='large' src={element.album.images[0].url} />}
                 title={<p href="https://ant.design">{element.name}</p>}
                 description={artists.join(', ')}
-                
               />
             </li>
           </div>);
@@ -92,11 +88,7 @@ function parseURI(uri){
   }
 // },[props.token, dispatch])
     let card;
-    function renderCards(){
-        // for(let i = 0; i < image.length; i ++){
-        //   console.log(image[i].key)
-        // }
-        
+    function renderCards(){     
         if(image.length > 0){
           card = 
           <div>
