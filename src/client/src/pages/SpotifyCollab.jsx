@@ -1,19 +1,23 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import styled from "styled-components";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar"; 
-import axios from "axios";
-import { useStateProvider } from "../utils/StateProvider";
+import FooterCollab from "../components/FooterCollab";
+import NavbarCollab from "../components/NavbarCollab"; 
+import $ from 'jquery'; 
 import { reducerCases } from "../utils/Constants";
-import PlayerControls from "../components/PlayerControls";
-import RenderTrack from "../components/RenderTrack";
-import { data, event } from "jquery";
 
-export default function Spotify(props) {
-  const [{ token, setImage, setGroup }, dispatch, setUris] = useStateProvider();
-  console.log(token, "SPORT")
+import { useStateProvider } from "../utils/StateProvider";
+import RenderTrackCollab from "../components/RenderTrackCollab";
+
+
+import axios from "axios";
+const qs = require('qs');
+
+export default function SpotifyCollab(props) {
+  const [{ token, setImage, setGroup}, dispatch, setUris] = useStateProvider();
   const [uriList, setUriList] = useStateProvider(undefined);
   const [navBackground, setNavBackground] = useState(false);
+  const [tok, setTok] = useState(false);
+
   const [headerBackground, setHeaderBackground] = useState(false);
   const bodyRef = useRef();
   const bodyScrolled = () => {
@@ -28,7 +32,32 @@ export default function Spotify(props) {
   var uriVals2 = '';
   const uriVal = '{"uris": ["spotify:track:63dLm0BUpepXeFIfZ0OKEL", "spotify:track:2LO5hQnz5rEaRwkGUvZcHN", "spotify:track:6IpvkngH89cA3hhPC84Leg"]}';
   const urisT = ["2LO5hQnz5rEaRwkGUvZcHN","6IpvkngH89cA3hhPC84Leg", "63dLm0BUpepXeFIfZ0OKEL"]
+  const SPOTIFY_CLIENT_ID = "0b2885f02bea4a8f887f715664b411e9"
+  const SPOTIFY_CLIENT_SECRET = "8482283b3d87491aaa1416b1dc4c06a3"
 
+  useEffect(() => {
+    const getAuth = async() => {
+        const data = { grant_type: "client_credentials" };
+        const options = {
+        method: "POST",
+        headers: {
+            Authorization:
+            "Basic " +
+            btoa(SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET),
+            "content-type": "application/x-www-form-urlencoded",
+        },
+        data: qs.stringify(data),
+        url: "https://accounts.spotify.com/api/token",
+        };
+        const response = await axios(options);
+    
+        const { access_token } = response.data;
+        setTok(access_token)   
+        // console.log(access_token);
+    }
+    getAuth()
+  },[dispatch, token]);
+  // console.log('tok', tok)
   function parseURIList(uris){
     let parseVal2 = []
     //console.log(uris)
@@ -54,40 +83,6 @@ export default function Spotify(props) {
     }
   }
 
-  useEffect(() => {
-    const getUserInfo = async () => {
-      const { data } = await axios.get("https://api.spotify.com/v1/me", {
-        headers: {
-          Authorization: "Bearer " + token.access_token,
-          "Content-Type": "application/json",
-        },
-      });
-      const userInfo = {
-        userId: data.id,
-        userUrl: data.external_urls.spotify,
-        name: data.display_name,
-      };
-      dispatch({ type: reducerCases.SET_USER, userInfo });
-    };
-    getUserInfo();
-  }, [dispatch, props.token]);
-
-  useEffect(() => {
-    const getPlaybackState = async () => {
-      const { data } = await axios.get("https://api.spotify.com/v1/me/player", {
-        headers: {
-          Authorization: "Bearer " + token.access_token,
-          "Content-Type": "application/json",
-        },
-      });
-      dispatch({
-        type: reducerCases.SET_PLAYER_STATE,
-        playerState: data.is_playing,
-      });
-    };
-    getPlaybackState();
-  }, [dispatch, props.token]);
-  
   useEffect(() => {
     // console.log('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup)
     const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup,
@@ -133,18 +128,18 @@ export default function Spotify(props) {
   }
 
   return (
-    <Container>
+  <Container>
     <div className="spotify__body">
       <div className="body" ref={bodyRef} onScroll={bodyScrolled}>
-        <Navbar token = {token.access_token} navBackground={navBackground} />
+        <NavbarCollab token = {tok} navBackground={navBackground} />
         
         <div className="body__contents">
-          <RenderTrack headerBackground={headerBackground} token={token.access_token} uriVal={parseURIList(setImage)}/>
+          <RenderTrackCollab headerBackground={headerBackground} token={tok} uriVal={parseURIList(setImage)}/>
         </div>
       </div>
     </div>
     <div className="spotify__footer">
-      <Footer token = {token.access_token} uriVal={setImage}/>
+      <FooterCollab token = {tok} uriVal={setImage}/>
     </div>
   </Container>
   );

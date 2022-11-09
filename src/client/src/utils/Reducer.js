@@ -52,10 +52,10 @@ const reducer = (state, action) => {
           setMultSongs: action.setMultSongs,
         }
 
-      case reducerCases.SET_NAME:
+      case reducerCases.SET_GROUP:
         return{
           ...state,
-          setName: action.setName,
+          setGroup: action.setGroup,
         }
 
       case reducerCases.SET_IMAGE:
@@ -74,6 +74,16 @@ const reducer = (state, action) => {
         return{
           ...state,
           setUris: action.setUris,
+        }
+      case reducerCases.SET_GROUP_ID:
+        return{
+          ...state,
+          groupId: action.setGroupId,
+        }
+      case reducerCases.SET_UUID:
+        return{
+          ...state,
+          setUUID: action.setUUID,
         }
   
 

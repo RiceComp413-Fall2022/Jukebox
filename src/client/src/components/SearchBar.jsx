@@ -5,7 +5,7 @@ import { Input, List, Avatar } from 'antd';
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 import styled from "styled-components";
-
+import axios from "axios";
 
 import 'antd/dist/antd.css';
 
@@ -15,10 +15,29 @@ const { Search } = Input;
 
 
 export default function SearchBar(props){
-const [dispatch] = useStateProvider();
+const [{ setGroup }, dispatch] = useStateProvider();
 const [image, setImage] = useState([]);
 console.log(props.token)
 
+function parseURI(uri){
+  let final = []
+  let temp = ''
+  let canAdd = false
+  for(let itr = 0; itr < uri.length; itr++){
+      if (uri[itr-1] == ':' && uri[itr- 2] == 'k'){
+          canAdd = true
+      }
+
+      if(canAdd) {
+          temp += uri[itr]
+      }
+  }
+  final.push(temp)
+  
+  
+  return final
+
+}
 
   function getSearchResults(query){
 
@@ -50,11 +69,12 @@ console.log(props.token)
       tracks.items.forEach(element => {
         let artists = []
         element.artists.forEach(artist => artists.push(artist.name))
-        results.push( 
-          <div>    
-            <li key={element.uri}>
-              <List.Item.Meta
-                avatar={<Avatar shape='square' size='medium' src={element.album.images[0].url} />}
+        results.push(   
+          <div onClick={() => axios.get('http://127.0.0.1:5000/addSong?userid=fun&roomid=' + setGroup + '&uri=' + element.uri,
+          { withCredentials: false })}>
+            <li key={element.uri}  >
+              <List.Item.Meta 
+                avatar={<Avatar shape='square' size='large' src={element.album.images[0].url} />}
                 title={<p href="https://ant.design">{element.name}</p>}
                 description={artists.join(', ')}
               />
@@ -68,11 +88,10 @@ console.log(props.token)
   }
 // },[props.token, dispatch])
     let card;
-    function renderCards(){
-        console.log(image)
+    function renderCards(){     
         if(image.length > 0){
-          card =
-          <div onClick={() => console.log('song clicked')}>
+          card = 
+          <div>
             <Card>
               <List itemLayout="horizontal" >
                 {image}
@@ -90,7 +109,7 @@ console.log(props.token)
     return (
       <div className="App">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-        <div className="Search" style={{'marginTop' : '10%'}}>
+        <div className="Search" style={{'height' : '30px', 'width' : '300px', 'paddingTop' : '7px'}}>
           <Search
             placeholder="Artists or Tracks"
             enterButton="Search"
@@ -98,10 +117,9 @@ console.log(props.token)
             onChange={value => getSearchResults(value.target.value)}
             onSearch={value => console.log(value)}
           />
-          <div style={{'marginTop' : '5%'}}/>
-
+          <div/>
             {image.length != 0 && (
-              <div className="dataResult">
+              <div className="dataResult" style={{'paddingTop' : '5px'}}>
                 {card}
               </div>
             )}

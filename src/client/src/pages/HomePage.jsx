@@ -1,33 +1,51 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
+
+import { reducerCases } from "../utils/Constants";
+import { useStateProvider } from "../utils/StateProvider";
+import {Link} from 'react-router-dom';
 import LoginWrapper from "./LoginWrapper";
-// import { Route } from "react-router";
-import {BrowserRouter as Link} from 'react-router-dom';
+import PrimaryCreateRoom from "./PrimaryCreateRoom";
+import Spotify from "./Spotify";
 
 export default function HomePage() {
-  const routes  = [
-    {
-        path: "/login",
-        component: LoginWrapper
+  const [{ token, groupId }, dispatch] = useStateProvider();
+  useEffect(() => {
+
+  const hash = window.location.hash
+  .substring(1)
+  .split('&')
+  .reduce(function (initial, item) {
+    if (item) {
+      var parts = item.split('=');
+      initial[parts[0]] = decodeURIComponent(parts[1]);
     }
-  ]
-
-  function handlePrim(){
-    return(
-        <LoginWrapper/>
-    )
-  }
-  function handleCon(){
-
-  }
+    return initial;
+  }, {});
+  window.location.hash = '';
+    let token = hash;
+    if (token.access_token) {
+      dispatch({ type: reducerCases.SET_TOKEN, token });
+    }
+    
+    document.title = "Spotify";
+  }, [dispatch,token]);
+  console.log(token)
 
 
   return (
-    <Container>
-        <button onClick={handlePrim}>Primary</button>
-
-        <button onClick={handleCon}>Contributor</button>
-    </Container>
+      <div>
+          {token ? <PrimaryCreateRoom token = {token.access_token}/> : <Container>
+          <Link to='/primary'>
+            <button>
+                Primary
+            </button>
+          </Link>
+          <Link to='/joinCode'>
+            <button>Contributor</button>
+          </Link>
+        </Container>}
+      </div>
 
   );
 }

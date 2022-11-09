@@ -8,9 +8,8 @@ import styled from "styled-components";
 import { BsFonts } from "react-icons/bs";
 
 
-export default function RenderTrack(props){
+export default function RenderTrackCollab(props){
     const [{ setMultSongs, setName, setTime, setImage}, dispatch] = useStateProvider();
-    console.log("TOK@",  props.token)
     const [resp, setResp] = useState('')
     const [sName, setSName] = useState([])
     const [sImg, setSImg] = useState([])
@@ -29,47 +28,9 @@ export default function RenderTrack(props){
       );
     }
 
-    const playTrack = async (
-        id,
-        name,
-        artists,
-        image,
-        context_uri,
-        track_number
-    ) => {
-        const response = await axios.put(
-            `https://api.spotify.com/v1/me/player/play`,
-            {
-                context_uri,
-                offset: {
-                    position: track_number - 1,
-                },
-                position_ms: 0,
-            },
-            {
-                headers: {
-                    Authorization: "Bearer " + props.token,
-                    "Content-Type": "application/json",
-                    
-                },
-            }
-        );
-        if (response.status === 204) {
-            const currentPlaying = {
-            id,
-            name,
-            artists,
-            image,
-            };
-            dispatch({ type: reducerCases.SET_PLAYING, currentPlaying });
-            dispatch({ type: reducerCases.SET_PLAYER_STATE, playerState: true });
-        } else {
-            dispatch({ type: reducerCases.SET_PLAYER_STATE, playerState: true });
-        }
-    };
-
     useEffect(() =>{
         const getTracks = async() => {
+            console.log(props.uriVal)
             const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + props.uriVal,
             {
             headers: {
@@ -78,7 +39,8 @@ export default function RenderTrack(props){
             },
             })
             if (response.data != ""){
-                //console.log("we're in")
+                console.log(response.data.tracks[0].name, "rep")
+                console.log("we're in")
                 let tpArr = []
                 for(let i = 0; i < response.data.tracks.length; i ++) {
                     const currentPlaying = {
@@ -102,16 +64,7 @@ export default function RenderTrack(props){
                             <div className="tracks">
                                 <div className="row"
                                      key={item.id}
-                                     onClick={() =>
-                                        playTrack(
-                                            item.id,
-                                            item.name,
-                                            item.artists,
-                                            item.image,
-                                            item.context_uri,
-                                            item.track_number
-                                        )
-                                     }
+                                     
                                 >
                                     <div className="col">
                                         <span> {index + 1}</span>
@@ -143,18 +96,6 @@ export default function RenderTrack(props){
                     dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
                 }
 
-                // let tempSName = []
-                // let tempSImg = []
-                // let tempSTime = []
-                // for(let i = 0; i < setMultSongs.data.tracks.length; i ++){
-                //     tempSName.push(setMultSongs.data.tracks[i].name);
-                //     tempSImg.push(setMultSongs.data.tracks[i].album.images[2].url)
-                //     tempSTime.push(setMultSongs.data.tracks[i].duration_ms)
-                // }
-    
-                // dispatch({ type: reducerCases.SET_NAME, setName: tempSName });
-                // dispatch({ type: reducerCases.SET_IMAGE, setImage: tempSImg });
-                // dispatch({ type: reducerCases.SET_TIME, setTime: tempSTime });
             } 
         } 
 
