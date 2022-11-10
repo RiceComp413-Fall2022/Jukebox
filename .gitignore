@@ -4,6 +4,5 @@ __pycache*
 */.cache
 .vscode
 src/client/node_modules/
-
 **/package-lock*
 package-lock*
