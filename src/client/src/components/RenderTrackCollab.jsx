@@ -3,15 +3,15 @@ import React, { useEffect, useState, useRef } from "react";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 import { AiFillClockCircle } from "react-icons/ai";
+import { blue} from '@mui/material/colors';
 
 import styled from "styled-components";
 import { BsFonts } from "react-icons/bs";
-import remove_song from "./removeSong"
+import RemoveButton from "./RemoveSong"
 
 
 export default function RenderTrackCollab(props){
     const [{ setMultSongs, setName, setTime, setImage, setGroup}, dispatch] = useStateProvider();
-    const [userId, setUserId] = useState(undefined);
     const [sName, setSName] = useState([])
     const [resp, setResp] = useState('')
     const [sImg, setSImg] = useState([])
@@ -34,13 +34,19 @@ export default function RenderTrackCollab(props){
         const getTracks = async() => {
             console.log(props.uriVal)
             const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + props.uriVal,
-            {
-            headers: {
-                Authorization: "Bearer " +  props.token,
-                "Content-Type" : "application/json"
-            },
-            })
-            if (response.data != ""){
+                {
+                    headers: {
+                        Authorization: "Bearer " +  props.token,
+                        "Content-Type" : "application/json"
+                    },
+                }
+            ).catch(function (error) {
+                if (error.response.status === 400) {
+                    let renderObj = <div></div>
+                    dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
+                }
+            });
+            if (response != undefined && response.data != ""){
                 console.log(response.data.tracks[0].name, "rep")
                 console.log("we're in")
                 let tpArr = []
@@ -84,9 +90,9 @@ export default function RenderTrackCollab(props){
                                         <span>{item.album}</span>
                                     </div>
                                     <div className="col">
-                                        {/* <span>{changeTime(item.duration)}</span> */}
-                                        <span> <button onClick={remove_song(userId, setGroup, props.uriVal)}> Remove Song </button></span>
-                                    </div>    
+                                        <span> {changeTime(item.duration)} </span>
+                                    </div>
+                                    <RemoveButton color={blue[200]} uri={"spotify:track:" + item.id} roomId={setGroup}/>
                                 </div>
                             </div>
                         </SongPlayer> 
@@ -99,9 +105,8 @@ export default function RenderTrackCollab(props){
                     dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
                 }
 
-            } 
-        } 
-
+            }  
+        }
             
         getTracks()
 
@@ -145,14 +150,14 @@ const ListWrapper = styled.div`
 
      .header-row {
         display: grid;
-        grid-template-columns: 0.3fr 3fr 3fr 0.1fr;
+        grid-template-columns: 0.3fr 3fr 3fr 0.1fr .5fr;
         margin: 1rem 0 0 0;
         color: white;
         position: sticky;
         top: 15vh;
         padding: 1rem 3rem;
         transition: 0.3s ease-in-out;
-        background-color: ${({ headerBackground }) =>
+        backgroundcolor: ${({ headerBackground }) =>
           headerBackground ? "#000000dc" : "none"};
     }
 `
@@ -166,7 +171,7 @@ const SongPlayer = styled.div`
         .row {
             padding: 0.5rem 1rem;
             display: grid;
-            grid-template-columns: 0.3fr 3.1fr 3fr 0.1fr;
+            grid-template-columns: 0.3fr 3.1fr 3fr 0.1fr .5fr;
             &:hover {
             background-color: rgba(0, 0, 0, 0.7);
         }
@@ -186,6 +191,17 @@ const SongPlayer = styled.div`
             display: flex;
             flex-direction: column;
           }
+        }
+        .remove {
+            display: flex;
+            align-items: center;
+            color: #dddcdc;
+            img {
+                height: 50px;
+                width: 50px;
+            }
+            margin-left: 2em;
+            margin-right: auto;
         }
       }
     }
