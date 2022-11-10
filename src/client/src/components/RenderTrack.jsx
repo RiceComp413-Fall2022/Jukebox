@@ -3,13 +3,14 @@ import React, { useEffect, useState, useRef } from "react";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 import { AiFillClockCircle } from "react-icons/ai";
+import { blue} from '@mui/material/colors';
 
 import styled from "styled-components";
 import { BsFonts } from "react-icons/bs";
-
+import RemoveButton from "./RemoveSong"
 
 export default function RenderTrack(props){
-    const [{ setMultSongs, setName, setTime, setImage}, dispatch] = useStateProvider();
+    const [{ setMultSongs, setName, setTime, setImage, setGroup}, dispatch] = useStateProvider();
     console.log("TOK@",  props.token)
     const [resp, setResp] = useState('')
     const [sName, setSName] = useState([])
@@ -72,12 +73,17 @@ export default function RenderTrack(props){
         const getTracks = async() => {
             const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + props.uriVal,
             {
-            headers: {
-                Authorization: "Bearer " +  props.token,
-                "Content-Type" : "application/json"
-            },
-            })
-            if (response.data != ""){
+                headers: {
+                    Authorization: "Bearer " +  props.token,
+                    "Content-Type" : "application/json"
+                }
+            }).catch(function (error) {
+                if (error.response.status === 400) {
+                    let renderObj = <div></div>
+                    dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
+                }
+            });
+            if (response != undefined && response.data != ""){
                 //console.log("we're in")
                 let tpArr = []
                 for(let i = 0; i < response.data.tracks.length; i ++) {
@@ -131,6 +137,7 @@ export default function RenderTrack(props){
                                     <div className="col">
                                         <span>{changeTime(item.duration)}</span>
                                     </div>    
+                                    <RemoveButton color={blue[200]} uri={"spotify:track:" + item.id} roomId={setGroup}/>
                                 </div>
                             </div>
                         </SongPlayer> 
