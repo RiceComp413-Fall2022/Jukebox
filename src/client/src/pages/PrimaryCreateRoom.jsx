@@ -1,23 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { reducerCases } from "../utils/Constants";
-import { useStateProvider } from "../utils/StateProvider";
 import { Link } from 'react-router-dom';
 import axios from "axios";
 
+import { reducerCases } from "../utils/Constants";
+import { useStateProvider } from "../utils/StateProvider";
+import genUserId from "../components/UserID";
 
 export default function PrimaryCreateRoom(props) {
   const [{  token, setGroup }, dispatch] = useStateProvider();
   const inputRef = useRef(null);
+  const userId = genUserId(); // get userid for the primary user  
+
   function handleClick() {
     dispatch({
         type: reducerCases.SET_GROUP,
         setGroup: inputRef.current.value,
       });
-    // console.log(token)
-    // console.log(inputRef.current.value);
+    
+    // update global userid value 
+    dispatch({
+        type: reducerCases.SET_UUIDS,
+        setGroup: userId,
+      });
 
-    axios.get('http://127.0.0.1:5000/songQueueCreate?userid=' + 123 + '&roomid=' + inputRef.current.value,
+    axios.get('http://127.0.0.1:5000/songQueueCreate?userid=' + userId + '&roomid=' + setGroup,
       { withCredentials: false });
 
   }
