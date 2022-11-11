@@ -11,7 +11,7 @@ import RemoveButton from "./RemoveSong"
 
 
 export default function RenderTrackCollab(props){
-    const [{ setMultSongs, setName, setTime, setImage, setGroup}, dispatch] = useStateProvider();
+    const [{ setMultSongs, setName, setTime, setImage, setGroup, setUUID}, dispatch] = useStateProvider();
     const [sName, setSName] = useState([])
     const [resp, setResp] = useState('')
     const [sImg, setSImg] = useState([])
@@ -92,7 +92,7 @@ export default function RenderTrackCollab(props){
                                     <div className="col">
                                         <span> {changeTime(item.duration)} </span>
                                     </div>
-                                    <RemoveButton color={blue[200]} uri={"spotify:track:" + item.id} roomId={setGroup}/>
+                                    <RemoveButton color={blue[200]} userId={setUUID} uri={"spotify:track:" + item.id} roomId={setGroup}/>
                                 </div>
                             </div>
                         </SongPlayer> 

@@ -15,7 +15,7 @@ const { Search } = Input;
 
 
 export default function SearchBar(props){
-const [{ setGroup }, dispatch] = useStateProvider();
+const [{ setGroup, setUUID }, dispatch] = useStateProvider();
 const [image, setImage] = useState([]);
 console.log(props.token)
 
@@ -70,7 +70,7 @@ function parseURI(uri){
         let artists = []
         element.artists.forEach(artist => artists.push(artist.name))
         results.push(   
-          <div onClick={() => axios.get('http://127.0.0.1:5000/addSong?userid=fun&roomid=' + setGroup + '&uri=' + element.uri,
+          <div onClick={() => axios.get('/addSong?userid=' + setUUID + '&roomid=' + setGroup + '&uri=' + element.uri,
           { withCredentials: false })}>
             <li key={element.uri}  >
               <List.Item.Meta 

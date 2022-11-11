@@ -32,7 +32,7 @@ class RemoveButton extends React.Component
 		// send get request to backend to remove song
 
 		/** USER ID IS HARDCODED RIGHT NOW BECAUSE WE DONT ACTUALLY HAVE USER IDs SET UP */
-		axios.get('/removeSong?userid=101&roomid=' + this.props.roomId + '&uri=' + this.props.uri)
+		axios.get('/removeSong?userid=' + this.props.userId + '&roomid=' + this.props.roomId + '&uri=' + this.props.uri)
 		.catch((error) => {
 			if (error.response.status === 400) {
 				// could not remove song, need to notify user
