@@ -73,7 +73,7 @@ export default function RenderTrack(props){
             },
             {
                 headers: {
-                    Authorization: "Bearer " + props.token,
+                    Authorization: "Bearer " + token.access_token,
                     "Content-Type": "application/json",
                     
                 },
@@ -192,7 +192,7 @@ export default function RenderTrack(props){
             
         getTracks()
 
-    }, [props.token,setMultSongs, dispatch]); 
+    }, [token.access_token,setMultSongs, dispatch]); 
     
 
         //console.log(setTime)
