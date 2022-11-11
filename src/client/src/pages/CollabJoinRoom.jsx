@@ -19,15 +19,15 @@ export default function CollabJoinRoom(props) {
       // when room is joined also set the userid for this user
       dispatch({
           type: reducerCases.SET_UUID,
-          setGroup: userId,
+          setUUID: userId,
         });  
     }
-    useEffect(() => {
-      // dispatch({ type: reducerCases.SET_GROUP_ID, groupId: inputRef.current.value });   
-      console.log("groupID", setGroup)
-      console.log("userID", setUUID);
+    // useEffect(() => {
+    //   // dispatch({ type: reducerCases.SET_GROUP_ID, groupId: inputRef.current.value });   
+    //   console.log("groupID", setGroup)
+    //   console.log("userID", setUUID);
   
-    }, [dispatch, inputRef, setGroup]);
+    // }, [dispatch, inputRef, setGroup, setUUID]);
   
 
   return (

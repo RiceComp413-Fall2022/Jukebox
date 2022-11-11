@@ -21,20 +21,20 @@ export default function PrimaryCreateRoom(props) {
     // update global userid value 
     dispatch({
         type: reducerCases.SET_UUIDS,
-        setGroup: userId,
+        setUUID: userId,
       });
 
     axios.get('http://127.0.0.1:5000/songQueueCreate?userid=' + userId + '&roomid=' + setGroup,
       { withCredentials: false });
 
   }
-  useEffect(() => {
-    // dispatch({ type: reducerCases.SET_GROUP_ID, groupId: inputRef.current.value });   
-    console.log("groupID", setGroup)
+  // useEffect(() => {
+  //   // dispatch({ type: reducerCases.SET_GROUP_ID, groupId: inputRef.current.value });   
+  //   console.log("groupID", setGroup)
 
-  }, [dispatch, inputRef, setGroup]);
+  // }, [dispatch, inputRef, setGroup]);
   
-  console.log(setGroup)
+  // console.log(setGroup)
 
   return (
     <Container>
