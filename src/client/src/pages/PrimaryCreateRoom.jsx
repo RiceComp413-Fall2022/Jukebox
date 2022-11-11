@@ -17,7 +17,7 @@ export default function PrimaryCreateRoom(props) {
     // console.log(token)
     // console.log(inputRef.current.value);
 
-    axios.get('http://127.0.0.1:5000/songQueueCreate?userid=' + 123 + '&roomid=' + setGroup,
+    axios.get('http://127.0.0.1:5000/songQueueCreate?userid=' + 123 + '&roomid=' + inputRef.current.value,
       { withCredentials: false });
 
   }

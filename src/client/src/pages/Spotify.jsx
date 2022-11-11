@@ -10,9 +10,9 @@ import RenderTrack from "../components/RenderTrack";
 import { data, event } from "jquery";
 
 export default function Spotify(props) {
-  const [{ token, setImage, setGroup }, dispatch, setUris] = useStateProvider();
-  console.log(token, "SPORT")
+  const [{ token, setMultSongs, setGroup }, dispatch] = useStateProvider();
   const [uriList, setUriList] = useStateProvider(undefined);
+  const [temp, setTemp] = useState(0);
   const [navBackground, setNavBackground] = useState(false);
   const [headerBackground, setHeaderBackground] = useState(false);
   const bodyRef = useRef();
@@ -70,7 +70,7 @@ export default function Spotify(props) {
       dispatch({ type: reducerCases.SET_USER, userInfo });
     };
     getUserInfo();
-  }, [dispatch, props.token]);
+  }, [dispatch, token.access_token]);
 
   useEffect(() => {
     const getPlaybackState = async () => {
@@ -86,28 +86,35 @@ export default function Spotify(props) {
       });
     };
     getPlaybackState();
-  }, [dispatch, props.token]);
-  
+  }, [dispatch, token.access_token]);
+
+
+
   useEffect(() => {
     // console.log('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup)
     const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup,
       { withCredentials: false });
-    
-    sse.addEventListener('song_queue', handleReceiveMessage)
 
-
-    function getRealtimeData(dataV)  {
-      // process the data here,
-      // then pass it to state to be rendered
-      console.log(dataV,"dadat2")
-      dispatch({ type: reducerCases.SET_IMAGE, setImage: dataV})
-
+    function handleReceiveMessage(event) {
+        console.log('message receieved')
+        setTemp(event.data)
     }
+    
+    sse.addEventListener('song_queue', (e) => {dispatch({type: reducerCases.SET_MULT_SONGS, setMultSongs: e.data}); console.log(setMultSongs)});
 
-    sse.onmessage = (event) => {
-      //console.log('message received')
-      getRealtimeData(event.data)
-    };
+
+    // function getRealtimeData(dataV)  {
+    //   // process the data here,
+    //   // then pass it to state to be rendered
+    //   console.log(dataV,"dadat2")
+    //   dispatch({ type: reducerCases.SET_IMAGE, setImage: dataV})
+
+    // }
+
+    // sse.onmessage = (event) => {
+    //   //console.log('message received')
+    //   getRealtimeData(event.data)
+    // };
     
 
     sse.onopen = (e) => {
@@ -125,12 +132,9 @@ export default function Spotify(props) {
     };
 
     
-  }, []);
+  }, [setGroup, setMultSongs, dispatch]);
 
-  const handleReceiveMessage = (event) => {
-    console.log('message receieved')
-    dispatch({ type: reducerCases.SET_IMAGE, setImage: event.data})
-  }
+
 
   return (
     <Container>
@@ -139,12 +143,12 @@ export default function Spotify(props) {
         <Navbar token = {token.access_token} navBackground={navBackground} />
         
         <div className="body__contents">
-          <RenderTrack headerBackground={headerBackground} token={token.access_token} uriVal={parseURIList(setImage)}/>
+          <RenderTrack headerBackground={headerBackground} token={token.access_token} uriVal={parseURIList(temp)}/>
         </div>
       </div>
     </div>
     <div className="spotify__footer">
-      <Footer token = {token.access_token} uriVal={setImage}/>
+      <Footer token = {token.access_token} uriVal={temp}/>
     </div>
   </Container>
   );
