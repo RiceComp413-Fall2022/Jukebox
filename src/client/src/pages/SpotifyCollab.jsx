@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import styled from "styled-components";
 import FooterCollab from "../components/FooterCollab";
 import NavbarCollab from "../components/NavbarCollab"; 
-import $ from 'jquery'; 
+import $, { event } from 'jquery'; 
 import { reducerCases } from "../utils/Constants";
 
 import { useStateProvider } from "../utils/StateProvider";
@@ -13,7 +13,7 @@ import axios from "axios";
 const qs = require('qs');
 
 export default function SpotifyCollab(props) {
-  const [{ token, setImage, setGroup}, dispatch, setUris] = useStateProvider();
+  const [{ token, setImage, setGroup, setMultSongs}, dispatch] = useStateProvider();
   const [uriList, setUriList] = useStateProvider(undefined);
   const [navBackground, setNavBackground] = useState(false);
   const [tok, setTok] = useState(false);
@@ -82,27 +82,32 @@ export default function SpotifyCollab(props) {
       return final
     }
   }
-
+  
   useEffect(() => {
     // console.log('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup)
     const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup,
       { withCredentials: false });
+
+    // function handleReceiveMessage(event) {
+    //     console.log('message receieved')
+    //     setTemp(event.data)
+    // }
     
-    sse.addEventListener('song_queue', handleReceiveMessage)
+    sse.addEventListener('song_queue', (e) => {dispatch({type: reducerCases.SET_MULT_SONGS, setMultSongs: e.data})});
 
 
-    function getRealtimeData(dataV)  {
-      // process the data here,
-      // then pass it to state to be rendered
-      console.log(dataV,"dadat2")
-      dispatch({ type: reducerCases.SET_IMAGE, setImage: dataV})
+    // function getRealtimeData(dataV)  {
+    //   // process the data here,
+    //   // then pass it to state to be rendered
+    //   console.log(dataV,"dadat2")
+    //   dispatch({ type: reducerCases.SET_IMAGE, setImage: dataV})
 
-    }
+    // }
 
-    sse.onmessage = (event) => {
-      //console.log('message received')
-      getRealtimeData(event.data)
-    };
+    // sse.onmessage = (event) => {
+    //   //console.log('message received')
+    //   getRealtimeData(event.data)
+    // };
     
 
     sse.onopen = (e) => {
@@ -120,12 +125,9 @@ export default function SpotifyCollab(props) {
     };
 
     
-  }, []);
+  }, [setGroup, setMultSongs, dispatch]);
 
-  const handleReceiveMessage = (event) => {
-    console.log('message receieved')
-    dispatch({ type: reducerCases.SET_IMAGE, setImage: event.data})
-  }
+
 
   return (
   <Container>
@@ -134,12 +136,12 @@ export default function SpotifyCollab(props) {
         <NavbarCollab token = {tok} navBackground={navBackground} />
         
         <div className="body__contents">
-          <RenderTrackCollab headerBackground={headerBackground} token={tok} uriVal={parseURIList(setImage)}/>
+          <RenderTrackCollab headerBackground={headerBackground} token={tok}/>
         </div>
       </div>
     </div>
     <div className="spotify__footer">
-      <FooterCollab token = {tok} uriVal={setImage}/>
+      <FooterCollab token = {tok}/>
     </div>
   </Container>
   );

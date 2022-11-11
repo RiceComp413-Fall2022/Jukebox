@@ -11,14 +11,38 @@ import RemoveButton from "./RemoveSong"
 
 
 export default function RenderTrackCollab(props){
-    const [{ setMultSongs, setName, setTime, setImage, setGroup}, dispatch] = useStateProvider();
+    const [{ setMultSongs, setName, setTime, setImage, setGroup, setUUID}, dispatch] = useStateProvider();
     const [sName, setSName] = useState([])
     const [resp, setResp] = useState('')
     const [sImg, setSImg] = useState([])
     const [sArtist, setSArtist]  = useState([])
     const [sTime, setSTime] = useState([])
-    const tempTracks = "7ouMYWpwJ422jRcDASZB7P,4VqPOruhp5EdPBeR92t6lQ,2takcwOaAZWiXQijPHIx7B";
+    const tempTracks = "7ouMYWpwJ4s22jRcDASZB7P,4VqPOruhp5EdPBeR92t6lQ,2takcwOaAZWiXQijPHIx7B";
     const didMount = useRef(true);
+    function parseURIList(uris){
+        let parseVal2 = []
+        //console.log(uris)
+        if (uris) {
+          parseVal2 = JSON.parse(uris).uris
+          let final = []
+          for (const track of parseVal2){
+              let temp = ''
+              let canAdd = false
+              for(let itr = 0; itr < track.length; itr++){
+                  if (track[itr-1] == ':' && track[itr- 2] == 'k'){
+                      canAdd = true
+                  }
+      
+                  if(canAdd) {
+                      temp += track[itr]
+                  }
+              }
+              final.push(temp)
+          }      
+          //console.log(final)
+          return final
+        }
+      }
 
     function changeTime(millis) {
         var minutes = Math.floor(millis / 60000);
@@ -33,7 +57,7 @@ export default function RenderTrackCollab(props){
     useEffect(() =>{
         const getTracks = async() => {
             console.log(props.uriVal)
-            const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + props.uriVal,
+            const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + parseURIList(setMultSongs),
                 {
                     headers: {
                         Authorization: "Bearer " +  props.token,
@@ -63,7 +87,6 @@ export default function RenderTrackCollab(props){
                     };
                     tpArr.push(currentPlaying);
                 }
-                dispatch({ type: reducerCases.SET_MULT_SONGS, setMultSongs: tpArr })
                 if(tpArr.length != 0){
 
                     let renderObj = tpArr.map((item, index) =>
@@ -92,7 +115,7 @@ export default function RenderTrackCollab(props){
                                     <div className="col">
                                         <span> {changeTime(item.duration)} </span>
                                     </div>
-                                    <RemoveButton color={blue[200]} uri={"spotify:track:" + item.id} roomId={setGroup}/>
+                                    <RemoveButton color={blue[200]} userId={setUUID} uri={"spotify:track:" + item.id} roomId={setGroup}/>
                                 </div>
                             </div>
                         </SongPlayer> 
@@ -110,7 +133,7 @@ export default function RenderTrackCollab(props){
             
         getTracks()
 
-    }, [props.token, dispatch, props.uriVal]); 
+    }, [props.token, dispatch, setMultSongs]); 
     
 
         //console.log(setTime)

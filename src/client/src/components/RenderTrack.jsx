@@ -19,6 +19,30 @@ export default function RenderTrack(props){
     const [sTime, setSTime] = useState([])
     const tempTracks = "7ouMYWpwJ422jRcDASZB7P,4VqPOruhp5EdPBeR92t6lQ,2takcwOaAZWiXQijPHIx7B";
     const didMount = useRef(true);
+    function parseURIList(uris){
+        let parseVal2 = []
+        //console.log(uris)
+        if (uris) {
+          parseVal2 = JSON.parse(uris).uris
+          let final = []
+          for (const track of parseVal2){
+              let temp = ''
+              let canAdd = false
+              for(let itr = 0; itr < track.length; itr++){
+                  if (track[itr-1] == ':' && track[itr- 2] == 'k'){
+                      canAdd = true
+                  }
+      
+                  if(canAdd) {
+                      temp += track[itr]
+                  }
+              }
+              final.push(temp)
+          }      
+          //console.log(final)
+          return final
+        }
+      }
 
     function changeTime(millis) {
         var minutes = Math.floor(millis / 60000);
@@ -71,7 +95,8 @@ export default function RenderTrack(props){
 
     useEffect(() =>{
         const getTracks = async() => {
-            const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + props.uriVal,
+            console.log(setMultSongs, "SSS")
+            const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + parseURIList(setMultSongs),
             {
                 headers: {
                     Authorization: "Bearer " +  props.token,
@@ -99,7 +124,6 @@ export default function RenderTrack(props){
                     };
                     tpArr.push(currentPlaying);
                 }
-                dispatch({ type: reducerCases.SET_MULT_SONGS, setMultSongs: tpArr })
                 if(tpArr.length != 0){
 
                     let renderObj = tpArr.map((item, index) =>
@@ -168,7 +192,7 @@ export default function RenderTrack(props){
             
         getTracks()
 
-    }, [props.token, dispatch, props.uriVal]); 
+    }, [props.token,setMultSongs, dispatch]); 
     
 
         //console.log(setTime)
