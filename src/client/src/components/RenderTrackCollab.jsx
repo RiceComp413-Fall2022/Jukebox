@@ -3,15 +3,14 @@ import React, { useEffect, useState, useRef } from "react";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 import { AiFillClockCircle } from "react-icons/ai";
-import { blue} from '@mui/material/colors';
+import { blue } from '@mui/material/colors';
 
 import styled from "styled-components";
-import { BsFonts } from "react-icons/bs";
 import RemoveButton from "./RemoveSong"
 
 
 export default function RenderTrackCollab(props){
-    const [{ setMultSongs, setName, setTime, setImage, setGroup, setUUID}, dispatch] = useStateProvider();
+    const [{ setMultSongs, setTime, setGroup, token}, dispatch] = useStateProvider();
     const [sName, setSName] = useState([])
     const [resp, setResp] = useState('')
     const [sImg, setSImg] = useState([])
@@ -56,11 +55,10 @@ export default function RenderTrackCollab(props){
 
     useEffect(() =>{
         const getTracks = async() => {
-            console.log(props.uriVal)
             const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + parseURIList(setMultSongs),
                 {
                     headers: {
-                        Authorization: "Bearer " +  props.token,
+                        Authorization: "Bearer " +  token.access_token,
                         "Content-Type" : "application/json"
                     },
                 }
@@ -115,7 +113,7 @@ export default function RenderTrackCollab(props){
                                     <div className="col">
                                         <span> {changeTime(item.duration)} </span>
                                     </div>
-                                    <RemoveButton color={blue[200]} userId={setUUID} uri={"spotify:track:" + item.id} roomId={setGroup}/>
+                                    <RemoveButton color={blue[200]} uri={"spotify:track:" + item.id} roomId={setGroup}/>
                                 </div>
                             </div>
                         </SongPlayer> 
@@ -133,7 +131,7 @@ export default function RenderTrackCollab(props){
             
         getTracks()
 
-    }, [props.token, dispatch, setMultSongs]); 
+    }, [token.access_token, dispatch, setMultSongs]); 
     
 
         //console.log(setTime)

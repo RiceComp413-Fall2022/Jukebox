@@ -9,7 +9,7 @@ import { BsFonts } from "react-icons/bs";
 
 
 export default function RenderTrack(props){
-    const [{setTime, setMultSongs}, dispatch] = useStateProvider();
+    const [{setTime, setMultSongs, token}, dispatch] = useStateProvider();
     // console.log("TOK@",  props.token)
     const [resp, setResp] = useState('')
     const [sName, setSName] = useState([])
@@ -72,7 +72,7 @@ export default function RenderTrack(props){
             },
             {
                 headers: {
-                    Authorization: "Bearer " + props.token,
+                    Authorization: "Bearer " + token.access_token,
                     "Content-Type": "application/json",
                     
                 },
@@ -185,7 +185,7 @@ export default function RenderTrack(props){
             
         getTracks()
 
-    }, [props.token,setMultSongs, dispatch]); 
+    }, [token.access_token,setMultSongs, dispatch]); 
     
 
         //console.log(setTime)
