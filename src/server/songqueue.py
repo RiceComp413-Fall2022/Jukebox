@@ -93,6 +93,7 @@ class SongQueue:
         """Remove a song from the queue by its identifier."""
         with self.lock:
             if uri not in self.entries_by_song:
+                print("here")
                 return False
             entry = self.entries_by_song[uri]
             is_owner = (user_id == entry[2].user_id)

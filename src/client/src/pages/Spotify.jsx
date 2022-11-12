@@ -1,17 +1,16 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import axios from "axios";
+
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar"; 
-import axios from "axios";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
-import PlayerControls from "../components/PlayerControls";
 import RenderTrack from "../components/RenderTrack";
-import { data, event } from "jquery";
+import parseURIList from "../utils/Util";
 
-export default function Spotify(props) {
+export default function Spotify() {
   const [{ token, setMultSongs, setGroup }, dispatch] = useStateProvider();
-  const [uriList, setUriList] = useStateProvider(undefined);
   const [temp, setTemp] = useState(0);
   const [navBackground, setNavBackground] = useState(false);
   const [headerBackground, setHeaderBackground] = useState(false);
@@ -24,36 +23,7 @@ export default function Spotify(props) {
       ? setHeaderBackground(true)
       : setHeaderBackground(false);
   };
-  const single_uri ='{"uris": ["spotify:track:2HScVhNGt7DltJYrph09Ee"]}';
-  var uriVals2 = '';
-  const uriVal = '{"uris": ["spotify:track:63dLm0BUpepXeFIfZ0OKEL", "spotify:track:2LO5hQnz5rEaRwkGUvZcHN", "spotify:track:6IpvkngH89cA3hhPC84Leg"]}';
-  const urisT = ["2LO5hQnz5rEaRwkGUvZcHN","6IpvkngH89cA3hhPC84Leg", "63dLm0BUpepXeFIfZ0OKEL"]
-
-  function parseURIList(uris){
-    let parseVal2 = []
-    //console.log(uris)
-    if (uris) {
-      parseVal2 = JSON.parse(uris).uris
-      let final = []
-      for (const track of parseVal2){
-          let temp = ''
-          let canAdd = false
-          for(let itr = 0; itr < track.length; itr++){
-              if (track[itr-1] == ':' && track[itr- 2] == 'k'){
-                  canAdd = true
-              }
-  
-              if(canAdd) {
-                  temp += track[itr]
-              }
-          }
-          final.push(temp)
-      }      
-      //console.log(final)
-      return final
-    }
-  }
-
+ 
   useEffect(() => {
     const getUserInfo = async () => {
       const { data } = await axios.get("https://api.spotify.com/v1/me", {
@@ -88,10 +58,7 @@ export default function Spotify(props) {
     getPlaybackState();
   }, [dispatch, token.access_token]);
 
-
-
   useEffect(() => {
-    // console.log('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup)
     const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup,
       { withCredentials: false });
 
@@ -100,22 +67,7 @@ export default function Spotify(props) {
         setTemp(event.data)
     }
     
-    sse.addEventListener('song_queue', (e) => {dispatch({type: reducerCases.SET_MULT_SONGS, setMultSongs: e.data}); console.log(setMultSongs)});
-
-
-    // function getRealtimeData(dataV)  {
-    //   // process the data here,
-    //   // then pass it to state to be rendered
-    //   console.log(dataV,"dadat2")
-    //   dispatch({ type: reducerCases.SET_IMAGE, setImage: dataV})
-
-    // }
-
-    // sse.onmessage = (event) => {
-    //   //console.log('message received')
-    //   getRealtimeData(event.data)
-    // };
-    
+    sse.addEventListener('song_queue', (e) => {dispatch({type: reducerCases.SET_MULT_SONGS, setMultSongs: e.data}); console.log('Mult Songs: ' + setMultSongs)});
 
     sse.onopen = (e) => {
       console.log('open')
@@ -123,18 +75,15 @@ export default function Spotify(props) {
 
     sse.onerror = () => {
       // error log here 
-      console.log('bricked')
+      console.error('Bricked; Could not listen to room ' + setGroup);
       
       sse.close();
     }
+
     return () => {
       sse.close();
-    };
-
-    
-  }, [setGroup, setMultSongs, dispatch]);
-
-
+    }; 
+  }, [setGroup]);
 
   return (
     <Container>
