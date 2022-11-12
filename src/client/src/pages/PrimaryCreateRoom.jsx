@@ -8,7 +8,7 @@ import { useStateProvider } from "../utils/StateProvider";
 import genUserId from "../components/UserID";
 
 export default function PrimaryCreateRoom(props) {
-  const [{  token, setGroup }, dispatch] = useStateProvider();
+  const [{}, dispatch] = useStateProvider();
   const inputRef = useRef(null);
   const userId = genUserId(); // get userid for the primary user  
 
@@ -24,7 +24,7 @@ export default function PrimaryCreateRoom(props) {
         setUUID: userId,
       });
 
-    axios.get('http://127.0.0.1:5000/songQueueCreate?userid=' + userId + '&roomid=' + setGroup,
+    axios.get('http://127.0.0.1:5000/songQueueCreate?userid=' + userId + '&roomid=' + inputRef.current.value,
       { withCredentials: false });
 
   }

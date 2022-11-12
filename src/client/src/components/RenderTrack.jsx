@@ -10,7 +10,7 @@ import { BsFonts } from "react-icons/bs";
 import RemoveButton from "./RemoveSong"
 
 export default function RenderTrack(props){
-    const [{ setMultSongs, setName, setTime, setImage, setGroup}, dispatch] = useStateProvider();
+    const [{setTime, setMultSongs, token, setGroup}, dispatch] = useStateProvider();
     console.log("TOK@",  props.token)
     const [resp, setResp] = useState('')
     const [sName, setSName] = useState([])
