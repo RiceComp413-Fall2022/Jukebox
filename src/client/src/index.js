@@ -14,7 +14,6 @@ import {
 } from "react-router-dom";
 import SpotifyCollab from './pages/SpotifyCollab';
 import CollabJoinRoom from './pages/CollabJoinRoom';
-import PrimaryCreateRoom from './pages/PrimaryCreateRoom';
 import axios from 'axios';
 
 axios.defaults.baseURL = 'http://localhost:5000/';

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import { Link } from 'react-router-dom';
 import axios from "axios";
@@ -7,46 +7,41 @@ import { reducerCases } from "../utils/Constants";
 import { useStateProvider } from "../utils/StateProvider";
 import genUserId from "../components/UserID";
 
-export default function PrimaryCreateRoom(props) {
+export default function PrimaryCreateRoom() {
   const [{}, dispatch] = useStateProvider();
   const inputRef = useRef(null);
   const userId = genUserId(); // get userid for the primary user  
 
   function handleClick() {
+
     dispatch({
-        type: reducerCases.SET_GROUP,
-        setGroup: inputRef.current.value,
-      });
+      type: reducerCases.SET_GROUP,
+      setGroup: inputRef.current.value,
+    });
     
     // update global userid value 
     dispatch({
-        type: reducerCases.SET_UUIDS,
-        setUUID: userId,
-      });
+      type: reducerCases.SET_UUID,
+      setUUID: userId,
+    });
 
     axios.get('http://127.0.0.1:5000/songQueueCreate?userid=' + userId + '&roomid=' + inputRef.current.value,
       { withCredentials: false });
 
   }
-  // useEffect(() => {
-  //   // dispatch({ type: reducerCases.SET_GROUP_ID, groupId: inputRef.current.value });   
-  //   console.log("groupID", setGroup)
-
-  // }, [dispatch, inputRef, setGroup]);
-  
-  // console.log(setGroup)
 
   return (
     <Container>
         <Input ref = {inputRef} placeholder="Enter Group ID here" />
-        <button onClick={handleClick}>            
-            <Link to={{pathname:'/queueMain'}}>
+          <Link to={{pathname:'/queueMain'}}>
+            <button onClick={handleClick}>            
               Create Room
-            </Link>
-        </button>
+            </button>
+          </Link>
     </Container>
   );
 }
+
 const Input = styled.input.attrs(props => ({
     // we can define static props
     type: "text",
@@ -63,6 +58,7 @@ const Input = styled.input.attrs(props => ({
     margin: ${props => props.size};
     padding: ${props => props.size};
   `;
+
 const Container = styled.div`
   display: flex;
   justify-content: center;

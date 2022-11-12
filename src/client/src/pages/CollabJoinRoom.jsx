@@ -1,43 +1,36 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import { reducerCases } from "../utils/Constants";
 import { useStateProvider } from "../utils/StateProvider";
-import {BrowserRouter as Router, Route, Link, Routes} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import genUserId from "../components/UserID";
 
 export default function CollabJoinRoom(props) {
-    const [{  token, setGroup, setUUID }, dispatch] = useStateProvider();
-    const inputRef = useRef(null);
-    const userId = genUserId(); // gen userid for the user  
+  const [{}, dispatch] = useStateProvider();
+  const inputRef = useRef(null);
+  const userId = genUserId(); // gen userid for the user  
 
-    function handleClick() {
-      dispatch({
-          type: reducerCases.SET_GROUP,
-          setGroup: inputRef.current.value,
-        });
-      
-      // when room is joined also set the userid for this user
-      dispatch({
-          type: reducerCases.SET_UUID,
-          setUUID: userId,
-        });  
-    }
-    // useEffect(() => {
-    //   // dispatch({ type: reducerCases.SET_GROUP_ID, groupId: inputRef.current.value });   
-    //   console.log("groupID", setGroup)
-    //   console.log("userID", setUUID);
-  
-    // }, [dispatch, inputRef, setGroup, setUUID]);
-  
+  function handleClick() {
+    dispatch({
+        type: reducerCases.SET_GROUP,
+        setGroup: inputRef.current.value,
+      });
+    
+    // when room is joined also set the userid for this user
+    dispatch({
+        type: reducerCases.SET_UUID,
+        setUUID: userId,
+      });  
+  } 
 
   return (
     <Container>
         <Input ref = {inputRef} placeholder="Enter Group ID here" />
-        <button onClick={handleClick}>            
-            <Link to={{pathname:'/queueCollab'}}>
-              Join Room
-            </Link>
-        </button>
+        <Link to={{pathname:'/queueCollab'}}>
+          <button onClick={handleClick}>            
+            Join Room
+          </button>
+        </Link>
     </Container>
   );
 }

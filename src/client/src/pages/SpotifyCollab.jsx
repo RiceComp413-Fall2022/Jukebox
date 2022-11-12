@@ -28,10 +28,7 @@ export default function SpotifyCollab(props) {
       ? setHeaderBackground(true)
       : setHeaderBackground(false);
   };
-  const single_uri ='{"uris": ["spotify:track:2HScVhNGt7DltJYrph09Ee"]}';
-  var uriVals2 = '';
-  const uriVal = '{"uris": ["spotify:track:63dLm0BUpepXeFIfZ0OKEL", "spotify:track:2LO5hQnz5rEaRwkGUvZcHN", "spotify:track:6IpvkngH89cA3hhPC84Leg"]}';
-  const urisT = ["2LO5hQnz5rEaRwkGUvZcHN","6IpvkngH89cA3hhPC84Leg", "63dLm0BUpepXeFIfZ0OKEL"]
+
   const SPOTIFY_CLIENT_ID = "0b2885f02bea4a8f887f715664b411e9"
   const SPOTIFY_CLIENT_SECRET = "8482283b3d87491aaa1416b1dc4c06a3"
 
@@ -53,63 +50,16 @@ export default function SpotifyCollab(props) {
     
         const { access_token } = response.data;
         setTok(access_token)   
-        // console.log(access_token);
     }
     getAuth()
   },[dispatch, token]);
-  // console.log('tok', tok)
-  function parseURIList(uris){
-    let parseVal2 = []
-    //console.log(uris)
-    if (uris) {
-      parseVal2 = JSON.parse(uris).uris
-      let final = []
-      for (const track of parseVal2){
-          let temp = ''
-          let canAdd = false
-          for(let itr = 0; itr < track.length; itr++){
-              if (track[itr-1] == ':' && track[itr- 2] == 'k'){
-                  canAdd = true
-              }
-  
-              if(canAdd) {
-                  temp += track[itr]
-              }
-          }
-          final.push(temp)
-      }      
-      //console.log(final)
-      return final
-    }
-  }
   
   useEffect(() => {
-    // console.log('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup)
     const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup,
       { withCredentials: false });
 
-    // function handleReceiveMessage(event) {
-    //     console.log('message receieved')
-    //     setTemp(event.data)
-    // }
-    
-    sse.addEventListener('song_queue', (e) => {dispatch({type: reducerCases.SET_MULT_SONGS, setMultSongs: e.data})});
-
-
-    // function getRealtimeData(dataV)  {
-    //   // process the data here,
-    //   // then pass it to state to be rendered
-    //   console.log(dataV,"dadat2")
-    //   dispatch({ type: reducerCases.SET_IMAGE, setImage: dataV})
-
-    // }
-
-    // sse.onmessage = (event) => {
-    //   //console.log('message received')
-    //   getRealtimeData(event.data)
-    // };
-    
-
+    sse.addEventListener('song_queue', (e) => {dispatch({type: reducerCases.SET_MULT_SONGS, setMultSongs: e.data}); console.log('Mult Songs: ' + setMultSongs)});
+ 
     sse.onopen = (e) => {
       console.log('open')
     }
@@ -125,10 +75,8 @@ export default function SpotifyCollab(props) {
     };
 
     
-  }, [setGroup, setMultSongs, dispatch]);
-
-
-
+  }, [setGroup]);
+  
   return (
   <Container>
     <div className="spotify__body">

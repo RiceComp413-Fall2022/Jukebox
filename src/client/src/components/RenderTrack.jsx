@@ -1,60 +1,29 @@
 import axios from "axios";
-import React, { useEffect, useState, useRef } from "react";
-import { useStateProvider } from "../utils/StateProvider";
-import { reducerCases } from "../utils/Constants";
+import React, { useEffect } from "react";
 import { AiFillClockCircle } from "react-icons/ai";
 import { blue} from '@mui/material/colors';
 
 import styled from "styled-components";
-import { BsFonts } from "react-icons/bs";
 import RemoveButton from "./RemoveSong"
+import parseURIList from "../utils/Util";
+import { useStateProvider } from "../utils/StateProvider";
+import { reducerCases } from "../utils/Constants";
 
 export default function RenderTrack(props){
-    const [{setTime, setMultSongs, token, setGroup}, dispatch] = useStateProvider();
-    console.log("TOK@",  props.token)
-    const [resp, setResp] = useState('')
-    const [sName, setSName] = useState([])
-    const [sImg, setSImg] = useState([])
-    const [sArtist, setSArtist]  = useState([])
-    const [sTime, setSTime] = useState([])
-    const tempTracks = "7ouMYWpwJ422jRcDASZB7P,4VqPOruhp5EdPBeR92t6lQ,2takcwOaAZWiXQijPHIx7B";
-    const didMount = useRef(true);
-    function parseURIList(uris){
-        let parseVal2 = []
-        //console.log(uris)
-        if (uris) {
-          parseVal2 = JSON.parse(uris).uris
-          let final = []
-          for (const track of parseVal2){
-              let temp = ''
-              let canAdd = false
-              for(let itr = 0; itr < track.length; itr++){
-                  if (track[itr-1] == ':' && track[itr- 2] == 'k'){
-                      canAdd = true
-                  }
-      
-                  if(canAdd) {
-                      temp += track[itr]
-                  }
-              }
-              final.push(temp)
-          }      
-          //console.log(final)
-          return final
-        }
-      }
+    const [{ setMultSongs, setTime, setGroup, setUUID, token}, dispatch] = useStateProvider();
 
     function changeTime(millis) {
         var minutes = Math.floor(millis / 60000);
         var seconds = ((millis % 60000) / 1000).toFixed(0);
+
         return (
-        seconds == 60 ?
-        (minutes+1) + ":00" :
-        minutes + ":" + (seconds < 10 ? "0" : "") + seconds
-      );
+            seconds == 60 ?
+            (minutes+1) + ":00" :
+            minutes + ":" + (seconds < 10 ? "0" : "") + seconds
+        );
     }
 
-    const playTrack = async (
+    const playTrack = async(
         id,
         name,
         artists,
@@ -79,23 +48,33 @@ export default function RenderTrack(props){
                 },
             }
         );
+
         if (response.status === 204) {
             const currentPlaying = {
-            id,
-            name,
-            artists,
-            image,
+                id,
+                name,
+                artists,
+                image
             };
+
             dispatch({ type: reducerCases.SET_PLAYING, currentPlaying });
             dispatch({ type: reducerCases.SET_PLAYER_STATE, playerState: true });
+
         } else {
+            
             dispatch({ type: reducerCases.SET_PLAYER_STATE, playerState: true });
         }
     };
 
     useEffect(() =>{
         const getTracks = async() => {
-            console.log(setMultSongs, "SSS")
+            if (setMultSongs == undefined) {
+                let renderObj = <div></div>
+                dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
+                return; 
+            }
+            
+            // check if we even have any songs to get
             const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + parseURIList(setMultSongs),
             {
                 headers: {
@@ -103,13 +82,14 @@ export default function RenderTrack(props){
                     "Content-Type" : "application/json"
                 }
             }).catch(function (error) {
+                // maybe not the best way to handle this error
                 if (error.response.status === 400) {
                     let renderObj = <div></div>
                     dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
                 }
             });
+
             if (response != undefined && response.data != ""){
-                //console.log("we're in")
                 let tpArr = []
                 for(let i = 0; i < response.data.tracks.length; i ++) {
                     const currentPlaying = {
@@ -161,7 +141,7 @@ export default function RenderTrack(props){
                                     <div className="col">
                                         <span>{changeTime(item.duration)}</span>
                                     </div>    
-                                    <RemoveButton color={blue[200]} uri={"spotify:track:" + item.id} roomId={setGroup}/>
+                                    <RemoveButton color={blue[200]} userId={setUUID} uri={"spotify:track:" + item.id} roomId={setGroup}/>
                                 </div>
                             </div>
                         </SongPlayer> 
@@ -173,26 +153,11 @@ export default function RenderTrack(props){
                     let renderObj = <div></div>
                     dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
                 }
-
-                // let tempSName = []
-                // let tempSImg = []
-                // let tempSTime = []
-                // for(let i = 0; i < setMultSongs.data.tracks.length; i ++){
-                //     tempSName.push(setMultSongs.data.tracks[i].name);
-                //     tempSImg.push(setMultSongs.data.tracks[i].album.images[2].url)
-                //     tempSTime.push(setMultSongs.data.tracks[i].duration_ms)
-                // }
-    
-                // dispatch({ type: reducerCases.SET_NAME, setName: tempSName });
-                // dispatch({ type: reducerCases.SET_IMAGE, setImage: tempSImg });
-                // dispatch({ type: reducerCases.SET_TIME, setTime: tempSTime });
             } 
-        } 
-
-            
+        }    
         getTracks()
 
-    }, [token.access_token,setMultSongs, dispatch]); 
+    }, [token.access_token, setMultSongs, dispatch]); 
     
 
         //console.log(setTime)
@@ -232,14 +197,14 @@ const ListWrapper = styled.div`
 
      .header-row {
         display: grid;
-        grid-template-columns: 0.3fr 3fr 3fr 0.1fr;
+        grid-template-columns: 0.3fr 3fr 3fr 0.1fr .5fr;
         margin: 1rem 0 0 0;
         color: white;
         position: sticky;
         top: 15vh;
         padding: 1rem 3rem;
         transition: 0.3s ease-in-out;
-        background-color: ${({ headerBackground }) =>
+        backgroundcolor: ${({ headerBackground }) =>
           headerBackground ? "#000000dc" : "none"};
     }
 `
@@ -253,7 +218,7 @@ const SongPlayer = styled.div`
         .row {
             padding: 0.5rem 1rem;
             display: grid;
-            grid-template-columns: 0.3fr 3.1fr 3fr 0.1fr;
+            grid-template-columns: 0.3fr 3.1fr 3fr 0.1fr .5fr;
             &:hover {
             background-color: rgba(0, 0, 0, 0.7);
         }
@@ -274,8 +239,21 @@ const SongPlayer = styled.div`
             flex-direction: column;
           }
         }
+        .remove {
+            display: flex;
+            align-items: center;
+            color: #dddcdc;
+            img {
+                height: 50px;
+                width: 50px;
+            }
+            margin-left: 2em;
+            margin-right: auto;
+        }
       }
     }
 `
 ;
+    
+
     

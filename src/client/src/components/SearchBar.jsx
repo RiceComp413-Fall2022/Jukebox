@@ -1,9 +1,8 @@
-import React, { Component, useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import {Card} from 'antd';
 import './SearchBar.css';
 import { Input, List, Avatar } from 'antd';
 import { useStateProvider } from "../utils/StateProvider";
-import { reducerCases } from "../utils/Constants";
 import styled from "styled-components";
 import axios from "axios";
 
@@ -15,40 +14,22 @@ const { Search } = Input;
 
 
 export default function SearchBar(props){
-const [{ setGroup, setUUID }, dispatch] = useStateProvider();
-const [image, setImage] = useState([]);
-console.log(props.token)
-
-function parseURI(uri){
-  let final = []
-  let temp = ''
-  let canAdd = false
-  for(let itr = 0; itr < uri.length; itr++){
-      if (uri[itr-1] == ':' && uri[itr- 2] == 'k'){
-          canAdd = true
-      }
-
-      if(canAdd) {
-          temp += uri[itr]
-      }
-  }
-  final.push(temp)
-  
-  
-  return final
-
-}
+  const [{ setGroup, setUUID }, dispatch] = useStateProvider();
+  const [image, setImage] = useState([]);
 
   function getSearchResults(query){
-
     const access_token = props.token;
     const searchQuery = query;
-    console.log("Search Query: " + searchQuery.toString())
     const fetchURL = encodeURI(`q=${searchQuery}`);
-    // this.state = {
-    //     token: props.token,
-    //     searchResults: [] 
-    // }
+
+    console.log("Search Query: " + searchQuery.toString())
+
+    // If the search query is empty we don't need to search for it
+    if (searchQuery.toString() == "") {
+      setImage(<div></div>);
+      return;
+    }
+
     fetch(`https://api.spotify.com/v1/search?${fetchURL}&type=track&limit=5`, {
         method: "GET",
         headers: {
@@ -65,10 +46,11 @@ function parseURI(uri){
     .then(response => response.json())
     .then(({tracks}) => {
       const results = [];
-      console.log(tracks)
+
       tracks.items.forEach(element => {
-        let artists = []
+        let artists = []        
         element.artists.forEach(artist => artists.push(artist.name))
+
         results.push(   
           <div onClick={() => axios.get('/addSong?userid=' + setUUID + '&roomid=' + setGroup + '&uri=' + element.uri,
           { withCredentials: false })}>
@@ -83,53 +65,50 @@ function parseURI(uri){
       });
       setImage(results)
     })
-    .catch(error => setImage([]))
-    
+    .catch(error => setImage([])) 
   }
-// },[props.token, dispatch])
-    let card;
-    function renderCards(){     
-        if(image.length > 0){
-          card = 
-          <div>
-            <Card>
-              <List itemLayout="horizontal" >
-                {image}
-              </List>
-            </Card>;
-          </div>
-        }
-        else {
-          card = <Card hidden={true}/>;
-        }
+
+  let card;
+  function renderCards(){     
+    if(image.length > 0){
+      card = 
+      <div>
+        <Card>
+          <List itemLayout="horizontal" >
+            {image}
+          </List>
+        </Card>;
+      </div>
     }
-
-   renderCards()
-
-    return (
-      <div className="App">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-        <div className="Search" style={{'height' : '30px', 'width' : '300px', 'paddingTop' : '7px'}}>
-          <Search
-            placeholder="Artists or Tracks"
-            enterButton="Search"
-            size="small"
-            onChange={value => getSearchResults(value.target.value)}
-            onSearch={value => console.log(value)}
-          />
-          <div/>
-            {image.length != 0 && (
-              <div className="dataResult" style={{'paddingTop' : '5px'}}>
-                {card}
-              </div>
-            )}
-        </div>
-       
-    </div>
-    );
+    else {
+      card = <Card hidden={true}/>;
+    }
   }
+
+  renderCards()
+
+  return (
+    <div className="App">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+      <div className="Search" style={{'height' : '30px', 'width' : '300px', 'paddingTop' : '7px'}}>
+        <Search
+          placeholder="Artists or Tracks"
+          enterButton="Search"
+          size="small"
+          onChange={value => getSearchResults(value.target.value)}
+          onSearch={value => console.log(value)}
+        />
+        <div/>
+          {image.length != 0 && (
+            <div className="dataResult" style={{'paddingTop' : '5px'}}>
+              {card}
+            </div>
+          )}
+      </div>     
+    </div>
+  );
+}
 
 const dataResult = styled.div`
   display : flex;
 `
-

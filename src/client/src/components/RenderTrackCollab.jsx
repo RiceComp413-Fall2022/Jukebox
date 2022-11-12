@@ -10,14 +10,8 @@ import RemoveButton from "./RemoveSong"
 
 
 export default function RenderTrackCollab(props){
-    const [{ setMultSongs, setTime, setGroup, token}, dispatch] = useStateProvider();
-    const [sName, setSName] = useState([])
-    const [resp, setResp] = useState('')
-    const [sImg, setSImg] = useState([])
-    const [sArtist, setSArtist]  = useState([])
-    const [sTime, setSTime] = useState([])
-    const tempTracks = "7ouMYWpwJ4s22jRcDASZB7P,4VqPOruhp5EdPBeR92t6lQ,2takcwOaAZWiXQijPHIx7B";
-    const didMount = useRef(true);
+    const [{ setMultSongs, setTime, setGroup, setUUID, token}, dispatch] = useStateProvider();
+
     function parseURIList(uris){
         let parseVal2 = []
         //console.log(uris)
@@ -55,19 +49,27 @@ export default function RenderTrackCollab(props){
 
     useEffect(() =>{
         const getTracks = async() => {
+            if (setMultSongs == undefined) {
+                let renderObj = <div></div>
+                dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
+                return; 
+            }
+            
+            // check if we even have any songs to get
             const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + parseURIList(setMultSongs),
-                {
-                    headers: {
-                        Authorization: "Bearer " +  token.access_token,
-                        "Content-Type" : "application/json"
-                    },
+            {
+                headers: {
+                    Authorization: "Bearer " +  props.token,
+                    "Content-Type" : "application/json"
                 }
-            ).catch(function (error) {
+            }).catch(function (error) {
+                // maybe not the best way to handle this error
                 if (error.response.status === 400) {
                     let renderObj = <div></div>
                     dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
                 }
             });
+
             if (response != undefined && response.data != ""){
                 console.log(response.data.tracks[0].name, "rep")
                 console.log("we're in")
@@ -113,7 +115,7 @@ export default function RenderTrackCollab(props){
                                     <div className="col">
                                         <span> {changeTime(item.duration)} </span>
                                     </div>
-                                    <RemoveButton color={blue[200]} uri={"spotify:track:" + item.id} roomId={setGroup}/>
+                                    <RemoveButton color={blue[200]} userId={setUUID} uri={"spotify:track:" + item.id} roomId={setGroup}/>
                                 </div>
                             </div>
                         </SongPlayer> 
@@ -131,7 +133,7 @@ export default function RenderTrackCollab(props){
             
         getTracks()
 
-    }, [token.access_token, dispatch, setMultSongs]); 
+    }, [token, dispatch, setMultSongs]); 
     
 
         //console.log(setTime)
