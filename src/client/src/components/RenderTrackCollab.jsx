@@ -7,35 +7,10 @@ import { blue } from '@mui/material/colors';
 
 import styled from "styled-components";
 import RemoveButton from "./RemoveSong"
-
+import parseURIList from "../utils/Util";
 
 export default function RenderTrackCollab(props){
     const [{ setMultSongs, setTime, setGroup, setUUID, token}, dispatch] = useStateProvider();
-
-    function parseURIList(uris){
-        let parseVal2 = []
-        //console.log(uris)
-        if (uris) {
-          parseVal2 = JSON.parse(uris).uris
-          let final = []
-          for (const track of parseVal2){
-              let temp = ''
-              let canAdd = false
-              for(let itr = 0; itr < track.length; itr++){
-                  if (track[itr-1] == ':' && track[itr- 2] == 'k'){
-                      canAdd = true
-                  }
-      
-                  if(canAdd) {
-                      temp += track[itr]
-                  }
-              }
-              final.push(temp)
-          }      
-          //console.log(final)
-          return final
-        }
-      }
 
     function changeTime(millis) {
         var minutes = Math.floor(millis / 60000);
