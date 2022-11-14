@@ -9,6 +9,11 @@ from .songqueue import SongQueue
 from .validator import validate_uri
 from .messageAnnouncer import SSEMessageAnnouncer
 
+from .config import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
+import requests
+import base64
+import json
+
 routes = Blueprint('routes', __name__)
 
 @routes.route("/songQueueCreate", methods=['GET'])
@@ -190,3 +195,23 @@ def song_downvote():
         return "Successfully upvoted song", 200
     else:
         return "Failed to upvote song", 400
+
+@routes.route("/search", methods=['GET'])
+def song_search():
+    """ API endpoint client should use to search for songs."""
+    s = requests.Session()
+
+    headers = {
+        "Authorization": b"Basic " + base64.b64encode((SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET).encode()),
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    res = s.post("https://accounts.spotify.com/api/token", headers=headers, data="grant_type=client_credentials")
+    at = json.loads(res.text)["access_token"]
+
+    headers = {
+        "Authorization": "Bearer " + at,
+        "Content-Type": "application/json"
+    }
+    res = s.get("https://api.spotify.com/v1/search?q=" + request.args['q'] + "&type=track", headers=headers)
+
+    return res.text
