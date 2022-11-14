@@ -198,7 +198,12 @@ def song_downvote():
 
 @routes.route("/search", methods=['GET'])
 def song_search():
-    """ API endpoint client should use to search for songs."""
+    """API endpoint client should use to search for songs."""
+    args = request.args
+
+    if 'q' not in args:
+        return "Search query not present in request.", 400
+
     s = requests.Session()
 
     headers = {
@@ -206,12 +211,16 @@ def song_search():
         "Content-Type": "application/x-www-form-urlencoded"
     }
     res = s.post("https://accounts.spotify.com/api/token", headers=headers, data="grant_type=client_credentials")
+    if res.status_code != 200:
+        return "Failed to perform search due to Spotify authentication error", 400
     at = json.loads(res.text)["access_token"]
 
     headers = {
         "Authorization": "Bearer " + at,
         "Content-Type": "application/json"
     }
-    res = s.get("https://api.spotify.com/v1/search?q=" + request.args['q'] + "&type=track", headers=headers)
+    res = s.get("https://api.spotify.com/v1/search?q=" + args['q'] + "&type=track", headers=headers)
+    if res.status_code != 200:
+        return "Failed to perform search due to Spotify search error", 400
 
-    return res.text
+    return res.text, 200
