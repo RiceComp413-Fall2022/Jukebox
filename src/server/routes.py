@@ -210,6 +210,7 @@ def song_search():
         "Authorization": b"Basic " + base64.b64encode((SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET).encode()),
         "Content-Type": "application/x-www-form-urlencoded"
     }
+
     res = s.post("https://accounts.spotify.com/api/token", headers=headers, data="grant_type=client_credentials")
     if res.status_code != 200:
         return "Failed to perform search due to Spotify authentication error", 400
@@ -219,6 +220,7 @@ def song_search():
         "Authorization": "Bearer " + at,
         "Content-Type": "application/json"
     }
+
     res = s.get("https://api.spotify.com/v1/search?q=" + args['q'] + "&type=track", headers=headers)
     if res.status_code != 200:
         return "Failed to perform search due to Spotify search error", 400
