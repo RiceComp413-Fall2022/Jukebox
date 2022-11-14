@@ -13,9 +13,10 @@ def announce_song_queue(roomid):
     queue = queues[roomid]
     announcer = announcers[roomid]
 
-    song_id_list = [song.uri for song in queue.get_all()]
+    queue_contents = queue.get_all()
+    json_data = [{"uri": song.uri, "upvotes": song.upvotes} for song in queue_contents]
 
-    announcer.announce(json.dumps({'uris': song_id_list}), SONG_QUEUE_EVENT)
+    announcer.announce(json.dumps(json_data), SONG_QUEUE_EVENT)
 
 def announce_queue_close(roomid):
     """Announces to all listeners that the current song queue is being closed."""

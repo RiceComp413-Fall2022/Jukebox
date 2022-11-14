@@ -9,7 +9,6 @@ import json
 from functools import partial
 from unittest import mock
 import pytest # noqa: F401
-import re
 
 from src.server.announcer import SONG_QUEUE_EVENT
 from src.server.listen import stream
@@ -48,7 +47,7 @@ def test_song_queue_listen_empty_queue(client): # noqa: F811
     with set_stream_to_testing():
         r = client.get(f'/songQueueListen?roomid={roomid}')
 
-    assert 'data: {"uris": []}' in r.data.decode('utf-8')
+    assert 'data: []' in r.data.decode('utf-8')
 
 def test_song_queue_listen_one_song(client): # noqa: F811
     """Checks that the initial song queue with one song added is formated corretly."""
@@ -61,9 +60,10 @@ def test_song_queue_listen_one_song(client): # noqa: F811
     with set_stream_to_testing():
         r = client.get(f'/songQueueListen?roomid={roomid}')
 
-    j = json.loads(re.findall(r'{.*}', r.data.decode('utf-8'))[0])
+    string = r.data.decode('utf-8')
+    j = json.loads(string[string.index('[') - 1:])
 
-    assert uri == j.get('uris')[0]
+    assert uri == j[0]['uri']
 
 def test_song_queue_listen_multiple_songs(client): # noqa: F811
     """Checks that the initial song queue with 4 song added is formated corretly."""
@@ -80,16 +80,15 @@ def test_song_queue_listen_multiple_songs(client): # noqa: F811
     with set_stream_to_testing():
         r = client.get(f'/songQueueListen?roomid={roomid}')
 
-    j = json.loads(re.findall(r'{.*}', r.data.decode('utf-8'))[0])
-
-    listenUris = j.get('uris')
+    string = r.data.decode('utf-8')
+    j = json.loads(string[string.index('[') - 1:])
 
     correct = True
     idx = 0
     for uri in uris:
-        if listenUris[idx] != uri:
+        if j[idx]['uri'] != uri:
             print(f'Uri {uri}, should have been added but it listener did not get it or the order was incorrect. This is '
-                  'what listener got: {listenUris}')
+                  'what listener got: {j}')
             correct = False
             break
         idx += 1
