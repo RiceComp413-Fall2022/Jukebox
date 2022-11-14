@@ -78,7 +78,7 @@ export default function RenderTrack(props){
             const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + parseURIList(setMultSongs),
             {
                 headers: {
-                    Authorization: "Bearer " +  props.token,
+                    Authorization: "Bearer " +  token.access_token,
                     "Content-Type" : "application/json"
                 }
             }).catch(function (error) {
@@ -157,7 +157,7 @@ export default function RenderTrack(props){
         }    
         getTracks()
 
-    }, [token.access_token, setMultSongs, dispatch]); 
+    }, [token.access_token, setMultSongs, dispatch,  setGroup, setUUID]); 
     
 
         //console.log(setTime)

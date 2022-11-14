@@ -1,13 +1,38 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 export default function  CurrentTrack(props) {
-    
-  const [{ token, currentPlaying }, dispatch] = useStateProvider();
+  const [{ token, currentPlaying, setGroup, setUUID, setPrev }, dispatch] = useStateProvider();
+  function createUri(currId){
+    return "spotify:track:" + currId
+  }
   useEffect(() => {
+    // console.log(setPrev)
+    if(setPrev == undefined && currentPlaying  != undefined){
+      console.log("intial render")
+      dispatch({ type: reducerCases.SET_PREV, setPrev: currentPlaying})
+    }
+    if(setPrev != undefined){
+      if(setPrev.id !== currentPlaying.id){
+          axios.get('/removeSong?userid=' + setUUID + '&roomid=' + setGroup + '&uri=' + createUri(setPrev.id))
+          .catch((error) => {
+            if (error.response.status === 400) {
+              // could not remove song, need to notify user
+              console.log("failed to remove song")
+            }
+          });
+          dispatch({type: reducerCases.SET_PREV, setPrev: currentPlaying})
+      }
+      // console.log(setPrev, "setPrev")
+      // console.log(currentPlaying, "current")
+    }
+  }, [dispatch, currentPlaying, setPrev])
+  useEffect(() => {
+
     const getCurrentTrack = async () => {
+      
       const response = await axios.get(
         "https://api.spotify.com/v1/me/player/currently-playing",
         {
@@ -29,8 +54,27 @@ export default function  CurrentTrack(props) {
         dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: null });
       }
     };
+    // if (currentPlaying !== undefined){
+    //   dispatch({ type: reducerCases.SET_PREV, setPrev: currentPlaying})
+    // }
+    // console.log(setPrev, "setPrev")
     getCurrentTrack();
-  }, [props.token, dispatch]);
+    // console.log(currentPlaying, "current")
+    // if(temp !== ''){
+    //   console.log(temp)
+    //   if(temp.id !== currentPlaying.id){
+    //     console.log(temp)
+        // axios.get('/removeSong?userid=' + setUUID + '&roomid=' + setGroup + '&uri=' + temp.)
+		    // .catch((error) => {
+        //   if (error.response.status === 400) {
+        //     // could not remove song, need to notify user
+        //     console.log("failed to remove song")
+        //   }
+		    // });
+    //   }
+    // }
+    // console.log(currentPlaying.id, "tp");
+  }, [dispatch]);
   
   return (
     <Container>
