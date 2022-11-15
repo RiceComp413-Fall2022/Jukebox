@@ -19,9 +19,9 @@ if [ "$USER_TYPE" = "server" ]; then
 elif [ "$USER_TYPE" = "client" ]; then
   cd src/client
   npm install
-  npm start # Uncomment once port specification added --port $USER_PORT
+  npm start --host=0.0.0.0 # Uncomment once port specification added --port $USER_PORT
 
 else
-  echo "Invalid user type: valid types 'Server' and 'Client'. Aborting."
+  echo "Invalid user type: valid types 'server' and 'client'. Aborting."
 fi
 
