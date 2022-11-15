@@ -2,18 +2,26 @@
  * Usefull functions to use throughout the app.
  */
 
-/**
- * Takes a json object with spotify song info and and creates a comma seperated string of the non-"spotify:track:" for all of the uris
- */
 export default function parseURIList(uris){
 
 	if (uris) {
 		uris = JSON.parse(uris);
 
-		uris = uris.map((x) => {
-		    return RegExp('track:(.*?$)').exec(x['uri'])[1]
-		})	
+		for (const track of songs){
+			let temp = ''
+			let canAdd = false
+			for(let itr = 0; itr < track.length; itr++){
+				if (track[itr-1] == ':' && track[itr- 2] == 'k'){
+					canAdd = true
+				}
 
-		return uris.join(',');
+				if(canAdd) {
+					temp += track[itr]
+				}
+			}
+			final.push(temp)
+		}      
+
+		return final
 	}
 }
