@@ -7,7 +7,7 @@ export default function Navbar(props) {
   return (
     <Container navBackground={props.navBackground}>
       <div>
-        <SearchBar token = {props.token}/>
+        <SearchBar/>
       </div>  
     </Container>
   );
