@@ -221,7 +221,7 @@ def song_search():
         "Content-Type": "application/json"
     }
 
-    res = s.get("https://api.spotify.com/v1/search?q=" + args['q'] + "&type=track", headers=headers)
+    res = s.get("https://api.spotify.com/v1/search?q=" + args['q'] + "&type=track&limit=5", headers=headers)
     if res.status_code != 200:
         return "Failed to perform search due to Spotify search error", 400
 
