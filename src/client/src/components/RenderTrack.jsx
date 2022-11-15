@@ -76,6 +76,7 @@ export default function RenderTrack(props){
             
             // check if we even have any songs to get
             // const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + parseURIList(setMultSongs),
+            console.log(parseURIList(setMultSongs))
             const response = await axios.get("/search?q=" + parseURIList(setMultSongs))
                 .catch(function (error) {
                     // maybe not the best way to handle this error
