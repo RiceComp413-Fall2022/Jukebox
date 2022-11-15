@@ -2,11 +2,6 @@
  * Usefull functions to use throughout the app.
  */
 
-import { ConnectingAirportsOutlined } from "@mui/icons-material"
-
-/**
- * Takes a json object with spotify uris and and creates a list of just the non-"spotify:track:" for all of the uris
- */
 export default function parseURIList(uris){
 	let parseVal2 = []
 
@@ -33,7 +28,6 @@ export default function parseURIList(uris){
 			final.push(temp)
 		}      
 
-		console.log(final)
 		return final
 	}
 }
