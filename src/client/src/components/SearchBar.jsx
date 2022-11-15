@@ -30,42 +30,33 @@ export default function SearchBar(props){
       return;
     }
 
-    fetch(`https://api.spotify.com/v1/search?${fetchURL}&type=track&limit=5`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${access_token}`     
-        }
-      }
-    )
-    .then(response => {
-      if(!response.ok){
-        throw Error("Response Not Ok")
-      }
-      return response;
-    })
-    .then(response => response.json())
-    .then(({tracks}) => {
-      const results = [];
+    axios.get(`/search?${fetchURL}`)
+      .catch(function (error) {
+        setImage([]);
+        throw Error("Response Not Ok: " + error);
+      })
+      .then((response) => response.data.tracks)
+      .then((tracks) => {
+        const results = [];
 
-      tracks.items.forEach(element => {
-        let artists = []        
-        element.artists.forEach(artist => artists.push(artist.name))
+        tracks.items.forEach(element => {
+          let artists = []        
+          element.artists.forEach(artist => artists.push(artist.name))
 
-        results.push(   
-          <div onClick={() => axios.get('/addSong?userid=' + setUUID + '&roomid=' + setGroup + '&uri=' + element.uri,
-          { withCredentials: false })}>
-            <li key={element.uri}  >
-              <List.Item.Meta 
-                avatar={<Avatar shape='square' size='large' src={element.album.images[0].url} />}
-                title={<p href="https://ant.design">{element.name}</p>}
-                description={artists.join(', ')}
-              />
-            </li>
-          </div>);
+          results.push(   
+            <div onClick={() => axios.get('/addSong?userid=' + setUUID + '&roomid=' + setGroup + '&uri=' + element.uri,
+            { withCredentials: false })}>
+              <li key={element.uri}  >
+                <List.Item.Meta 
+                  avatar={<Avatar shape='square' size='large' src={element.album.images[0].url} />}
+                  title={<p href="https://ant.design">{element.name}</p>}
+                  description={artists.join(', ')}
+                />
+              </li>
+            </div>);
+        });
+        setImage(results)
       });
-      setImage(results)
-    })
-    .catch(error => setImage([])) 
   }
 
   let card;
