@@ -3,15 +3,9 @@
  */
 
 export default function parseURIList(uris){
-	let parseVal2 = []
 
 	if (uris) {
-		parseVal2 = JSON.parse(uris)
-		let final = []
-		let songs = []
-		for(let i = 0; i < parseVal2.length; i ++) {
-			songs.push(parseVal2[i].uri)
-		}
+		uris = JSON.parse(uris);
 
 		for (const track of songs){
 			let temp = ''
