@@ -31,14 +31,19 @@ export default function RenderTrackCollab(props){
             }
             
             // check if we even have any songs to get
-            const response = await axios.get("/search?q=" + parseURIList(setMultSongs))
-                .catch(function (error) {
-                    // maybe not the best way to handle this error
-                    if (error.response.status === 400) {
-                        let renderObj = <div></div>
-                        dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
-                    }
-                });
+            const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + parseURIList(setMultSongs),
+            {
+                headers: {
+                    Authorization: "Bearer " +  props.token,
+                    "Content-Type" : "application/json"
+                }
+            }).catch(function (error) {
+                // maybe not the best way to handle this error
+                if (error.response.status === 400) {
+                    let renderObj = <div></div>
+                    dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
+                }
+            });
 
             if (response != undefined && response.data != ""){
                 console.log(response.data.tracks[0].name, "rep")

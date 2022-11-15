@@ -7,11 +7,9 @@ import Navbar from "../components/Navbar";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 import RenderTrack from "../components/RenderTrack";
-import parseURIList from "../utils/Util";
 
 export default function Spotify() {
   const [{ token, setMultSongs, setGroup }, dispatch] = useStateProvider();
-  const [temp, setTemp] = useState(0);
   const [navBackground, setNavBackground] = useState(false);
   const [headerBackground, setHeaderBackground] = useState(false);
   const bodyRef = useRef();
@@ -61,11 +59,6 @@ export default function Spotify() {
   useEffect(() => {
     const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup,
       { withCredentials: false });
-
-    function handleReceiveMessage(event) {
-        console.log('message receieved')
-        setTemp(event.data)
-    }
     
     sse.addEventListener('song_queue', (e) => {dispatch({type: reducerCases.SET_MULT_SONGS, setMultSongs: e.data}); console.log('Mult Songs: ' + setMultSongs)});
 
@@ -92,12 +85,12 @@ export default function Spotify() {
         <Navbar token = {token.access_token} navBackground={navBackground} />
         
         <div className="body__contents">
-          <RenderTrack headerBackground={headerBackground} token={token.access_token} uriVal={parseURIList(temp)}/>
+          <RenderTrack headerBackground={headerBackground} token={token.access_token}/>
         </div>
       </div>
     </div>
     <div className="spotify__footer">
-      <Footer token = {token.access_token} uriVal={temp}/>
+      <Footer token = {token.access_token} uriVal={setMultSongs === undefined ? '' : setMultSongs[0]}/>
     </div>
   </Container>
   );
