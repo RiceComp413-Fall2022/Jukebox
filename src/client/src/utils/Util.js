@@ -28,7 +28,6 @@ export default function parseURIList(uris){
 			final.push(temp)
 		}      
 
-		console.log(final)
 		return final
 	}
 }
