@@ -3,29 +3,17 @@
  */
 
 /**
- * Takes a json object with spotify uris and and creates a list of just the non-"spotify:track:" for all of the uris
+ * Takes a json object with spotify song info and and creates a comma seperated string of the non-"spotify:track:" for all of the uris
  */
 export default function parseURIList(uris){
-	let parseVal2 = []
 
 	if (uris) {
-		parseVal2 = JSON.parse(uris).uris
-		let final = []
-		for (const track of parseVal2){
-			let temp = ''
-			let canAdd = false
-			for(let itr = 0; itr < track.length; itr++){
-				if (track[itr-1] == ':' && track[itr- 2] == 'k'){
-					canAdd = true
-				}
+		uris = JSON.parse(uris);
 
-				if(canAdd) {
-					temp += track[itr]
-				}
-			}
-			final.push(temp)
-		}      
+		uris = uris.map((x) => {
+		    return RegExp('track:(.*?$)').exec(x['uri'])[1]
+		})	
 
-		return final
+		return uris.join(',');
 	}
 }

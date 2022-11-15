@@ -14,15 +14,12 @@ import $ from 'jquery';
 
 
 export default function PlayerControls(props) {
-  const [{ token, playerState }, dispatch] = useStateProvider();
+  const [{ playerState }, dispatch] = useStateProvider();
   const [is_active, setActive] = useState(false);
   const [id, setId]= useState(undefined);
-  const [userId, setUserId] = useState(undefined);
   const [player, setPlayer] = useState(undefined);
   const [is_paused, setPaused] = useState(false);
-  const [{ userInfo }] = useStateProvider();
-  const single_uri ='{"uris": ["spotify:track:2HScVhNGt7DltJYrph09Ee"]}';
-  const mult_uri = '{"uris": ["spotify:track:2LO5hQnz5rEaRwkGUvZcHN", "spotify:track:6IpvkngH89cA3hhPC84Leg", "spotify:track:63dLm0BUpepXeFIfZ0OKEL"]}';
+
   useEffect(() => {
 
     const script = document.createElement("script");
@@ -57,7 +54,6 @@ export default function PlayerControls(props) {
               return;
           }
 
-          // setTrack(state.track_window.current_track);
           setPaused(state.paused);
 
           player.getCurrentState().then( state => { 
@@ -71,110 +67,22 @@ export default function PlayerControls(props) {
       player.connect();
     };
   }, []);
-  const getId = async () => { 
-    $.ajax({
-        url: "https://api.spotify.com/v1/me/player/devices",
-        type: "PUT",
-        data: '{"uris": ["spotify:track:2HScVhNGt7DltJYrph09Ee"]}',
-        beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + props.token);},
-        success: function(data) { 
-          //console.log(data)
-        }
-    });
-    
-    // await axios.put(
-    //   `https://api.spotify.com/v1/me/player/${state}`,
-    //   {},
-    //   {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: "Bearer " + token,
-    //     },
-    //   }
-    // );
+
+  function changeState() {
+    playerState ? 
+      axios.put(`https://api.spotify.com/v1/me/player/pause?device_id=${id}`, {}, {
+        headers: { "Authorization": 'Bearer ' + props.token}
+      }) : 
+      axios.put(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {}, {
+        headers: { "Authorization": 'Bearer ' + props.token}
+      });
+
     dispatch({
       type: reducerCases.SET_PLAYER_STATE,
       playerState: !playerState,
     });
   };
 
-  function parseURIList(uris){
-    let canAdd = false
-    let temp = ''
-    for(const cVal of mult_uri){
-      if(cVal == "["){
-        canAdd = true
-      }
-      else if(cVal == "]"){
-        canAdd = false
-      }
-      else if(canAdd){
-        temp += cVal;
-      }
-    }
-    return JSON.parse("[" + temp + "]");
-  }
-  function changeState(uris) {
-    const state = playerState ? "pause" : "play";
-    if(!is_active){
-      $.ajax({
-        url: "https://api.spotify.com/v1/me/player/play?device_id=" + id,
-        type: "PUT",
-        data: uris,
-        beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + props.token);},
-        success: function(data) { 
-          // console.log(data)
-        }
-    });
-  }
-  
-
- 
-
-  // const changeState = async(device_id) => { 
-  //   const state = playerState ? "pause" : "play";
-  //   $.ajax({
-  //       url: "https://api.spotify.com/v1/me/player/play?device_id=" + device_id,
-  //       type: "PUT",
-  //       data: '{"uris": ["spotify:track:2HScVhNGt7DltJYrph09Ee"]}',
-  //       beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + props.token);},
-  //       success: function(data) { 
-  //         console.log(data)
-  //       }
-  //   });
-    
-    // await axios.put(
-    //   `https://api.spotify.com/v1/me/player/${state}`,
-    //   {},
-    //   {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: "Bearer " + token,
-    //     },
-    //   }
-    // );
-    dispatch({
-      type: reducerCases.SET_PLAYER_STATE,
-      playerState: !playerState,
-    });
-  };
-
-  // function createPlaylist(){
-  //   console.log(userInfo.userId)
-  //   $.ajax({
-  //     url: "https://api.spotify.com/v1/users/" + userInfo.userId + "/playlists",
-  //     type: "POST",
-  //     beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer ' + props.token);},
-  //     success: function(data) { 
-  //       console.log(data);
-  //     }
-  //   });
-    
-  // }
-
-  // function addURItoPlaylist(uris){
-    
-  // }
   const changeTrack = async(type) => {
     $.ajax({
       url: `https://api.spotify.com/v1/me/player/${type}`,
@@ -183,16 +91,7 @@ export default function PlayerControls(props) {
       success: function(data) { 
       }
     });
-    // await axios.post(
-    //   `https://api.spotify.com/v1/me/player/${type}`,
-    //   {},
-    //   {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: "Bearer " + token,
-    //     },
-    //   }
-    // );
+
     dispatch({ type: reducerCases.SET_PLAYER_STATE, playerState: true });
     const response1 = await axios.get(
       "https://api.spotify.com/v1/me/player/currently-playing",
@@ -216,6 +115,7 @@ export default function PlayerControls(props) {
       dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: null });
     }
   };
+
   return (
     <Container>
       <div className="shuffle">
@@ -226,9 +126,9 @@ export default function PlayerControls(props) {
       </div>
       <div className="state">
         {!is_paused ? (
-          <BsFillPauseCircleFill onClick={() => {setPaused(true); player.togglePlay(); changeState(props.uriVal); }}/>
+          <BsFillPauseCircleFill onClick={() => {setPaused(true); player.togglePlay(); changeState(); }}/>
         ) : (
-          <BsFillPlayCircleFill onClick={() => { setPaused(false); player.togglePlay(); changeState(props.uriVal); }}/>
+          <BsFillPlayCircleFill onClick={() => { setPaused(false); player.togglePlay(); changeState(); }}/>
         )}
       </div>
       <div className="next">
