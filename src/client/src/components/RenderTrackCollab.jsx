@@ -8,6 +8,7 @@ import { blue } from '@mui/material/colors';
 import styled from "styled-components";
 import RemoveButton from "./RemoveSong"
 import parseURIList from "../utils/Util";
+import Upvotes from "./Upvotes";
 
 export default function RenderTrackCollab(props){
     const [{ setMultSongs, setTime, setGroup, setUUID, token}, dispatch] = useStateProvider();
@@ -29,9 +30,11 @@ export default function RenderTrackCollab(props){
                 dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
                 return; 
             }
-            
+
+            let uri2Upvotes = parseURIList(setMultSongs);
+
             // check if we even have any songs to get
-            const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + parseURIList(setMultSongs),
+            const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + Object.keys(uri2Upvotes).join(','),
             {
                 headers: {
                     Authorization: "Bearer " +  props.token,
@@ -87,6 +90,7 @@ export default function RenderTrackCollab(props){
                                     <div className="col">
                                         <span>{item.album}</span>
                                     </div>
+                                    <Upvotes upvotes={uri2Upvotes[item.id]} />
                                     <div className="col">
                                         <span> {changeTime(item.duration)} </span>
                                     </div>
@@ -126,6 +130,8 @@ export default function RenderTrackCollab(props){
                 <div className="col">
                     <span>ALBUM</span>
                 </div>
+                {/* Place holder for the upvotes  */}
+                <div className="col"></div> 
                 <div className="col">
                     <span>
                         <AiFillClockCircle />
@@ -148,7 +154,7 @@ const ListWrapper = styled.div`
 
      .header-row {
         display: grid;
-        grid-template-columns: 0.3fr 3fr 3fr 0.1fr .5fr;
+        grid-template-columns: 0.3fr 3fr 1.5fr .75fr 0.1fr .5fr;
         margin: 1rem 0 0 0;
         color: white;
         position: sticky;
@@ -169,7 +175,7 @@ const SongPlayer = styled.div`
         .row {
             padding: 0.5rem 1rem;
             display: grid;
-            grid-template-columns: 0.3fr 3.1fr 3fr 0.1fr .5fr;
+            grid-template-columns: 0.3fr 3fr 1.5fr .75fr 0.1fr .5fr;
             &:hover {
             background-color: rgba(0, 0, 0, 0.7);
         }
