@@ -8,8 +8,8 @@ from src.server.resources import queues
 LOGGER = logging.getLogger(__name__)
 
 # place holder userid and roomid
-userid = '100'
-roomid = '101'
+userid = 'test_sq_create'
+roomid = 'test_sq_create_room'
 
 def test_success(client): # noqa: F811
     """Test that a get request to the /songQueueCreate endpoint is sucessful."""

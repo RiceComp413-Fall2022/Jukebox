@@ -15,8 +15,8 @@ from src.server.listen import stream
 from .fixtures import client # noqa: F401
 
 # place holder userid and roomid
-userid = 100
-roomid = 101
+userid = 'test_sq_listen'
+roomid = 'test_sq_listen_room'
 
 @pytest.fixture(scope="function", autouse=True)
 def setup(client): # noqa: F811
