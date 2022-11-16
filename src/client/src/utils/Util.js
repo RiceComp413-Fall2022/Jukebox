@@ -2,32 +2,20 @@
  * Usefull functions to use throughout the app.
  */
 
-export default function parseURIList(uris){
-	let parseVal2 = []
+/**
+ * Return dict of song id, without "spotify:track:" to the number of upvotes for the song
+ */
+export default function parseURIList(uris) {
 
-	if (uris) {
-		parseVal2 = JSON.parse(uris)
-		let final = []
-		let songs = []
-		for(let i = 0; i < parseVal2.length; i ++) {
-			songs.push(parseVal2[i].uri)
-		}
+	let final = {};
 
-		for (const track of songs){
-			let temp = ''
-			let canAdd = false
-			for(let itr = 0; itr < track.length; itr++){
-				if (track[itr-1] == ':' && track[itr- 2] == 'k'){
-					canAdd = true
-				}
+	// convert json to obj
+	uris = JSON.parse(uris);
 
-				if(canAdd) {
-					temp += track[itr]
-				}
-			}
-			final.push(temp)
-		}      
+	uris.forEach(song => {
+		// add uri mapped to upvotes 
+		final[RegExp('track:(.*)$').exec(song['uri'])[1]] = song['upvotes']
+	});
 
-		return final
-	}
+	return final
 }
