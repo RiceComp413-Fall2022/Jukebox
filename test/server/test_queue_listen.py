@@ -15,13 +15,15 @@ from src.server.listen import stream
 from .fixtures import client # noqa: F401
 
 # place holder userid and roomid
-userid = 100
-roomid = 101
+userid = 'test_sq_listen'
+roomid = 'test_sq_listen_room'
+
 
 @pytest.fixture(scope="function", autouse=True)
 def setup(client): # noqa: F811
     """Before each test sets up our song queue."""
     client.get(f'/songQueueCreate?userid={userid}&roomid={roomid}')
+
 
 @contextmanager
 def set_stream_to_testing():
@@ -33,6 +35,7 @@ def set_stream_to_testing():
     with mock.patch('src.server.listen.stream', partial(stream, testing=True)):
         yield
 
+
 def test_song_queue_listen_event(client): # noqa: F811
     """Checks that song queues that are sent to the client have correct event format."""
 
@@ -41,6 +44,7 @@ def test_song_queue_listen_event(client): # noqa: F811
 
     assert f'event: {SONG_QUEUE_EVENT}' in r.data.decode('utf-8')
 
+
 def test_song_queue_listen_empty_queue(client): # noqa: F811
     """Checks that the initial song queue with no songs added is formated corretly."""
 
@@ -48,6 +52,7 @@ def test_song_queue_listen_empty_queue(client): # noqa: F811
         r = client.get(f'/songQueueListen?roomid={roomid}')
 
     assert 'data: []' in r.data.decode('utf-8')
+
 
 def test_song_queue_listen_one_song(client): # noqa: F811
     """Checks that the initial song queue with one song added is formated corretly."""
@@ -64,6 +69,7 @@ def test_song_queue_listen_one_song(client): # noqa: F811
     j = json.loads(string[string.index('[') - 1:])
 
     assert uri == j[0]['uri']
+
 
 def test_song_queue_listen_multiple_songs(client): # noqa: F811
     """Checks that the initial song queue with 4 song added is formated corretly."""

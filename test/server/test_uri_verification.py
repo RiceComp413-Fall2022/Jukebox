@@ -3,6 +3,7 @@ import unittest
 
 from src.server.validator import validate_uri
 
+
 class UriVerificationTest(unittest.TestCase):
     """Test Class for all URI verification related tests."""
 
