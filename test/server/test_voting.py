@@ -17,6 +17,7 @@ uris = ["spotify:track:5YZuePCawcrg0DJrWovPu7",
         "spotify:track:0qcr5FMsEO85NAQjrlDRKo",
         "spotify:track:1IHWl5LamUGEuP4ozKQSXZ"]
 
+
 def test_initialize(client): # noqa: F811
     """Add all the songs to the queue before executing tests."""
     r = client.get(f'/songQueueCreate?userid={userid}&roomid={roomid}')
@@ -29,6 +30,7 @@ def test_initialize(client): # noqa: F811
 
     for uri in uris:
         client.get(f'/addSong?userid={userid}&uri={uri}&roomid={roomid}')
+
 
 def test_upvote_explicit(client): # noqa: F811
     """Test that upvoting a song via upvote api works correctly."""
@@ -51,6 +53,7 @@ def test_upvote_explicit(client): # noqa: F811
             assert song.upvotes == 2
         else:
             assert song.upvotes == 0
+
 
 def test_upvote_implicit(client): # noqa: F811
     """Test that upvoting a song works via add song api call works correctly."""
@@ -77,6 +80,7 @@ def test_upvote_implicit(client): # noqa: F811
         else:
             assert song.upvotes == 0
 
+
 def test_upvote_reject(client): # noqa: F811
     """Test that upvotes are rejected a user has already upvoted a song."""
     # Test implicit after explicit
@@ -94,6 +98,7 @@ def test_upvote_reject(client): # noqa: F811
     # Test explicit after explicit
     r = client.get(f'/upvoteSong?userid={userid}&uri={uris[0]}&roomid={roomid}')
     assert r.status != "200 OK" and r.status == "400 BAD REQUEST"
+
 
 def test_downvote_explicit(client): # noqa: F811
     """Test that downvoting a song works via downvote api call."""

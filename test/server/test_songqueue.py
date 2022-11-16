@@ -4,6 +4,7 @@ import unittest
 
 from src.server.songqueue import SongQueue
 
+
 class test_songqueue(unittest.TestCase):
     """Tests for the songqueue functionality."""
 
