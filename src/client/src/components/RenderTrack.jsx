@@ -8,6 +8,7 @@ import RemoveButton from "./RemoveSong"
 import parseURIList from "../utils/Util";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
+import Upvotes from "./Upvotes";
 
 export default function RenderTrack(props) {
     const [{ setMultSongs, setTime, setGroup, setUUID, token }, dispatch] = useStateProvider();
@@ -74,7 +75,6 @@ export default function RenderTrack(props) {
                 return;
             }
             let uri2Upvotes = parseURIList(setMultSongs);
-            console.log("🚀 ~ file: RenderTrack.jsx ~ line 77 ~ getTracks ~ uri2Upvotes", uri2Upvotes)
 
             // check if we even have any songs to get
             const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + Object.keys(uri2Upvotes).join(','),
@@ -140,9 +140,7 @@ export default function RenderTrack(props) {
                                         <div className="col">
                                             <span>{item.album}</span>
                                         </div>
-                                        <div className="col">
-                                            <span>Upvotes: {uri2Upvotes[item.id]}  </span>
-                                        </div>
+                                        <Upvotes upvotes={uri2Upvotes[item.id]} />
                                         <div className="col">
                                             <span>{changeTime(item.duration)}</span>
                                         </div>
@@ -165,8 +163,6 @@ export default function RenderTrack(props) {
     }, [token.access_token, setMultSongs, dispatch]);
 
 
-    //console.log(setTime)
-
     return (
 
         <ListWrapper>
@@ -180,6 +176,8 @@ export default function RenderTrack(props) {
                 <div className="col">
                     <span>ALBUM</span>
                 </div>
+                {/* Place holder for the upvotes  */}
+                <div className="col"></div> 
                 <div className="col">
                     <span>
                         <AiFillClockCircle />
@@ -189,7 +187,6 @@ export default function RenderTrack(props) {
 
             {setTime}
         </ListWrapper>
-
     );
 
 }
@@ -202,7 +199,7 @@ const ListWrapper = styled.div`
 
      .header-row {
         display: grid;
-        grid-template-columns: 0.3fr 3fr 3fr 0.1fr .5fr;
+        grid-template-columns: 0.3fr 3fr 1.5fr .75fr 0.1fr .5fr;
         margin: 1rem 0 0 0;
         color: white;
         position: sticky;
@@ -223,7 +220,7 @@ const SongPlayer = styled.div`
         .row {
             padding: 0.5rem 1rem;
             display: grid;
-            grid-template-columns: 0.3fr 3.1fr 3fr 0.1fr .5fr;
+            grid-template-columns: 0.3fr 3fr 1.5fr .75fr 0.1fr .5fr;
             &:hover {
             background-color: rgba(0, 0, 0, 0.7);
         }
