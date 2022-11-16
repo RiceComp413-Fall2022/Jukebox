@@ -19,7 +19,14 @@ uris = ["spotify:track:5YZuePCawcrg0DJrWovPu7",
 
 def test_initialize(client): # noqa: F811
     """Add all the songs to the queue before executing tests."""
-    client.get(f'/songQueueCreate?userid={userid}&roomid={roomid}')
+    r = client.get(f'/songQueueCreate?userid={userid}&roomid={roomid}')
+
+    if (r.status != "200 OK"):
+        LOGGER.error(f"songQueueCreate get request failed with userid: {userid} and roomid: {roomid}:\n{r}")
+        assert False
+
+    assert True
+
     for uri in uris:
         client.get(f'/addSong?userid={userid}&uri={uri}&roomid={roomid}')
 
