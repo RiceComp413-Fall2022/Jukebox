@@ -197,7 +197,7 @@ def song_downvote():
         return "Failed to upvote song", 400
 
 @routes.route("/search", methods=['GET'])
-def song_search():
+def search():
     """API endpoint client should use to search for songs."""
     args = request.args
 
@@ -224,5 +224,36 @@ def song_search():
     res = s.get("https://api.spotify.com/v1/search?q=" + args['q'] + "&type=track&limit=5", headers=headers)
     if res.status_code != 200:
         return "Failed to perform search due to Spotify search error", 400
+
+    return res.text, 200
+
+@routes.route("/tracks", methods=['GET'])
+def tracks():
+    """API endpoint client should use to get track info."""
+    args = request.args
+
+    if 'ids' not in args:
+        return "IDs not present in request.", 400
+
+    s = requests.Session()
+
+    headers = {
+        "Authorization": b"Basic " + base64.b64encode((SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET).encode()),
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+
+    res = s.post("https://accounts.spotify.com/api/token", headers=headers, data="grant_type=client_credentials")
+    if res.status_code != 200:
+        return "Failed to perform search due to Spotify authentication error", 400
+    at = json.loads(res.text)["access_token"]
+
+    headers = {
+        "Authorization": "Bearer " + at,
+        "Content-Type": "application/json",
+    }
+
+    res = s.get("https://api.spotify.com/v1/tracks?ids=" + args['ids'], headers=headers)
+    if res.status_code != 200:
+        return "Failed to perform track lookup due to Spotify API error", 400
 
     return res.text, 200
