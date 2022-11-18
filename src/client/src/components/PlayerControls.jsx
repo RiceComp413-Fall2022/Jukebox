@@ -11,15 +11,20 @@ import { useStateProvider } from "../utils/StateProvider";
 import axios from "axios";
 import { reducerCases } from "../utils/Constants";
 import $ from 'jquery'; 
+import reducer from "../utils/Reducer";
+
 
 
 export default function PlayerControls(props) {
-  const [{ playerState }, dispatch] = useStateProvider();
+  const [{ playerState, setChangeCurr }, dispatch] = useStateProvider();
+  const [temp, setTemp] = useState(false)
   const [is_active, setActive] = useState(false);
   const [id, setId]= useState(undefined);
   const [player, setPlayer] = useState(undefined);
   const [is_paused, setPaused] = useState(false);
 
+
+  
   useEffect(() => {
 
     const script = document.createElement("script");
@@ -47,9 +52,15 @@ export default function PlayerControls(props) {
             console.log('Device ID has gone offline', device_id);
 
         });
+        player.addListener('player_state_changed', ({track_window: {current_track}}
+          )=>{
+            dispatch({type: reducerCases.SET_CHANGE_CURR, setChangeCurr: current_track})
+        })
 
-        player.addListener('player_state_changed', ( state => {
-
+        player.addListener('player_state_changed', (
+          { 
+            state, 
+          }) => {
           if (!state) {
               return;
           }
@@ -62,7 +73,7 @@ export default function PlayerControls(props) {
 
           player.getCurrentState().then( state)
 
-      }));
+      });
 
       player.connect();
     };
@@ -72,9 +83,18 @@ export default function PlayerControls(props) {
     playerState ? 
       axios.put(`https://api.spotify.com/v1/me/player/pause?device_id=${id}`, {}, {
         headers: { "Authorization": 'Bearer ' + props.token}
+      }).catch(function (error){
+        if(error.response.status === 402){
+          console.log(error.response.reason)
+          alert("Need Spotify Premium to Use Player")        
+        }
       }) : 
       axios.put(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {}, {
         headers: { "Authorization": 'Bearer ' + props.token}
+      }).catch(function (error){
+        if(error.response.status === 402){
+          alert("Need Spotify Premium to Use Player")
+        }
       });
 
     dispatch({
@@ -101,7 +121,8 @@ export default function PlayerControls(props) {
           Authorization: "Bearer " + props.token,
         },
       }
-    );
+    )
+    
 
     if (response1.data !== "") {
       const currentPlaying = {
