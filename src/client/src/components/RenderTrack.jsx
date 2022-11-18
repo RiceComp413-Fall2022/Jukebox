@@ -140,7 +140,7 @@ export default function RenderTrack(props) {
                                         <div className="col">
                                             <span>{item.album}</span>
                                         </div>
-                                        <Upvotes upvotes={uri2Upvotes[item.id]} />
+                                        <Upvotes upvotes={uri2Upvotes[item.id]} uri={"spotify:track:" + item.id} />
                                         <div className="col">
                                             <span>{changeTime(item.duration)}</span>
                                         </div>
@@ -177,7 +177,7 @@ export default function RenderTrack(props) {
                     <span>ALBUM</span>
                 </div>
                 {/* Place holder for the upvotes  */}
-                <div className="col"></div> 
+                <div className="col"></div>
                 <div className="col">
                     <span>
                         <AiFillClockCircle />
