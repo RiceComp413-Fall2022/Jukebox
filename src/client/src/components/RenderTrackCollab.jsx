@@ -34,23 +34,22 @@ export default function RenderTrackCollab(props) {
             let uri2Upvotes = parseURIList(setMultSongs);
 
             // check if we even have any songs to get
-            const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + Object.keys(uri2Upvotes).join(','),
-                {
-                    headers: {
-                        Authorization: "Bearer " + props.token,
-                        "Content-Type": "application/json"
-                    }
-                }).catch(function (error) {
-                    // maybe not the best way to handle this error
-                    if (error.response.status === 400) {
-                        let renderObj = <div></div>
-                        dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
-                    }
-                });
 
-            if (response != undefined && response.data != "") {
-                console.log(response.data.tracks[0].name, "rep")
-                console.log("we're in")
+            const response = await axios.get("/tracks?ids=" + Object.keys(uri2Upvotes).join(','),
+            {
+                // headers: {
+                //     Authorization: "Bearer " +  props.token,
+                //     "Content-Type" : "application/json"
+                // }
+            }).catch(function (error) {
+                // maybe not the best way to handle this error
+                if (error.response.status === 400) {
+                    let renderObj = <div></div>
+                    dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
+                }
+            });
+
+            if (response != undefined && response.data != ""){
                 let tpArr = []
                 for (let i = 0; i < response.data.tracks.length; i++) {
                     const currentPlaying = {

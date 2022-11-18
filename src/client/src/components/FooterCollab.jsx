@@ -8,7 +8,7 @@ export default function FooterCollab(props) {
 
   return (
     <Container>
-      <CurrentTrack token = {props.token}/>
+      {/* <CurrentTrack token = {props.token}/> */}
     </Container>
   );
 }

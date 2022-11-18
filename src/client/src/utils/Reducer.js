@@ -85,6 +85,16 @@ const reducer = (state, action) => {
           ...state,
           setUUID: action.setUUID,
         }
+      case reducerCases.SET_CHANGE_CURR:
+        return{
+          ...state,
+          setChangeCurr: action.setChangeCurr,
+        }
+      case reducerCases.SET_PREV:
+        return{
+          ...state,
+          setPrev: action.setPrev,
+        }
   
 
       default:
