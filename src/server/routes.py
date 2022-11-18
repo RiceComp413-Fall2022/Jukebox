@@ -80,8 +80,10 @@ def song_q_listen():
     if not args['roomid'] in queues:
         return "Invalid room ID", 400
 
+    userid = args['userid'] if 'userid' in args else ""
+
     """API endpoint client should use to listen for song queues."""
-    return song_queue_listen(args['roomid'])
+    return song_queue_listen(args['roomid'], userid)
 
 @routes.route("/addSong", methods=['GET'])
 def song_add():
