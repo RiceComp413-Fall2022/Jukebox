@@ -13,6 +13,7 @@ import { reducerCases } from "../utils/Constants";
 import $ from 'jquery'; 
 
 
+
 export default function PlayerControls(props) {
   const [{ playerState }, dispatch] = useStateProvider();
   const [is_active, setActive] = useState(false);
@@ -20,6 +21,8 @@ export default function PlayerControls(props) {
   const [player, setPlayer] = useState(undefined);
   const [is_paused, setPaused] = useState(false);
 
+
+  
   useEffect(() => {
 
     const script = document.createElement("script");
@@ -72,9 +75,18 @@ export default function PlayerControls(props) {
     playerState ? 
       axios.put(`https://api.spotify.com/v1/me/player/pause?device_id=${id}`, {}, {
         headers: { "Authorization": 'Bearer ' + props.token}
+      }).catch(function (error){
+        if(error.response.status === 402){
+          console.log(error.response.reason)
+          alert("Need Spotify Premium to Use Player")        
+        }
       }) : 
       axios.put(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {}, {
         headers: { "Authorization": 'Bearer ' + props.token}
+      }).catch(function (error){
+        if(error.response.status === 402){
+          alert("Need Spotify Premium to Use Player")
+        }
       });
 
     dispatch({
@@ -101,7 +113,8 @@ export default function PlayerControls(props) {
           Authorization: "Bearer " + props.token,
         },
       }
-    );
+    )
+    
 
     if (response1.data !== "") {
       const currentPlaying = {
