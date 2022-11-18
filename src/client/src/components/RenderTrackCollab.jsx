@@ -10,37 +10,31 @@ import RemoveButton from "./RemoveSong"
 import parseURIList from "../utils/Util";
 import Upvotes from "./Upvotes";
 
-export default function RenderTrackCollab(props){
-    const [{ setMultSongs, setTime, setGroup, setUUID, token}, dispatch] = useStateProvider();
+export default function RenderTrackCollab(props) {
+    const [{ setMultSongs, setTime, setGroup, setUUID, token }, dispatch] = useStateProvider();
 
     function changeTime(millis) {
         var minutes = Math.floor(millis / 60000);
         var seconds = ((millis % 60000) / 1000).toFixed(0);
         return (
-        seconds == 60 ?
-        (minutes+1) + ":00" :
-        minutes + ":" + (seconds < 10 ? "0" : "") + seconds
-      );
+            seconds == 60 ?
+                (minutes + 1) + ":00" :
+                minutes + ":" + (seconds < 10 ? "0" : "") + seconds
+        );
     }
 
-    useEffect(() =>{
-        const getTracks = async() => {
+    useEffect(() => {
+        const getTracks = async () => {
             if (setMultSongs == undefined) {
                 let renderObj = <div></div>
                 dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
-                return; 
+                return;
             }
 
             let uri2Upvotes = parseURIList(setMultSongs);
 
             // check if we even have any songs to get
-            // axios.get(`/search?${fetchURL}`)
-            // .catch(function (error) {
-            //   setImage([]);
-            //   throw Error("Response Not Ok: " + error);
-            // })
-            // .then((response) => response.data.tracks)
-            // .then((tracks) => {
+
             const response = await axios.get("/tracks?ids=" + Object.keys(uri2Upvotes).join(','),
             {
                 // headers: {
@@ -57,74 +51,74 @@ export default function RenderTrackCollab(props){
 
             if (response != undefined && response.data != ""){
                 let tpArr = []
-                for(let i = 0; i < response.data.tracks.length; i ++) {
+                for (let i = 0; i < response.data.tracks.length; i++) {
                     const currentPlaying = {
-                      id: response.data.tracks[i].id,
-                      name: response.data.tracks[i].name,
-                      artists: response.data.tracks[i].artists.map((artist) => artist.name),
-                      image: response.data.tracks[i].album.images[2].url,
-                      album : response.data.tracks[i].album.name,
-                      duration : response.data.tracks[i].duration_ms,
-                      context_uri : response.data.tracks[i].album.uri,
-                      track_number : response.data.tracks[i].track_number
+                        id: response.data.tracks[i].id,
+                        name: response.data.tracks[i].name,
+                        artists: response.data.tracks[i].artists.map((artist) => artist.name),
+                        image: response.data.tracks[i].album.images[2].url,
+                        album: response.data.tracks[i].album.name,
+                        duration: response.data.tracks[i].duration_ms,
+                        context_uri: response.data.tracks[i].album.uri,
+                        track_number: response.data.tracks[i].track_number
                     };
                     tpArr.push(currentPlaying);
                 }
-                if(tpArr.length != 0){
+                if (tpArr.length != 0) {
 
                     let renderObj = tpArr.map((item, index) =>
-                    <li key={item.id} style={{listStyleType:"none"}} >
-                        <SongPlayer style={{backgroundColor : "#181818"}}> 
-                            <div className="tracks">
-                                <div className="row"
-                                     key={item.id}
-                                     
-                                >
-                                    <div className="col">
-                                        <span> {index + 1}</span>
-                                    </div>
-                                    <div className="col detail">
-                                        <div className="image">
-                                            <img src={item.image} alt='track'/>
-                                        </div>
-                                        <div className="info">
-                                            <span className = "song__name">{item.name}</span>
-                                            <span className="artists__names">{item.artists.join(", ")}</span>
-                                        </div>
-                                    </div>
-                                    <div className="col">
-                                        <span>{item.album}</span>
-                                    </div>
-                                    <Upvotes upvotes={uri2Upvotes[item.id]} />
-                                    <div className="col">
-                                        <span> {changeTime(item.duration)} </span>
-                                    </div>
-                                    <RemoveButton color={blue[200]} userId={setUUID} uri={"spotify:track:" + item.id} roomId={setGroup}/>
-                                </div>
-                            </div>
-                        </SongPlayer> 
-                    </li>);
+                        <li key={item.id} style={{ listStyleType: "none" }} >
+                            <SongPlayer style={{ backgroundColor: "#181818" }}>
+                                <div className="tracks">
+                                    <div className="row"
+                                        key={item.id}
 
-                     dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
+                                    >
+                                        <div className="col">
+                                            <span> {index + 1}</span>
+                                        </div>
+                                        <div className="col detail">
+                                            <div className="image">
+                                                <img src={item.image} alt='track' />
+                                            </div>
+                                            <div className="info">
+                                                <span className="song__name">{item.name}</span>
+                                                <span className="artists__names">{item.artists.join(", ")}</span>
+                                            </div>
+                                        </div>
+                                        <div className="col">
+                                            <span>{item.album}</span>
+                                        </div>
+                                        <Upvotes upvotes={uri2Upvotes[item.id]} uri={"spotify:track:" + item.id} />
+                                        <div className="col">
+                                            <span> {changeTime(item.duration)} </span>
+                                        </div>
+                                        <RemoveButton color={blue[200]} userId={setUUID} uri={"spotify:track:" + item.id} roomId={setGroup} />
+                                    </div>
+                                </div>
+                            </SongPlayer>
+                        </li>);
+
+                    dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
 
                 } else {
                     let renderObj = <div></div>
                     dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
                 }
 
-            }  
+            }
         }
-            
+
         getTracks()
 
-    }, [token, dispatch, setMultSongs]); 
-    
+    }, [token, dispatch, setMultSongs]);
 
-        //console.log(setTime)
 
-        return(
+    //console.log(setTime)
 
-            <ListWrapper>
+    return (
+
+        <ListWrapper>
             <div className="header-row">
                 <div className="col">
                     <span>#</span>
@@ -136,20 +130,20 @@ export default function RenderTrackCollab(props){
                     <span>ALBUM</span>
                 </div>
                 {/* Place holder for the upvotes  */}
-                <div className="col"></div> 
+                <div className="col"></div>
                 <div className="col">
                     <span>
                         <AiFillClockCircle />
                     </span>
                 </div>
             </div>
-            
-            {setTime}
-            </ListWrapper>
-    
-        );
 
-    }
+            {setTime}
+        </ListWrapper>
+
+    );
+
+}
 
 const ListWrapper = styled.div`
     display: flex;
@@ -167,11 +161,11 @@ const ListWrapper = styled.div`
         padding: 1rem 3rem;
         transition: 0.3s ease-in-out;
         backgroundcolor: ${({ headerBackground }) =>
-          headerBackground ? "#000000dc" : "none"};
+        headerBackground ? "#000000dc" : "none"};
     }
 `
-;
-    
+    ;
+
 const SongPlayer = styled.div`
     .tracks {
         margin: 0 2rem;
@@ -215,5 +209,5 @@ const SongPlayer = styled.div`
       }
     }
 `
-;
-    
+    ;
+
