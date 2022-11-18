@@ -11,11 +11,13 @@ import { useStateProvider } from "../utils/StateProvider";
 import axios from "axios";
 import { reducerCases } from "../utils/Constants";
 import $ from 'jquery'; 
+import reducer from "../utils/Reducer";
 
 
 
 export default function PlayerControls(props) {
-  const [{ playerState }, dispatch] = useStateProvider();
+  const [{ playerState, setChangeCurr }, dispatch] = useStateProvider();
+  const [temp, setTemp] = useState(false)
   const [is_active, setActive] = useState(false);
   const [id, setId]= useState(undefined);
   const [player, setPlayer] = useState(undefined);
@@ -50,9 +52,15 @@ export default function PlayerControls(props) {
             console.log('Device ID has gone offline', device_id);
 
         });
+        player.addListener('player_state_changed', ({track_window: {current_track}}
+          )=>{
+            dispatch({type: reducerCases.SET_CHANGE_CURR, setChangeCurr: current_track})
+        })
 
-        player.addListener('player_state_changed', ( state => {
-
+        player.addListener('player_state_changed', (
+          { 
+            state, 
+          }) => {
           if (!state) {
               return;
           }
@@ -65,7 +73,7 @@ export default function PlayerControls(props) {
 
           player.getCurrentState().then( state)
 
-      }));
+      });
 
       player.connect();
     };

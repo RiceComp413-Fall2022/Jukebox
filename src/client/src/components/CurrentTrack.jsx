@@ -4,35 +4,76 @@ import axios from "axios";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 export default function  CurrentTrack(props) {
-    
-  const [{ token, currentPlaying }, dispatch] = useStateProvider();
+  function createUri(currId){
+    return "spotify:track:" + currId
+  }
+  const [{ token, currentPlaying, setPrev, setChangeCurr, setGroup, setUUID }, dispatch] = useStateProvider();
   useEffect(() => {
+    // console.log(setPrev)
+    if(setPrev == undefined && currentPlaying  != undefined){
+      console.log("intial render")
+      dispatch({ type: reducerCases.SET_PREV, setPrev: currentPlaying})
+    }
+    if(setPrev != undefined){
+      if(setPrev.id !== currentPlaying.id){
+        console.log(setPrev)
+        console.log(currentPlaying)
+
+          axios.get('/removeSong?userid=' + setUUID + '&roomid=' + setGroup + '&uri=' + createUri(setPrev.id))
+          .catch((error) => {
+            if (error.response.status === 400) {
+              // could not remove song, need to notify user
+              console.log("failed to remove song")
+            }
+          });
+          dispatch({type: reducerCases.SET_PREV, setPrev: currentPlaying})
+      }
+      // console.log(setPrev, "setPrev")
+      // console.log(currentPlaying, "current")
+    }
+  }, [currentPlaying, dispatch])
+  useEffect(() => {
+    console.log("curr track")
     const getCurrentTrack = async () => {
-      const response = await axios.get(
-        "https://api.spotify.com/v1/me/player/currently-playing",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + props.token,
-          },
-        }
-      );
-      if (response.data !== "") {
+      console.log(setChangeCurr)
+      if(setChangeCurr !== ""){
         const currentPlaying = {
-          id: response.data.item.id,
-          name: response.data.item.name,
-          artists: response.data.item.artists.map((artist) => artist.name),
-          image: response.data.item.album.images[2].url,
-        };
+          id: setChangeCurr.id,
+          name: setChangeCurr.name,
+          artists: setChangeCurr.artists.map((artist) => artist.name),
+          image: setChangeCurr.album.images[2].url,
+        }
         dispatch({ type: reducerCases.SET_PLAYING, currentPlaying });
       } else {
         dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: null });
       }
+      
+      // const response = await axios.get(
+      //   "https://api.spotify.com/v1/me/player/currently-playing",
+      //   {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: "Bearer " + props.token,
+      //     },
+      //   }
+      // );
+      // if (response.data !== "") {
+      //   const currentPlaying = {
+      //     id: response.data.item.id,
+      //     name: response.data.item.name,
+      //     artists: response.data.item.artists.map((artist) => artist.name),
+      //     image: response.data.item.album.images[2].url,
+      //   };
+      //   dispatch({ type: reducerCases.SET_PLAYING, currentPlaying });
+      // } else {
+      //   dispatch({ type: reducerCases.SET_PLAYING, currentPlaying: null });
+      // }
+      // console.log(response.data.item.name)
     };
     getCurrentTrack();
-  }, [props.token, dispatch]);
+  }, [props.token, dispatch, setChangeCurr]);
   
-  return (
+  return ( 
     <Container>
       {currentPlaying && (
         <div className="track">
