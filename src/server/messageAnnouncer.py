@@ -15,11 +15,11 @@ class MessageAnnouncer:
         Returns:
             a queue that contains messages from the announcer
         """
-        q = queue.Queue()
+        q = queue.Queue(maxsize=5)
         self.listeners.append(q)
         return q
 
-    def announce(self, msg: str) -> None:
+    def announce(self, msg) -> None:
         """
         Send message to all listners.
 
@@ -35,7 +35,7 @@ class MessageAnnouncer:
 class SSEMessageAnnouncer(MessageAnnouncer):
     """Message Announcer specifically tailored for server sent events."""
 
-    def announce(self, msg: str, event=None) -> None:
+    def announce(self, msg) -> None:
         """
         Sends a server sent event message to all listeners.
 
@@ -47,7 +47,7 @@ class SSEMessageAnnouncer(MessageAnnouncer):
             - event: String event to be added to the message sent to the listners, that can clasify what type of event the
                     message is describing.
         """
-        return super().announce(format_sse(msg, event))
+        return super().announce(msg)
 
 def format_sse(data: str, event=None) -> str:
     """

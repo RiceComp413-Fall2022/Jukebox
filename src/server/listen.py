@@ -6,7 +6,7 @@ from .resources import queues
 from flask import Response
 import json
 
-def stream(announcer, queue, testing=False):
+def stream(announcer, queue, userid="", testing=False):
     """
     Defines the stream to be used for server send events.
 
@@ -17,7 +17,12 @@ def stream(announcer, queue, testing=False):
 
     # tells the user the current state of the queue
     queue_contents = queue.get_all()
-    json_data = [{"uri": song.uri, "upvotes": song.upvotes} for song in queue_contents]
+    json_data = [{
+        "uri": song.uri,
+        "upvotes": song.upvotes,
+        "isOwnSong": True if song.user_id == userid else False,
+        "upvotesByUser": song.upvotes_by_user[userid] if userid in song.upvotes_by_user else 0
+    } for song in queue_contents]
     init_q = format_sse(json.dumps(json_data), SONG_QUEUE_EVENT)
     yield init_q
 
@@ -25,18 +30,24 @@ def stream(announcer, queue, testing=False):
         return
 
     while True:
-        msg = messages.get()  # blocks until a new message arrives
-        # check if this message is about the song queue
-        if f"event: {SONG_QUEUE_EVENT}" in msg:
-            yield msg
-        if f"event: {QUEUE_CLOSED_EVENT}" in msg:
-            yield msg
-            return
+        queue_is_open, queue_contents = messages.get()  # blocks until a new message arrives
 
-def song_queue_listen(roomid):
+        if not queue_is_open:
+            yield format_sse("", QUEUE_CLOSED_EVENT)
+            return
+        else:
+            json_data = [{
+                "uri": song.uri,
+                "upvotes": song.upvotes,
+                "isOwnSong": True if song.user_id == userid else False,
+                "upvotesByUser": song.upvotes_by_user[userid] if userid in song.upvotes_by_user else 0
+            } for song in queue_contents]
+            yield format_sse(json.dumps(json_data), SONG_QUEUE_EVENT)
+
+def song_queue_listen(roomid, userid):
     """Listens for a song queue to be announced using server sent events."""
     queue = queues[roomid]
     announcer = announcers[roomid]
 
     # NOTE: Change the * to the domain to be more secure later
-    return Response(stream(announcer, queue), mimetype='text/event-stream')
+    return Response(stream(announcer, queue, userid=userid), mimetype='text/event-stream')
