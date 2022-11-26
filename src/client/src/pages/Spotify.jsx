@@ -9,7 +9,9 @@ import { reducerCases } from "../utils/Constants";
 import RenderTrack from "../components/RenderTrack";
 
 export default function Spotify() {
-  const [{ token, setMultSongs, setGroup }, dispatch] = useStateProvider();
+  const [{ token, setMultSongs, setGroup, setUpdate }, dispatch] = useStateProvider();
+  const [temp, setTemp] = useState({});
+
   const [navBackground, setNavBackground] = useState(false);
   const [headerBackground, setHeaderBackground] = useState(false);
   const bodyRef = useRef();
@@ -21,7 +23,7 @@ export default function Spotify() {
       ? setHeaderBackground(true)
       : setHeaderBackground(false);
   };
- 
+
   useEffect(() => {
     const getUserInfo = async () => {
       const { data } = await axios.get("https://api.spotify.com/v1/me", {
@@ -56,28 +58,27 @@ export default function Spotify() {
     getPlaybackState();
   }, [dispatch, token.access_token]);
 
-  useEffect(() => {
-    const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup,
-      { withCredentials: false });
+  // useEffect(() => {
+  //   const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup,
+  //     { withCredentials: false });
     
-    sse.addEventListener('song_queue', (e) => {dispatch({type: reducerCases.SET_MULT_SONGS, setMultSongs: e.data}); console.log('Mult Songs: ' + setMultSongs)});
+  //   sse.addEventListener('song_queue', (e) => {dispatch({type: reducerCases.SET_MULT_SONGS, setMultSongs: e.data}); setTemp(e.data); dispatch({type: reducerCases.SET_UPDATE, setUpdate: e.data})});
 
-    sse.onopen = (e) => {
-      console.log('open')
-    }
+  //   sse.onopen = (e) => {
+  //     console.log('open')
+  //   }
 
-    sse.onerror = () => {
-      // error log here 
-      console.error('Bricked; Could not listen to room ' + setGroup);
+  //   sse.onerror = () => {
+  //     // error log here 
+  //     console.error('Bricked; Could not listen to room ' + setGroup);
       
-      sse.close();
-    }
+  //     sse.close();
+  //   }
 
-    return () => {
-      sse.close();
-    }; 
-  }, [setGroup]);
-
+  //   return () => {
+  //     sse.close();
+  //   }; 
+  // }, [setGroup, dispatch]);
   return (
     <Container>
     <div className="spotify__body">
@@ -90,7 +91,7 @@ export default function Spotify() {
       </div>
     </div>
     <div className="spotify__footer">
-      <Footer token = {token.access_token} uriVal={setMultSongs === undefined ? '' : setMultSongs[0]}/>
+      <Footer token = {token.access_token}/>
     </div>
   </Container>
   );

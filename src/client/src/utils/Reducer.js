@@ -95,6 +95,11 @@ const reducer = (state, action) => {
           ...state,
           setPrev: action.setPrev,
         }
+      case reducerCases.SET_UPDATE:
+          return{
+            ...state,
+            setUpdate: action.setUpdate,
+          }
   
 
       default:
