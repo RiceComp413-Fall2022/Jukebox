@@ -14,5 +14,6 @@ export const reducerCases = {
   SET_GROUP_ID: "SET_GROUP_ID",
   SET_UUID: "SET_UUIDS",
   SET_CHANGE_CURR: "SET_CHANGE_CURR",
-  SET_PREV: "SET_PREV"
+  SET_PREV: "SET_PREV",
+  SET_UPDATE: "SET_UPDATE",
 };
