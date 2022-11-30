@@ -11,7 +11,7 @@ import axios from "axios";
 const qs = require('qs');
 
 export default function SpotifyCollab(props) {
-  const [{ token, setImage, setGroup, setMultSongs}, dispatch] = useStateProvider();
+  const [{ token, setImage, setGroup, setMultSongs, setTrackC}, dispatch] = useStateProvider();
   const [uriList, setUriList] = useStateProvider(undefined);
   const [navBackground, setNavBackground] = useState(false);
   const [tok, setTok] = useState(false);
@@ -56,7 +56,7 @@ export default function SpotifyCollab(props) {
     const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup,
       { withCredentials: false });
 
-    sse.addEventListener('song_queue', (e) => {dispatch({type: reducerCases.SET_MULT_SONGS, setMultSongs: e.data}); console.log('Mult Songs: ' + setMultSongs)});
+    sse.addEventListener('song_queue', (e) => {dispatch({type: reducerCases.SET_MULT_SONGS, setMultSongs: e.data}); if (e.data.length > 5) {dispatch({type: reducerCases.SET_TRACK_C, setTrackC: JSON.stringify(e.data).substring(28, 50)})}; console.log('collab')});
  
     sse.onopen = (e) => {
       console.log('open')

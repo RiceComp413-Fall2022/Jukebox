@@ -52,19 +52,21 @@ export default function SearchBar() {
                 return;
               }}
             >
-              <li key={element.uri}>
-                <List.Item.Meta
-                  avatar={
-                    <Avatar
-                      shape="square"
-                      size="large"
-                      src={element.album.images[0].url}
-                    />
-                  }
-                  title={<p href="https://ant.design">{element.name}</p>}
-                  description={artists.join(", ")}
-                />
-              </li>
+              <Container>
+                <li className="tracks" key={element.uri} style = {{'border-bottom' : 'solid', 'border-width' : '2px', 'marginTop' : '10px'}}>
+                  <List.Item.Meta
+                    avatar={
+                      <Avatar
+                        shape="square"
+                        size="large"
+                        src={element.album.images[0].url}
+                      />
+                    }
+                    title={<p href="https://ant.design">{element.name}</p>}
+                    description={artists.join(", ")}
+                  />
+                </li>
+              </Container>
             </div>
           );
         });
@@ -124,7 +126,7 @@ export default function SearchBar() {
         )}
         <div />
         {image.length != 0 && (
-          <div className="dataResult" style={{ paddingTop: "5px" }}>
+          <div className="dataResult" style={{ 'paddingTop' : "3px", 'width' : '100%' }}>
             {card}
           </div>
         )}
@@ -133,6 +135,11 @@ export default function SearchBar() {
   );
 }
 
-const dataResult = styled.div`
-  display: flex;
-`;
+
+const Container = styled.div`
+.tracks {
+    &:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+`
