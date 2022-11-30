@@ -106,7 +106,7 @@ export default function PlayerControls(props) {
                   if(tItr.current === 4){
                   
                     console.log(tItr.current)
-                    changeSong('s')
+                    changeSong()
                   }
                     // tItr.current = 0;
 
@@ -151,10 +151,8 @@ export default function PlayerControls(props) {
 // there arte 3 callbacks we only want 1. try using pretrack currtrack states to check on identitical callbacks? and change this method to delete the
 // 0th song and play the first song
   var alr_play = new Set()
-  async function changeSong(v){
-    console.log(tVal.current)
-    console.log(id)
-    await sleep(2000)
+  async function changeSong(){
+    await sleep(500)
     // tItr ++;
     if(alr_play.has(JSON.stringify(tVal.current).substring(14, 50)) == false && id != 0){
       console.log("should change")
@@ -275,18 +273,15 @@ export default function PlayerControls(props) {
       <div className="shuffle">
         <BsShuffle />
       </div>
-      <div className="previous">
-        <CgPlayTrackPrev onClick={() => changeTrack("previous")} />
-      </div>
       <div className="state">
         {!is_paused ? (
           <BsFillPauseCircleFill onClick={() => {setPaused(true); player.togglePlay();  }}/>
         ) : (
-          <BsFillPlayCircleFill onClick={() => { setPaused(false); player.togglePlay();  changeSong("s")}}/>
+          <BsFillPlayCircleFill onClick={() => { setPaused(false); player.togglePlay();  changeSong()}}/>
         )}
       </div>
       <div className="next">
-        <CgPlayTrackNext onClick={() => changeTrack("next")} />
+        <CgPlayTrackNext onClick={() => changeSong()} />
       </div>
       {/* <button onClick={createPlaylist}>LOL</button> */}
       <div className="repeat">

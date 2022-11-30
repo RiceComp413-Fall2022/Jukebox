@@ -9,7 +9,7 @@ export default function Footer(props) {
     <Container>
       <CurrentTrack token = {props.token}/>
       <PlayerControls token = {props.token} uriVal = {props.uriVal}/>
-      <Volume />
+      <Volume token = {props.token}/>
     </Container>
   );
 }

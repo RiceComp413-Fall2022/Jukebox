@@ -3,7 +3,7 @@ import React from "react";
 import styled from "styled-components";
 import { useStateProvider } from "../utils/StateProvider";
 
-export default function Volume() {
+export default function Volume(props) {
   const [{ token }] = useStateProvider();
   const setVolume = async (e) => {
     await axios.put(
@@ -15,7 +15,7 @@ export default function Volume() {
         },
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
+          Authorization: "Bearer " + props.token,
         },
       }
     );

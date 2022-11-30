@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import CurrentTrack from "./CurrentTrack";
+import CurrentTrackCollab from './CurrentTrackCollab';
 
 import PlayerControls from "./PlayerControls";
 import Volume from "./Volume";
@@ -8,7 +9,7 @@ export default function FooterCollab(props) {
 
   return (
     <Container>
-      {/* <CurrentTrack token = {props.token}/> */}
+      <CurrentTrackCollab token = {props.token}/>
     </Container>
   );
 }
