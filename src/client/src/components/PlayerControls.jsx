@@ -164,7 +164,7 @@ export default function PlayerControls(props) {
         success: function (data) { }
       });
       alr_play.add(JSON.stringify(tVal.current).substring(14, 50))
-      axios.get('/removeSong?userid=' + setUUID + '&roomid=' + setGroup + '&uri=' + JSON.stringify(tVal.current).substring(14, 50));
+      axios.get('/stepCurrent?userid=' + setUUID + '&roomid=' + setGroup + '&uri=' + JSON.stringify(tVal.current).substring(14, 50));
     }
   }
   async function getUri(uris, useParse) {

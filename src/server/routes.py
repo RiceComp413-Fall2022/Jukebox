@@ -16,6 +16,15 @@ import json
 
 routes = Blueprint('routes', __name__)
 
+s = requests.Session()
+
+headers = {
+    "Authorization": b"Basic " + base64.b64encode((SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET).encode()),
+    "Content-Type": "application/x-www-form-urlencoded"
+}
+res = s.post("https://accounts.spotify.com/api/token", headers=headers, data="grant_type=client_credentials")
+at = json.loads(res.text)["access_token"]
+
 @routes.route("/songQueueCreate", methods=['GET'])
 def song_q_create():
     """
@@ -198,6 +207,28 @@ def song_downvote():
     else:
         return "Failed to upvote song", 400
 
+@routes.route("/stepCurrent", methods=['GET'])
+def step_current():
+    """API endpoint client should use to step the current song."""
+    args = request.args
+
+    if 'userid' not in args:
+        return "User ID not present in request.", 400
+
+    if 'roomid' not in args:
+        return "Room ID not present in request.", 400
+
+    if not args['roomid'] in queues:
+        return "Invalid room ID", 400
+
+    result = queues[args['roomid']].step_current(args['userid'])
+    announce_song_queue(args['roomid'])
+
+    if result:
+        return "Successfully updated current song", 200
+    else:
+        return "Failed to update current song", 400
+
 @routes.route("/search", methods=['GET'])
 def search():
     """API endpoint client should use to search for songs."""
@@ -205,18 +236,6 @@ def search():
 
     if 'q' not in args:
         return "Search query not present in request.", 400
-
-    s = requests.Session()
-
-    headers = {
-        "Authorization": b"Basic " + base64.b64encode((SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET).encode()),
-        "Content-Type": "application/x-www-form-urlencoded"
-    }
-
-    res = s.post("https://accounts.spotify.com/api/token", headers=headers, data="grant_type=client_credentials")
-    if res.status_code != 200:
-        return "Failed to perform search due to Spotify authentication error", 400
-    at = json.loads(res.text)["access_token"]
 
     headers = {
         "Authorization": "Bearer " + at,
@@ -236,18 +255,6 @@ def tracks():
 
     if 'ids' not in args:
         return "IDs not present in request.", 400
-
-    s = requests.Session()
-
-    headers = {
-        "Authorization": b"Basic " + base64.b64encode((SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET).encode()),
-        "Content-Type": "application/x-www-form-urlencoded"
-    }
-
-    res = s.post("https://accounts.spotify.com/api/token", headers=headers, data="grant_type=client_credentials")
-    if res.status_code != 200:
-        return "Failed to perform search due to Spotify authentication error", 400
-    at = json.loads(res.text)["access_token"]
 
     headers = {
         "Authorization": "Bearer " + at,

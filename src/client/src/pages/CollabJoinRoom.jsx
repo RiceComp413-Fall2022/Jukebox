@@ -3,44 +3,54 @@ import styled from "styled-components";
 import { reducerCases } from "../utils/Constants";
 import { useStateProvider } from "../utils/StateProvider";
 import { Link } from 'react-router-dom';
-import genUserId from "../components/UserID";
+import GLogin from "./GLogin";
 
 export default function CollabJoinRoom(props) {
-  const [{}, dispatch] = useStateProvider();
+  const [{ setUUID }, dispatch] = useStateProvider();
   const inputRef = useRef(null);
-  const userId = genUserId(); // gen userid for the user  
 
   function handleClick() {
     dispatch({
-        type: reducerCases.SET_GROUP,
-        setGroup: inputRef.current.value,
-      });
-    
-    // when room is joined also set the userid for this user
-    dispatch({
-        type: reducerCases.SET_UUID,
-        setUUID: userId,
-      });  
-  } 
+      type: reducerCases.SET_GROUP,
+      setGroup: inputRef.current.value,
+    });
+  }
 
-  return (
-    <Container>
-        <Input ref = {inputRef} placeholder="Enter Group ID here" />
-        <Link to={{pathname:'/queueCollab'}}>
-          <button onClick={handleClick}>            
+  // google auth clientId
+  const clientId = '865635097502-3r9fj984vh1834te8vq6nur5du57k8cb.apps.googleusercontent.com';
+
+  // require Goolge Login until we have a valid userID to use
+  if (setUUID === undefined) {
+    return (
+      <Container>
+        <GLogin clientId={clientId} />
+      </Container>
+    )
+  }
+  else {
+    // there is a valid userID they can now enter the room ID to join
+    console.log('UUID: ' + setUUID);
+
+    return (
+      <Container>
+        <Input ref={inputRef} placeholder="Enter Group ID here" />
+        <Link to={{ pathname: '/queueCollab' }}>
+          <button onClick={handleClick}>
             Join Room
           </button>
         </Link>
-    </Container>
-  );
+      </Container>
+    )
+  }
 }
+
 const Input = styled.input.attrs(props => ({
-    // we can define static props
-    type: "text",
-  
-    // or we can define dynamic ones
-    size: props.size || "1em",
-  }))`
+  // we can define static props
+  type: "text",
+
+  // or we can define dynamic ones
+  size: props.size || "1em",
+}))`
     color: palevioletred;
     font-size: 1em;
     border: 2px solid palevioletred;
