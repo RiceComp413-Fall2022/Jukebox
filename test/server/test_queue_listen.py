@@ -66,7 +66,7 @@ def test_song_queue_listen_one_song(client): # noqa: F811
         r = client.get(f'/songQueueListen?roomid={roomid}')
 
     string = r.data.decode('utf-8')
-    j = json.loads(string[string.index('[') - 1:])
+    j = json.loads(string[string.index('['):string.index(']') + 1])
 
     assert uri == j[0]['uri']
 
@@ -87,7 +87,7 @@ def test_song_queue_listen_multiple_songs(client): # noqa: F811
         r = client.get(f'/songQueueListen?roomid={roomid}')
 
     string = r.data.decode('utf-8')
-    j = json.loads(string[string.index('[') - 1:])
+    j = json.loads(string[string.index('['):string.index(']') + 1])
 
     correct = True
     idx = 0
