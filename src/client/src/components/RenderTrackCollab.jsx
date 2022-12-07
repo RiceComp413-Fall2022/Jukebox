@@ -49,6 +49,9 @@ export default function RenderTrackCollab(props) {
                 }
             });
 
+            console.log(JSON.parse(setMultSongs)[0])
+            console.log('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup + '&userid=' + setUUID)
+
             if (response != undefined && response.data != ""){
                 let tpArr = []
                 for (let i = 0; i < response.data.tracks.length; i++) {
@@ -93,7 +96,11 @@ export default function RenderTrackCollab(props) {
                                         <div className="col">
                                             <span> {changeTime(item.duration)} </span>
                                         </div>
-                                        <RemoveButton color={blue[200]} userId={setUUID} uri={"spotify:track:" + item.id} roomId={setGroup} />
+                                        {JSON.parse(setMultSongs).length > 0 && JSON.parse(setMultSongs)[index]['isOwnSong'] === true ?
+                                               <RemoveButton color={blue[200]} userId={setUUID} uri={"spotify:track:" + item.id} roomId={setGroup} /> :
+                                               <div></div>
+                                        } 
+
                                     </div>
                                 </div>
                             </SongPlayer>
