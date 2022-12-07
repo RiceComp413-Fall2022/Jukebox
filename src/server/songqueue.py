@@ -16,6 +16,8 @@ class SongQueue:
         self.entries_by_song = {}
         self.primary_user_id = primary_user_id
 
+        self.current_song = None
+
     def __len__(self):
         """Return the number of songs in the queue."""
         with self.lock:
@@ -92,7 +94,6 @@ class SongQueue:
         """Remove a song from the queue by its identifier."""
         with self.lock:
             if uri not in self.entries_by_song:
-                print("here")
                 return False
             entry = self.entries_by_song[uri]
             is_owner = (user_id == entry[2].user_id)
@@ -104,8 +105,28 @@ class SongQueue:
             else:
                 return False
 
+    def step_current(self, user_id):
+        """Remove the top song from the queue and make it the currently-playing song."""
+        with self.lock:
+            if user_id == self.primary_user_id:
+                if len(self.pq) == 0:
+                    self.current_song = None
+                    return True
+                entry = self.pq[0]
+                self.current_song = entry[2]
+                self.pq.remove(entry)
+                self.pq.sort()
+                del self.entries_by_song[entry[2].uri]
+                return True
+            else:
+                return False
+
+    def get_current(self):
+        """Return the currently-playing song."""
+        return self.current_song
+
     def get_all(self):
-        """Return a list of tuples (votes, song_data, song_identifier) for all songs in the queue."""
+        """Return a list of Songs in the queue."""
         with self.lock:
             ret = []
             for priority, count, song_data in self.pq:

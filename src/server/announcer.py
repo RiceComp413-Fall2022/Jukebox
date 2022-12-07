@@ -5,6 +5,7 @@ from .resources import announcers, queues
 """Event that sends a whole song queue to a listener."""
 
 SONG_QUEUE_EVENT = 'song_queue'
+CURRENT_SONG_EVENT = 'current_song'
 QUEUE_CLOSED_EVENT = 'queue_closed'
 
 def announce_song_queue(roomid):
@@ -13,11 +14,12 @@ def announce_song_queue(roomid):
     announcer = announcers[roomid]
 
     queue_contents = queue.get_all()
+    current_song = queue.get_current()
 
-    announcer.announce([True, queue_contents])
+    announcer.announce([True, queue_contents, current_song])
 
 def announce_queue_close(roomid):
     """Announces to all listeners that the current song queue is being closed."""
     announcer = announcers[roomid]
 
-    announcer.announce([False, None])
+    announcer.announce([False, None, None])
