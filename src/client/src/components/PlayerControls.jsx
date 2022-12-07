@@ -278,11 +278,11 @@ export default function PlayerControls(props) {
         {!is_paused ? (
           <BsFillPauseCircleFill onClick={() => { setPaused(true); player.togglePlay(); }} />
         ) : (
-          <BsFillPlayCircleFill onClick={() => { setPaused(false); player.togglePlay(); changeSong() }} />
+          <BsFillPlayCircleFill onClick={() => { setPaused(false); player.togglePlay(); }} />
         )}
       </div>
       <div className="next">
-        <CgPlayTrackNext onClick={() => changeSong()} />
+        <CgPlayTrackNext onClick={() => { changeSong(); setPaused(false); }} />
       </div>
       {/* <button onClick={createPlaylist}>LOL</button> */}
       <div className="repeat">
