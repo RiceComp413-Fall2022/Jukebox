@@ -58,12 +58,10 @@ export default function PlayerControls(props) {
     const script = document.createElement("script");
     script.src = "https://sdk.scdn.co/spotify-player.js";
 
-    document.body.appendChild(script);
-
     window.onSpotifyWebPlaybackSDKReady = () => {
 
         const player = new window.Spotify.Player({
-            name: 'Web Playback SDK',
+            name: 'Jukebox.lol room ' + setGroup,
             getOAuthToken: cb => { cb(props.token); },
             volume: 0.5
         });
@@ -86,6 +84,7 @@ export default function PlayerControls(props) {
           dispatch({type: reducerCases.SET_CHANGE_CURR, setChangeCurr: current_track})
       })
       
+      document.body.appendChild(script);
 
       player.connect();
     
