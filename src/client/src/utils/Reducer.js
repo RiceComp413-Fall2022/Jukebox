@@ -100,6 +100,12 @@ const reducer = (state, action) => {
             ...state,
             setUpdate: action.setUpdate,
           }
+
+      case reducerCases.SET_TRACK_C:
+        return{
+          ...state,
+          setTrackC: action.setTrackC,
+        }
   
 
       default:

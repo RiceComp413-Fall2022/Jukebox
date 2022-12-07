@@ -16,4 +16,5 @@ export const reducerCases = {
   SET_CHANGE_CURR: "SET_CHANGE_CURR",
   SET_PREV: "SET_PREV",
   SET_UPDATE: "SET_UPDATE",
+  SET_TRACK_C: "SET_TRACK_C"
 };

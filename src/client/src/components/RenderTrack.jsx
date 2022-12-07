@@ -24,49 +24,6 @@ export default function RenderTrack(props) {
         );
     }
 
-    const playTrack = async (
-        id,
-        name,
-        artists,
-        image,
-        context_uri,
-        track_number
-    ) => {
-        const response = await axios.put(
-            `https://api.spotify.com/v1/me/player/play`,
-            {
-                context_uri,
-                offset: {
-                    position: track_number - 1,
-                },
-                position_ms: 0,
-            },
-            {
-                headers: {
-                    Authorization: "Bearer " + token.access_token,
-                    "Content-Type": "application/json",
-
-                },
-            }
-        );
-
-        if (response.status === 204) {
-            const currentPlaying = {
-                id,
-                name,
-                artists,
-                image
-            };
-
-            dispatch({ type: reducerCases.SET_PLAYING, currentPlaying });
-            dispatch({ type: reducerCases.SET_PLAYER_STATE, playerState: true });
-
-        } else {
-
-            dispatch({ type: reducerCases.SET_PLAYER_STATE, playerState: true });
-        }
-    };
-
     useEffect(() => {
         const getTracks = async () => {
             if (setMultSongs == undefined) {
@@ -114,16 +71,6 @@ export default function RenderTrack(props) {
                                 <div className="tracks">
                                     <div className="row"
                                         key={item.id}
-                                        onClick={() =>
-                                            playTrack(
-                                                item.id,
-                                                item.name,
-                                                item.artists,
-                                                item.image,
-                                                item.context_uri,
-                                                item.track_number
-                                            )
-                                        }
                                     >
                                         <div className="col">
                                             <span> {index + 1}</span>
@@ -202,7 +149,7 @@ const ListWrapper = styled.div`
         grid-template-columns: 0.3fr 3fr 1.5fr .75fr 0.1fr .5fr;
         margin: 1rem 0 0 0;
         color: white;
-        position: sticky;
+        position: justified;
         top: 15vh;
         padding: 1rem 3rem;
         transition: 0.3s ease-in-out;

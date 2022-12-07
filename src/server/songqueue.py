@@ -39,6 +39,7 @@ class SongQueue:
                 entry = [0, count, song_data]
                 self.entries_by_song[uri] = entry
                 heapq.heappush(self.pq, entry)
+                self.pq.sort()
                 return True
 
     def upvote_song(self, user_id, uri):
@@ -59,6 +60,7 @@ class SongQueue:
                     entry[2].upvotes_by_user[user_id] = 0
                 entry[2].upvotes_by_user[user_id] += 1
                 heapq.heapify(self.pq)
+                self.pq.sort()
                 return True
             else:
                 return False
@@ -81,6 +83,7 @@ class SongQueue:
                     entry[2].upvotes_by_user[user_id] = 0
                 entry[2].upvotes_by_user[user_id] -= 1
                 heapq.heapify(self.pq)
+                self.pq.sort()
                 return True
             else:
                 return False
@@ -95,6 +98,7 @@ class SongQueue:
             is_owner = (user_id == entry[2].user_id)
             if is_owner or user_id == self.primary_user_id:
                 self.pq.remove(entry)
+                self.pq.sort()
                 del self.entries_by_song[uri]
                 return True
             else:
