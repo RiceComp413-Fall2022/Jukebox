@@ -54,11 +54,11 @@ def song_q_create():
     if 'roomid' not in args:
         return "Room ID not present in request.", 400
 
-    if args['roomid'] in queues:
+    if args['roomid'].strip().lower() in queues:
         return "Room ID already exists.", 400
 
-    queues[args['roomid']] = SongQueue(args['userid'])
-    announcers[args['roomid']] = SSEMessageAnnouncer()
+    queues[args['roomid'].strip().lower()] = SongQueue(args['userid'])
+    announcers[args['roomid'].strip().lower()] = SSEMessageAnnouncer()
 
     return "Successfully created song queue", 200
 
@@ -73,15 +73,15 @@ def song_q_destroy():
     if 'roomid' not in args:
         return "Room ID not present in request.", 400
 
-    if args['roomid'] not in queues:
+    if args['roomid'].strip().lower() not in queues:
         return "Room ID does not exist.", 400
 
-    if args['userid'] != queues[args['roomid']].primary_user_id:
+    if args['userid'] != queues[args['roomid'].strip().lower()].primary_user_id:
         return "Failed to destroy queue", 400
 
-    announce_queue_close(args['roomid'])
-    del queues[args['roomid']]
-    del announcers[args['roomid']]
+    announce_queue_close(args['roomid'].strip().lower())
+    del queues[args['roomid'].strip().lower()]
+    del announcers[args['roomid'].strip().lower()]
 
     return "Successfully destroyed song queue", 200
 
@@ -98,13 +98,13 @@ def song_q_listen():
     if 'roomid' not in args:
         return "Room ID not present in request.", 400
 
-    if not args['roomid'] in queues:
+    if not args['roomid'].strip().lower() in queues:
         return "Invalid room ID", 400
 
     userid = args['userid'] if 'userid' in args else ""
 
     """API endpoint client should use to listen for song queues."""
-    return song_queue_listen(args['roomid'], userid)
+    return song_queue_listen(args['roomid'].strip().lower(), userid)
 
 @routes.route("/addSong", methods=['GET'])
 def song_add():
@@ -131,14 +131,14 @@ def song_add():
     if not validate_uri(args['uri']):
         return "Invalid song URI", 400
 
-    if not args['roomid'] in queues:
+    if not args['roomid'].strip().lower() in queues:
         return "Invalid room ID", 400
 
-    result = queues[args['roomid']].add_song(args['userid'], args['uri'])
+    result = queues[args['roomid'].strip().lower()].add_song(args['userid'], args['uri'])
 
     # then send updated song queue to everyone
 
-    announce_song_queue(args['roomid'])
+    announce_song_queue(args['roomid'].strip().lower())
 
     if result:
         return "Successfully added song", 200
@@ -158,11 +158,11 @@ def song_remove():
     if 'roomid' not in args:
         return "Room ID not present in request.", 400
 
-    if not args['roomid'] in queues:
+    if not args['roomid'].strip().lower() in queues:
         return "Invalid room ID", 400
 
-    result = queues[args['roomid']].remove_song(args['userid'], args['uri'])
-    announce_song_queue(args['roomid'])
+    result = queues[args['roomid'].strip().lower()].remove_song(args['userid'], args['uri'])
+    announce_song_queue(args['roomid'].strip().lower())
 
     if result:
         return "Successfully removed song", 200
@@ -183,11 +183,11 @@ def song_upvote():
     if 'roomid' not in args:
         return "Room ID not present in request.", 400
 
-    if not args['roomid'] in queues:
+    if not args['roomid'].strip().lower() in queues:
         return "Invalid room ID", 400
 
-    result = queues[args['roomid']].upvote_song(args['userid'], args['uri'])
-    announce_song_queue(args['roomid'])
+    result = queues[args['roomid'].strip().lower()].upvote_song(args['userid'], args['uri'])
+    announce_song_queue(args['roomid'].strip().lower())
 
     if result:
         return "Successfully upvoted song", 200
@@ -208,11 +208,11 @@ def song_downvote():
     if 'roomid' not in args:
         return "Room ID not present in request.", 400
 
-    if not args['roomid'] in queues:
+    if not args['roomid'].strip().lower() in queues:
         return "Invalid room ID", 400
 
-    result = queues[args['roomid']].downvote_song(args['userid'], args['uri'])
-    announce_song_queue(args['roomid'])
+    result = queues[args['roomid'].strip().lower()].downvote_song(args['userid'], args['uri'])
+    announce_song_queue(args['roomid'].strip().lower())
 
     if result:
         return "Successfully upvoted song", 200
@@ -230,11 +230,11 @@ def step_current():
     if 'roomid' not in args:
         return "Room ID not present in request.", 400
 
-    if not args['roomid'] in queues:
+    if not args['roomid'].strip().lower() in queues:
         return "Invalid room ID", 400
 
-    result = queues[args['roomid']].step_current(args['userid'])
-    announce_song_queue(args['roomid'])
+    result = queues[args['roomid'].strip().lower()].step_current(args['userid'])
+    announce_song_queue(args['roomid'].strip().lower())
 
     if result:
         return "Successfully updated current song", 200
