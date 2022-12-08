@@ -13,17 +13,29 @@ from .config import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
 import requests
 import base64
 import json
+import time
+import threading
 
 routes = Blueprint('routes', __name__)
 
 s = requests.Session()
 
-headers = {
-    "Authorization": b"Basic " + base64.b64encode((SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET).encode()),
-    "Content-Type": "application/x-www-form-urlencoded"
-}
-res = s.post("https://accounts.spotify.com/api/token", headers=headers, data="grant_type=client_credentials")
-at = json.loads(res.text)["access_token"]
+at = None
+
+def refresh_token():
+    global at
+
+    while True:
+        headers = {
+            "Authorization": b"Basic " + base64.b64encode((SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET).encode()),
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        res = s.post("https://accounts.spotify.com/api/token", headers=headers, data="grant_type=client_credentials")
+        at = json.loads(res.text)["access_token"]
+        time.sleep(3000)
+
+t = threading.Thread(target=refresh_token)
+t.start()
 
 @routes.route("/songQueueCreate", methods=['GET'])
 def song_q_create():

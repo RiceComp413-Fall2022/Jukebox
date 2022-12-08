@@ -14,7 +14,7 @@ USER_TYPE=$1
 
 if [ "$USER_TYPE" = "server" ]; then
   cd src/server
-  flask --app main run --host=0.0.0.0 -p $USER_PORT
+  flask --app main run --host=0.0.0.0 -p $USER_PORT --no-reload
 
 elif [ "$USER_TYPE" = "client" ]; then
   cd src/client
