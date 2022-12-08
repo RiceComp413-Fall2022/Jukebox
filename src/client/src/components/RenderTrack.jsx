@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillClockCircle } from "react-icons/ai";
 import { blue } from '@mui/material/colors';
 
@@ -12,6 +12,7 @@ import Upvotes from "./Upvotes";
 
 export default function RenderTrack(props) {
     const [{ setMultSongs, setTime, setGroup, setUUID, token }, dispatch] = useStateProvider();
+    const [width, setWidth] = useState(window.innerWidth);
 
     function changeTime(millis) {
         var minutes = Math.floor(millis / 60000);
@@ -63,8 +64,7 @@ export default function RenderTrack(props) {
                     };
                     tpArr.push(currentPlaying);
                 }
-                if (tpArr.length != 0) {
-
+                if (tpArr.length != 0 && width >= 768) {
                     let renderObj = tpArr.map((item, index) =>
                         <li key={item.id} style={{ listStyleType: "none" }} >
                             <SongPlayer style={{ backgroundColor: "#181818" }}>
@@ -99,7 +99,33 @@ export default function RenderTrack(props) {
 
                     dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
 
-                } else {
+                }else if(tpArr.length != 0 && width < 768){
+                    let renderObj = tpArr.map((item, index) =>
+                        <li key={item.id} style={{ listStyleType: "none" }} >
+                            <SongMobilePlayer style={{ backgroundColor: "#181818" }}>
+                                <div className="tracks">
+                                    <div className="row"
+                                        key={item.id}
+                                    >
+                                        <div className="col detail">
+                                            <div className="image">
+                                                <img src={item.image} alt='track' />
+                                            </div>
+                                            <div className="info">
+                                                <span className="song__name">{item.name}</span>
+                                                <span className="artists__names">{item.artists.join(", ")}</span>
+                                            </div>
+                                        </div>
+                                        <Upvotes upvotes={uri2Info[item.id]['totalUpvotes']} upvoteStatus={uri2Info[item.id]['userUpvotes']} uri={"spotify:track:" + item.id} />
+                                        <RemoveButton color={blue[200]} userId={setUUID} uri={"spotify:track:" + item.id} roomId={setGroup} />
+                                    </div>
+                                </div>
+                            </SongMobilePlayer>
+                        </li>);
+
+                    dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
+                } 
+                else {
                     let renderObj = <div></div>
                     dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
                 }
@@ -109,10 +135,9 @@ export default function RenderTrack(props) {
 
     }, [token.access_token, setMultSongs, dispatch]);
 
-
-    return (
-
-        <ListWrapper>
+    if(width >= 768){
+        return(
+            <ListWrapper>
             <div className="header-row">
                 <div className="col">
                     <span>#</span>
@@ -134,12 +159,24 @@ export default function RenderTrack(props) {
 
             {setTime}
         </ListWrapper>
-    );
-
+        )
+    } else {
+        return (
+            <MobileListWrapper>
+                <div className="header-row">
+                    <div className="col">
+                        <span>Songs</span>
+                    </div>
+                    <div className="col"></div>
+                </div>  
+                 {setTime}
+            </MobileListWrapper> 
+        )
+    }
 }
 
 const ListWrapper = styled.div`
-    display: flex;
+    display: inline-block;
     flex-direction: column; 
     width: 95%;
     padding-left:50px;
@@ -158,8 +195,28 @@ const ListWrapper = styled.div`
     }
 `
     ;
+    const MobileListWrapper = styled.div`
+    display: inline-block;
+    flex-direction: column; 
+    width: 70%;
+    padding-left:50px;
 
-const SongPlayer = styled.div`
+     .header-row {
+        display: grid;
+        grid-template-columns: 0.3fr 3fr 1.5fr .75fr 0.1fr .5fr;
+        margin: 1rem 0 0 0;
+        color: white;
+        position: justified;
+        top: 15vh;
+        padding: 1rem 3rem;
+        transition: 0.3s ease-in-out;
+        backgroundcolor: ${({ headerBackground }) =>
+        headerBackground ? "#000000dc" : "none"};
+    }
+`
+    ;
+
+    const SongPlayer = styled.div`
     .tracks {
         margin: 0 2rem;
         display: flex;
@@ -203,5 +260,50 @@ const SongPlayer = styled.div`
     }
 `
     ;
+
+    const SongMobilePlayer = styled.div`
+    .tracks {
+        margin: 0 2rem;
+        display: flex;
+        flex-direction: column;
+        .row {
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            &:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        .col {
+          display: flex;
+          align-items: center;
+          color: #dddcdc;
+          img {
+            height: 50px;
+            width: 50px;
+          }
+        }
+        .detail {
+          display: flex;
+          gap: 1rem;
+          .info {
+            display: flex;
+            flex-direction: column;
+          }
+        }
+        .remove {
+            display: flex;
+            align-self: center;
+            color: #dddcdc;
+            img {
+                height: 50px;
+                width: 50px;
+            }
+            
+            margin-right: auto;
+        }
+      }
+    }
+`
+    ;
+
 
 
