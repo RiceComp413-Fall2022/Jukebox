@@ -38,11 +38,11 @@ export default function HomePage() {
           {token ? <PrimaryCreateRoom token = {token.access_token}/> : <Container>
           <Link to='/primary'>
             <button>
-                Primary
+                Create Room
             </button>
           </Link>
           <Link to='/joinCode'>
-            <button>Contributor</button>
+            <button>Join Room</button>
           </Link>
         </Container>}
       </div>

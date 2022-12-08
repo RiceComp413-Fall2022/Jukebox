@@ -167,7 +167,6 @@ export default function RenderTrack(props) {
                     <div className="col">
                         <span>Songs</span>
                     </div>
-                    <div className="col"></div>
                 </div>  
                  {setTime}
             </MobileListWrapper> 
