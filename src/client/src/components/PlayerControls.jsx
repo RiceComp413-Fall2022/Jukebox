@@ -17,7 +17,7 @@ import { IronTwoTone, SettingsRemoteSharp, UndoRounded } from "@mui/icons-materi
 
 
 export default function PlayerControls(props) {
-  const [{ playerState, setChangeCurr, setMultSongs, setGroup, setUpdate, setUUID }, dispatch] = useStateProvider();
+  const [{ playerState, setMultSongs, setGroup, setUpdate, setUUID }, dispatch] = useStateProvider();
   const [is_active, setActive] = useState(false);
   var tItr = useRef(0);
   var tVal = useRef({});
@@ -34,7 +34,7 @@ export default function PlayerControls(props) {
   );
 
   useEffect(() => {
-    const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup,
+    const sse = new EventSource(`http://127.0.0.1:5000/songQueueListen?roomid=${setGroup}&userid=${setUUID}`,
       { withCredentials: false });
 
     sse.addEventListener('song_queue', (e) => { tVal.current = e.data; dispatch({ type: reducerCases.SET_UPDATE, setUpdate: e.data }); dispatch({ type: reducerCases.SET_MULT_SONGS, setMultSongs: e.data }); setCVal(cVal => e.data); });

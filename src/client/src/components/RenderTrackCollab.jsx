@@ -35,13 +35,7 @@ export default function RenderTrackCollab(props) {
 
             // check if we even have any songs to get
 
-            const response = await axios.get("/tracks?ids=" + Object.keys(uri2Upvotes).join(','),
-            {
-                // headers: {
-                //     Authorization: "Bearer " +  props.token,
-                //     "Content-Type" : "application/json"
-                // }
-            }).catch(function (error) {
+            const response = await axios.get("/tracks?ids=" + Object.keys(uri2Upvotes).join(',')).catch(function (error) {
                 // maybe not the best way to handle this error
                 if (error.response.status === 400) {
                     let renderObj = <div></div>
@@ -89,7 +83,7 @@ export default function RenderTrackCollab(props) {
                                         <div className="col">
                                             <span>{item.album}</span>
                                         </div>
-                                        <Upvotes upvotes={uri2Upvotes[item.id]} uri={"spotify:track:" + item.id} />
+                                        <Upvotes upvotes={uri2Upvotes[item.id]['total_upvotes']} upvoteStatus={uri2Upvotes[item.id]['user_upvotes']} uri={"spotify:track:" + item.id} />
                                         <div className="col">
                                             <span> {changeTime(item.duration)} </span>
                                         </div>

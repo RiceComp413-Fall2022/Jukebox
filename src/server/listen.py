@@ -21,17 +21,18 @@ def stream(announcer, queue, userid="", testing=False):
         "uri": song.uri,
         "upvotes": song.upvotes,
         "isOwnSong": True if song.user_id == userid else False,
-        "upvotesByUser": song.upvotes_by_user[userid] if userid in song.upvotes_by_user else 0
+        "upvotesByUser": song.upvotes_by_user[userid] if userid in song.upvotes_by_user.keys() else 0
     } for song in queue_contents]
     init_q = format_sse(json.dumps(json_data), SONG_QUEUE_EVENT)
     yield init_q
 
+    # tell front end what the current song is
     song = queue.get_current()
     json_data = [{
         "uri": song.uri,
         "upvotes": song.upvotes,
         "isOwnSong": True if song.user_id == userid else False,
-        "upvotesByUser": song.upvotes_by_user[userid] if userid in song.upvotes_by_user else 0
+        "upvotesByUser": song.upvotes_by_user[userid] if userid in song.upvotes_by_user.keys() else 0
     }] if song is not None else None
     init_q = format_sse(json.dumps(json_data), CURRENT_SONG_EVENT)
     yield init_q
@@ -50,7 +51,7 @@ def stream(announcer, queue, userid="", testing=False):
                 "uri": song.uri,
                 "upvotes": song.upvotes,
                 "isOwnSong": True if song.user_id == userid else False,
-                "upvotesByUser": song.upvotes_by_user[userid] if userid in song.upvotes_by_user else 0
+                "upvotesByUser": song.upvotes_by_user[userid] if userid in song.upvotes_by_user.keys() else 0
             } for song in queue_contents]
             yield format_sse(json.dumps(json_data), SONG_QUEUE_EVENT)
 
@@ -58,7 +59,7 @@ def stream(announcer, queue, userid="", testing=False):
                 "uri": current_song.uri,
                 "upvotes": current_song.upvotes,
                 "isOwnSong": True if current_song.user_id == userid else False,
-                "upvotesByUser": current_song.upvotes_by_user[userid] if userid in current_song.upvotes_by_user else 0
+                "upvotesByUser": current_song.upvotes_by_user[userid] if userid in current_song.upvotes_by_user.keys() else 0
             }] if current_song is not None else None
             yield format_sse(json.dumps(json_data), CURRENT_SONG_EVENT)
 

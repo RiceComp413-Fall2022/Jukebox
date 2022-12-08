@@ -87,7 +87,7 @@ export default function RenderTrack(props) {
                                         <div className="col">
                                             <span>{item.album}</span>
                                         </div>
-                                        <Upvotes upvotes={uri2Upvotes[item.id]} uri={"spotify:track:" + item.id} />
+                                        <Upvotes upvotes={uri2Upvotes[item.id]['total_upvotes']} upvoteStatus={uri2Upvotes[item.id]['user_upvotes']} uri={"spotify:track:" + item.id} />
                                         <div className="col">
                                             <span>{changeTime(item.duration)}</span>
                                         </div>
