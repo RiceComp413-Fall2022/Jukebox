@@ -10,6 +10,7 @@ import RemoveButton from "./RemoveSong"
 import parseMultSongs from "../utils/Util";
 import Upvotes from "./Upvotes";
 
+let mobileWidth = window.innerWidth * 0.5
 
 export default function RenderTrackCollab(props) {
     const [{ setMultSongs, setTime, setGroup, setUUID, token }, dispatch] = useStateProvider();
@@ -116,8 +117,8 @@ export default function RenderTrackCollab(props) {
                                                 <img src={item.image} alt='track' />
                                             </div>
                                             <div className="info">
-                                                <span className="song__name">{item.name}</span>
-                                                <span className="artists__names">{item.artists.join(", ")}</span>
+                                                <span className="song__name">{item.name.substring(0, 40)}</span>
+                                                <span className="artists__names">{item.artists.join(", ").substring(0, 40)}</span>
                                             </div>
                                         </div>
                                         <Upvotes upvotes={uri2Info[item.id]['totalUpvotes']} upvoteStatus={uri2Info[item.id]['userUpvotes']} uri={"spotify:track:" + item.id} />
@@ -205,7 +206,7 @@ const ListWrapper = styled.div`
         grid-template-columns: 0.3fr 3fr 1.5fr .75fr 0.1fr .5fr;
         margin: 1rem 0 0 0;
         color: white;
-        position: sticky;
+        position: justified;
         top: 15vh;
         padding: 1rem 3rem;
         transition: 0.3s ease-in-out;
@@ -217,8 +218,7 @@ const ListWrapper = styled.div`
     const MobileListWrapper = styled.div`
     display: inline-block;
     flex-direction: column; 
-    width: 70%;
-    padding-left:50px;
+    width: ${({ width }) => width >= 768 ?  0.95 : mobileWidth};
 
      .header-row {
         display: grid;

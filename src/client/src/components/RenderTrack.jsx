@@ -10,10 +10,12 @@ import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 import Upvotes from "./Upvotes";
 
-export default function RenderTrack(props) {
-    const [{ setMultSongs, setTime, setGroup, setUUID, token }, dispatch] = useStateProvider();
-    const [width, setWidth] = useState(window.innerWidth);
+let mobileWidth = window.innerWidth * 0.5
 
+export default function RenderTrack(props) {
+    const [width, setWidth] = useState(window.innerWidth);
+    const [{ setMultSongs, setTime, setGroup, setUUID, token }, dispatch] = useStateProvider();
+    
     function changeTime(millis) {
         var minutes = Math.floor(millis / 60000);
         var seconds = ((millis % 60000) / 1000).toFixed(0);
@@ -112,8 +114,8 @@ export default function RenderTrack(props) {
                                                 <img src={item.image} alt='track' />
                                             </div>
                                             <div className="info">
-                                                <span className="song__name">{item.name}</span>
-                                                <span className="artists__names">{item.artists.join(", ")}</span>
+                                                <span className="song__name">{item.name.substring(0, 40)}</span>
+                                                <span className="artists__names">{item.artists.join(", ").substring(0, 40)}</span>
                                             </div>
                                         </div>
                                         <Upvotes upvotes={uri2Info[item.id]['totalUpvotes']} upvoteStatus={uri2Info[item.id]['userUpvotes']} uri={"spotify:track:" + item.id} />
@@ -197,8 +199,7 @@ const ListWrapper = styled.div`
     const MobileListWrapper = styled.div`
     display: inline-block;
     flex-direction: column; 
-    width: 70%;
-    padding-left:50px;
+    width: ${({ width }) => width >= 768 ?  0.95 : mobileWidth}; 
 
      .header-row {
         display: grid;
