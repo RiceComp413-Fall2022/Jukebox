@@ -55,12 +55,15 @@ class SongQueue:
                 return False
             entry = self.entries_by_song[uri]
             already_voted = user_id in entry[2].upvotes_by_user
-            if not already_voted or entry[2].upvotes_by_user[user_id] != 1:
-                entry[0] -= 1
+            if not already_voted:
+                entry[2].upvotes_by_user[user_id] = 0
+            if entry[2].upvotes_by_user[user_id] != 1:
+                incvote = 1
+                if entry[2].upvotes_by_user[user_id] == -1:
+                    incvote = 2
+                entry[0] -= incvote
                 entry[2].upvotes = -entry[0]
-                if not already_voted:
-                    entry[2].upvotes_by_user[user_id] = 0
-                entry[2].upvotes_by_user[user_id] += 1
+                entry[2].upvotes_by_user[user_id] += incvote
                 heapq.heapify(self.pq)
                 self.pq.sort()
                 return True
@@ -78,12 +81,17 @@ class SongQueue:
                 return False
             entry = self.entries_by_song[uri]
             already_voted = (user_id in entry[2].upvotes_by_user)
-            if not already_voted or entry[2].upvotes_by_user[user_id] != -1:
-                entry[0] += 1
+            if not already_voted:
+                entry[2].upvotes_by_user[user_id] = 0
+            if entry[2].upvotes_by_user[user_id] != -1:
+                incvote = -1
+                if entry[2].upvotes_by_user[user_id] == 1:
+                    incvote = -2
+                entry[0] -= incvote
                 entry[2].upvotes = -entry[0]
                 if not already_voted:
                     entry[2].upvotes_by_user[user_id] = 0
-                entry[2].upvotes_by_user[user_id] -= 1
+                entry[2].upvotes_by_user[user_id] += incvote
                 heapq.heapify(self.pq)
                 self.pq.sort()
                 return True
@@ -127,11 +135,10 @@ class SongQueue:
 
     def get_all(self):
         """Return a list of Songs in the queue."""
-        with self.lock:
-            ret = []
-            for priority, count, song_data in self.pq:
-                ret.append(song_data)
-            return ret
+        ret = []
+        for priority, count, song_data in self.pq:
+            ret.append(song_data)
+        return ret
 
 class Song:
     """A wrapper class to hold all associated metadata for a song."""
