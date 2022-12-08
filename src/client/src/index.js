@@ -26,11 +26,11 @@ root.render(
 
       <StateProvider initialState={initialState} reducer={reducer}>
         <Routes>
-          <Route path = '/' element={<App/>}></Route>
-          <Route path = 'queueMain' element={<Spotify/>}></Route>
-          <Route path = 'queueCollab' element={<SpotifyCollab/>}></Route>
-          <Route path = 'primary' element={<LoginWrapper/>}></Route>
-          <Route path = 'joinCode' element={<CollabJoinRoom/>}></Route>
+          <Route path='/' element={<App />}></Route>
+          <Route path='queueMain' element={<Spotify />}></Route>
+          <Route path='queueCollab' element={<SpotifyCollab />}></Route>
+          <Route path='primary' element={<LoginWrapper />}></Route>
+          <Route path='joinCode' element={<CollabJoinRoom />}></Route>
 
         </Routes>
       </StateProvider>
