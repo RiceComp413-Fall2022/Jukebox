@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect } from "react";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 import { AiFillClockCircle } from "react-icons/ai";
@@ -7,7 +7,7 @@ import { blue } from '@mui/material/colors';
 
 import styled from "styled-components";
 import RemoveButton from "./RemoveSong"
-import parseURIList from "../utils/Util";
+import parseMultSongs from "../utils/Util";
 import Upvotes from "./Upvotes";
 
 export default function RenderTrackCollab(props) {
@@ -31,26 +31,17 @@ export default function RenderTrackCollab(props) {
                 return;
             }
 
-            let uri2Upvotes = parseURIList(setMultSongs);
+            let uri2Info = parseMultSongs(setMultSongs);
 
             // check if we even have any songs to get
 
-            const response = await axios.get("/tracks?ids=" + Object.keys(uri2Upvotes).join(','),
-            {
-                // headers: {
-                //     Authorization: "Bearer " +  props.token,
-                //     "Content-Type" : "application/json"
-                // }
-            }).catch(function (error) {
+            const response = await axios.get("/tracks?ids=" + Object.keys(uri2Info).join(',')).catch(function (error) {
                 // maybe not the best way to handle this error
                 if (error.response.status === 400) {
                     let renderObj = <div></div>
                     dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
                 }
             });
-
-            console.log(JSON.parse(setMultSongs)[0])
-            console.log('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup + '&userid=' + setUUID)
 
             if (response != undefined && response.data != ""){
                 let tpArr = []
@@ -92,13 +83,15 @@ export default function RenderTrackCollab(props) {
                                         <div className="col">
                                             <span>{item.album}</span>
                                         </div>
-                                        <Upvotes upvotes={uri2Upvotes[item.id]} uri={"spotify:track:" + item.id} />
+                                        <Upvotes upvotes={uri2Info[item.id]['totalUpvotes']} upvoteStatus={uri2Info[item.id]['userUpvotes']} uri={"spotify:track:" + item.id} />
                                         <div className="col">
                                             <span> {changeTime(item.duration)} </span>
                                         </div>
-                                        {JSON.parse(setMultSongs).length > 0 && JSON.parse(setMultSongs)[index]['isOwnSong'] === true ?
-                                               <RemoveButton color={blue[200]} userId={setUUID} uri={"spotify:track:" + item.id} roomId={setGroup} /> :
-                                               <div></div>
+                                        {
+                                            // if this user added this song then show the remove button
+                                            uri2Info[item.id]['isOwnSong'] ?
+                                            <RemoveButton color={blue[200]} userId={setUUID} uri={"spotify:track:" + item.id} roomId={setGroup} /> :
+                                            <div></div>
                                         } 
 
                                     </div>

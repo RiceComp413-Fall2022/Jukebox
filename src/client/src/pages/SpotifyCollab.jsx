@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import FooterCollab from "../components/FooterCollab";
 import Navbar from "../components/Navbar"; 
@@ -11,8 +11,7 @@ import axios from "axios";
 const qs = require('qs');
 
 export default function SpotifyCollab(props) {
-  const [{ token, setImage, setGroup, setMultSongs, setTrackC, setUUID}, dispatch] = useStateProvider();
-  const [uriList, setUriList] = useStateProvider(undefined);
+  const [{ setGroup, setUUID}, dispatch] = useStateProvider();
   const [navBackground, setNavBackground] = useState(false);
   const [tok, setTok] = useState(false);
 
@@ -27,33 +26,8 @@ export default function SpotifyCollab(props) {
       : setHeaderBackground(false);
   };
 
-  const SPOTIFY_CLIENT_ID = "0b2885f02bea4a8f887f715664b411e9"
-  const SPOTIFY_CLIENT_SECRET = "8482283b3d87491aaa1416b1dc4c06a3"
-
   useEffect(() => {
-    const getAuth = async() => {
-        const data = { grant_type: "client_credentials" };
-        const options = {
-        method: "POST",
-        headers: {
-            Authorization:
-            "Basic " +
-            btoa(SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET),
-            "content-type": "application/x-www-form-urlencoded",
-        },
-        data: qs.stringify(data),
-        url: "https://accounts.spotify.com/api/token",
-        };
-        const response = await axios(options);
-
-        const { access_token } = response.data;
-        setTok(access_token)   
-    }
-    getAuth()
-  },[dispatch, token]);
-
-  useEffect(() => {
-    const sse = new EventSource('http://127.0.0.1:5000/songQueueListen?roomid=' + setGroup + '&userid=' + setUUID ,
+    const sse = new EventSource(`http://127.0.0.1:5000/songQueueListen?roomid=${setGroup}&userid=${setUUID}`,
       { withCredentials: false });
 
     sse.addEventListener('song_queue', (e) => {dispatch({type: reducerCases.SET_MULT_SONGS, setMultSongs: e.data}); console.log('collab')});

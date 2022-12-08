@@ -3,18 +3,22 @@
  */
 
 /**
- * Return dict of song id, without "spotify:track:" to the number of upvotes for the song
+ * Return dict of song id, without "spotify:track:" to a dict with number of upvotes, the current user upvote status, and isOwnSong, whcih is true if the song
+ * was added by thed user
+ * 
+ * Format:
+ * {URI: {'totalUpvotes': TOTAL_UPVOTES, 'userUpvotes': USER_UPVOTES, 'isOwnSong': TRUE_IF_OWN_SONG}}
  */
-export default function parseURIList(uris) {
+export default function parseMultSongs(multSongs) {
 
 	let final = {};
 
 	// convert json to obj
-	uris = JSON.parse(uris);
+	multSongs = JSON.parse(multSongs);
 
-	uris.forEach(song => {
+	multSongs.forEach(song => {
 		// add uri mapped to upvotes 
-		final[RegExp('track:(.*)$').exec(song['uri'])[1]] = song['upvotes']
+		final[RegExp('track:(.*)$').exec(song['uri'])[1]] = {'totalUpvotes': song['upvotes'], 'userUpvotes': song['upvotesByUser'], 'isOwnSong': song['isOwnSong']};
 	});
 
 	return final

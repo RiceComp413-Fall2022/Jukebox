@@ -2,7 +2,7 @@
  * Handles displaying the upvotes for the song.
  */
 import axios from "axios";
-import { TiArrowDownOutline, TiArrowUpOutline } from 'react-icons/ti';
+import { TiArrowDownOutline, TiArrowUpOutline, TiArrowUpThick, TiArrowDownThick } from 'react-icons/ti';
 import { IconContext } from "react-icons";
 
 import { useStateProvider } from "../utils/StateProvider";
@@ -36,15 +36,54 @@ function send_downvote(uri, userid, roomid) {
  * @returns A React Component representing the number of upvotes for the song
  */
 export default function Upvotes(props) {
-	const [{ setGroup, setUUID }, dispatch] = useStateProvider();
+	const [{ setGroup, setUUID }] = useStateProvider();
 
-	return (
-		<IconContext.Provider value={{ size: "2em", style: { margin: '.25em' } }}>
-			<div className="col">
-				<TiArrowUpOutline onClick={() => send_upvote(props.uri, setUUID, setGroup)} />
-				{props.upvotes}
-				<TiArrowDownOutline onClick={() => send_downvote(props.uri, setUUID, setGroup)} />
-			</div>
-		</IconContext.Provider>
-	)
+	// check upvote status given and change arrow fills and functions accordingly
+	if (props.upvoteStatus == 1) {
+		// song is upvoted
+
+		return (
+			<IconContext.Provider value={{ size: "2em", style: { margin: '.25em' } }}>
+				<div className="col">
+					<TiArrowUpThick onClick={() => send_downvote(props.uri, setUUID, setGroup)} />
+					{props.upvotes}
+					<TiArrowDownOutline onClick={() => {
+							send_downvote(props.uri, setUUID, setGroup);
+							send_downvote(props.uri, setUUID, setGroup);
+						}
+					} />
+				</div>
+			</IconContext.Provider>
+		);
+	}
+	else if (props.upvoteStatus == 0) {
+		// song is neither upvoted nor downvoted
+
+		return (
+			<IconContext.Provider value={{ size: "2em", style: { margin: '.25em' } }}>
+				<div className="col">
+					<TiArrowUpOutline onClick={() => send_upvote(props.uri, setUUID, setGroup)} />
+					{props.upvotes}
+					<TiArrowDownOutline onClick={() => send_downvote(props.uri, setUUID, setGroup)} />	
+				</div>
+			</IconContext.Provider>
+		);
+	}
+	else if (props.upvoteStatus == -1) {
+		// song is currently downvoted
+
+		return (
+			<IconContext.Provider value={{ size: "2em", style: { margin: '.25em' } }}>
+				<div className="col">
+					<TiArrowUpOutline onClick={() => {
+							send_upvote(props.uri, setUUID, setGroup);
+							send_upvote(props.uri, setUUID, setGroup);
+						}
+					} />
+					{props.upvotes}
+					<TiArrowDownThick onClick={() => send_upvote(props.uri, setUUID, setGroup)} />
+				</div>
+			</IconContext.Provider>
+		);
+	}
 }
