@@ -139,11 +139,8 @@ def song_add():
 
     result = queues[args['roomid'].strip().lower()].add_song(args['userid'], args['uri'])
 
-    # then send updated song queue to everyone
-
-    announce_song_queue(args['roomid'].strip().lower())
-
     if result:
+        announce_song_queue(args['roomid'].strip().lower())
         return "Successfully added song", 200
     else:
         return "Failed to add song", 400
@@ -165,9 +162,9 @@ def song_remove():
         return "Invalid room ID", 400
 
     result = queues[args['roomid'].strip().lower()].remove_song(args['userid'], args['uri'])
-    announce_song_queue(args['roomid'].strip().lower())
 
     if result:
+        announce_song_queue(args['roomid'].strip().lower())
         return "Successfully removed song", 200
     else:
         return "Failed to remove song", 400
@@ -190,9 +187,9 @@ def song_upvote():
         return "Invalid room ID", 400
 
     result = queues[args['roomid'].strip().lower()].upvote_song(args['userid'], args['uri'])
-    announce_song_queue(args['roomid'].strip().lower())
 
     if result:
+        announce_song_queue(args['roomid'].strip().lower())
         return "Successfully upvoted song", 200
     else:
         return "Failed to upvote song", 400
@@ -215,9 +212,9 @@ def song_downvote():
         return "Invalid room ID", 400
 
     result = queues[args['roomid'].strip().lower()].downvote_song(args['userid'], args['uri'])
-    announce_song_queue(args['roomid'].strip().lower())
 
     if result:
+        announce_song_queue(args['roomid'].strip().lower())
         return "Successfully upvoted song", 200
     else:
         return "Failed to upvote song", 400
@@ -237,9 +234,9 @@ def step_current():
         return "Invalid room ID", 400
 
     result = queues[args['roomid'].strip().lower()].step_current(args['userid'])
-    announce_song_queue(args['roomid'].strip().lower())
 
     if result:
+        announce_song_queue(args['roomid'].strip().lower())
         return "Successfully updated current song", 200
     else:
         return "Failed to update current song", 400
