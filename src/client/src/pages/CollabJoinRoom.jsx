@@ -29,7 +29,6 @@ export default function CollabJoinRoom(props) {
   }
   else {
     // there is a valid userID they can now enter the room ID to join
-    console.log('UUID: ' + setUUID);
 
     return (
       <Container>

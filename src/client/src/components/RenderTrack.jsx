@@ -5,7 +5,7 @@ import { blue } from '@mui/material/colors';
 
 import styled from "styled-components";
 import RemoveButton from "./RemoveSong"
-import parseURIList from "../utils/Util";
+import parseMultSongs from "../utils/Util";
 import { useStateProvider } from "../utils/StateProvider";
 import { reducerCases } from "../utils/Constants";
 import Upvotes from "./Upvotes";
@@ -31,10 +31,10 @@ export default function RenderTrack(props) {
                 dispatch({ type: reducerCases.SET_TIME, setTime: renderObj });
                 return;
             }
-            let uri2Upvotes = parseURIList(setMultSongs);
+            let uri2Info = parseMultSongs(setMultSongs);
 
             // check if we even have any songs to get
-            const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + Object.keys(uri2Upvotes).join(','),
+            const response = await axios.get("https://api.spotify.com/v1/tracks?ids=" + Object.keys(uri2Info).join(','),
                 {
                     headers: {
                         Authorization: "Bearer " + props.token,
@@ -87,7 +87,7 @@ export default function RenderTrack(props) {
                                         <div className="col">
                                             <span>{item.album}</span>
                                         </div>
-                                        <Upvotes upvotes={uri2Upvotes[item.id]['total_upvotes']} upvoteStatus={uri2Upvotes[item.id]['user_upvotes']} uri={"spotify:track:" + item.id} />
+                                        <Upvotes upvotes={uri2Info[item.id]['totalUpvotes']} upvoteStatus={uri2Info[item.id]['userUpvotes']} uri={"spotify:track:" + item.id} />
                                         <div className="col">
                                             <span>{changeTime(item.duration)}</span>
                                         </div>
