@@ -23,6 +23,7 @@ s = requests.Session()
 at = None
 
 def refresh_token():
+    """Refresh the Spotify access token every 50 minutes."""
     global at
 
     while True:
@@ -34,7 +35,9 @@ def refresh_token():
         at = json.loads(res.text)["access_token"]
         time.sleep(3000)
 
+
 t = threading.Thread(target=refresh_token)
+t.daemon = True
 t.start()
 
 @routes.route("/songQueueCreate", methods=['GET'])
