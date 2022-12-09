@@ -40,6 +40,8 @@ t = threading.Thread(target=refresh_token)
 t.daemon = True
 t.start()
 
+idcache = {}
+
 @routes.route("/songQueueCreate", methods=['GET'])
 def song_q_create():
     """
@@ -273,8 +275,26 @@ def tracks():
         "Content-Type": "application/json",
     }
 
-    res = s.get("https://api.spotify.com/v1/tracks?ids=" + args['ids'], headers=headers)
-    if res.status_code != 200:
-        return "Failed to perform track lookup due to Spotify API error", 400
+    allids = args["ids"].split(",")
+    newids = ""
+    for id in allids:
+        if id not in idcache:
+            newids += id + ","
 
-    return res.text, 200
+    if newids != "":
+        print("Going to Spotify for " + newids)
+        res = s.get("https://api.spotify.com/v1/tracks?ids=" + newids, headers=headers)
+        if res.status_code != 200:
+            return "Failed to perform track lookup due to Spotify API error", 400
+
+        resjson = json.loads(res.text)
+        for track in resjson["tracks"]:
+            if track is not None:
+                idcache[track["id"]] = track
+
+    outjson = {"tracks": []}
+    for id in allids:
+        if id in idcache:
+            outjson["tracks"].append(idcache[id])
+
+    return json.dumps(outjson), 200

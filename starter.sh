@@ -14,7 +14,7 @@ USER_TYPE=$1
 
 if [ "$USER_TYPE" = "server" ]; then
   cd src/server
-  flask --app main run --host=0.0.0.0 -p $USER_PORT --cert /etc/letsencrypt/live/jukebox.lol/fullchain.pem --key /etc/letsencrypt/live/jukebox.lol/privkey.pem --no-reload
+  flask --app main run --host=0.0.0.0 -p $USER_PORT --cert /etc/letsencrypt/live/jukebox.lol/fullchain.pem --key /etc/letsencrypt/live/jukebox.lol/privkey.pem --no-reload --with-threads
 
 elif [ "$USER_TYPE" = "client" ]; then
   cd src/client
