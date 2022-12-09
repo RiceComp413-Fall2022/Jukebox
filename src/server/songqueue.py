@@ -59,8 +59,6 @@ class SongQueue:
                 entry[2].upvotes_by_user[user_id] = 0
             if entry[2].upvotes_by_user[user_id] != 1:
                 incvote = 1
-                if entry[2].upvotes_by_user[user_id] == -1:
-                    incvote = 2
                 entry[0] -= incvote
                 entry[2].upvotes = -entry[0]
                 entry[2].upvotes_by_user[user_id] += incvote
@@ -85,8 +83,6 @@ class SongQueue:
                 entry[2].upvotes_by_user[user_id] = 0
             if entry[2].upvotes_by_user[user_id] != -1:
                 incvote = -1
-                if entry[2].upvotes_by_user[user_id] == 1:
-                    incvote = -2
                 entry[0] -= incvote
                 entry[2].upvotes = -entry[0]
                 if not already_voted:
