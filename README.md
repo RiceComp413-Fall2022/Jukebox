@@ -24,6 +24,7 @@ sh actions.sh
 ```
 
 ## Demo
+To see a video demo, use this link here *https://drive.google.com/file/d/1g_12niOp7fzO3imhE8hAwaspzlFMPzup/view?usp=sharing*
 ### Setup for Running Locally
 Prerequisites:
 * Open the Spotify web app or Spotify desktop application and log into your spotify premium account.
